@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <EditTextPreference
+        android:key="card_id"
+        android:title="@string/card_id"
+        android:summary="@string/card_id_summ"
+        android:defaultValue="" />
+</PreferenceScreen>
