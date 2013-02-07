@@ -1,4 +1,4 @@
-package com.example.rikslunchentest;
+package se.helmer.rikslunchensaldo;
 
 import android.os.Bundle;
 import android.preference.PreferenceFragment;

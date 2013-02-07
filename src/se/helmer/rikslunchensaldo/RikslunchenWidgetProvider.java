@@ -1,4 +1,4 @@
-package com.example.rikslunchentest;
+package se.helmer.rikslunchensaldo;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -11,11 +11,14 @@ import android.widget.RemoteViews;
 public class RikslunchenWidgetProvider extends AppWidgetProvider {
 
   private static final String ACTION_CLICK = "ACTION_CLICK";
-  final RikslunchenDatasource rds = new RikslunchenDatasource();
+  RikslunchenDatasource rds;
 
-  @Override
+    @Override
   public void onUpdate(Context context, AppWidgetManager appWidgetManager,
       int[] appWidgetIds) {
+
+    rds = new RikslunchenDatasource(context);
+    String card_id = "32271843";
 
     // Get all ids
     ComponentName thisWidget = new ComponentName(context,
@@ -27,9 +30,9 @@ public class RikslunchenWidgetProvider extends AppWidgetProvider {
       RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
           R.layout.widget_layout);
 
-      rds.setResultCallback(new MyResultCallback(remoteViews,appWidgetManager,widgetId));
+      rds.setResultCallback(new MyResultCallback(context,remoteViews,appWidgetManager,widgetId));
 
-      rds.query(context, "");
+      rds.query(context, card_id);
 
       // Register an onClickListener
       Intent intent = new Intent(context, RikslunchenWidgetProvider.class);
@@ -48,16 +51,28 @@ public class RikslunchenWidgetProvider extends AppWidgetProvider {
       RemoteViews rv;
       AppWidgetManager awm;
       int widgetId;
+      Context context;
 
-      MyResultCallback(RemoteViews rv1, AppWidgetManager am, int wi) {
+      MyResultCallback(Context c, RemoteViews rv1, AppWidgetManager am, int wi) {
           rv = rv1;
           awm = am;
           widgetId = wi;
+          context = c;
       }
 
       @Override
       public void update(int viewId, String value) {
-          rv.setTextViewText(viewId, value);
+    	  switch (viewId) {
+    	  case R.id.widget_balance:
+    		  rv.setTextViewText(viewId, context.getString(R.string.balance) + ":" + value);
+    		  break;
+    	  case R.id.widget_lasttopupdate:
+    		  rv.setTextViewText(viewId, context.getString(R.string.lasttopupdate) + ":" + value);
+    		  break;
+    	  }
+
+
+
           awm.updateAppWidget(widgetId, rv);
 
     }

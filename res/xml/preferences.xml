@@ -3,6 +3,6 @@
     <EditTextPreference
         android:key="card_id"
         android:title="@string/card_id"
-        android:summary="@string/card_id_summ"
+        android:summary=""
         android:defaultValue="" />
 </PreferenceScreen>

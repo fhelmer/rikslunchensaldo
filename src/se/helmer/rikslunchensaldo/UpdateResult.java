@@ -1,4 +1,4 @@
-package com.example.rikslunchentest;
+package se.helmer.rikslunchensaldo;
 
 public interface UpdateResult {
 

@@ -15,11 +15,22 @@
         android:layout_gravity="center"
         android:gravity="center_horizontal|center_vertical"
         android:layout_margin="4dip"
-        android:text="Rikslunchen:" >
+        android:text="Rikslunchen" >
     </TextView>
     
     <TextView
-        android:id="@+id/balance"
+        android:id="@+id/widget_card_id"
+        style="@android:style/TextAppearance.Medium"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal|center_vertical"
+        android:layout_margin="4dip"
+        android:text="Static Text" >
+    </TextView>
+    
+    <TextView
+        android:id="@+id/widget_balance"
         style="@android:style/TextAppearance.Medium"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -30,7 +41,7 @@
     </TextView>
     
        <TextView
-        android:id="@+id/lasttopupdate"
+        android:id="@+id/widget_lasttopupdate"
         style="@android:style/TextAppearance.Medium"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
