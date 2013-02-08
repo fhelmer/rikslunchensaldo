@@ -6,18 +6,19 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.ResultReceiver;
 import android.widget.RemoteViews;
 
 public class RikslunchenWidgetProvider extends AppWidgetProvider {
 
   private static final String ACTION_CLICK = "ACTION_CLICK";
-  RikslunchenDatasource rds;
 
-    @Override
+  @Override
   public void onUpdate(Context context, AppWidgetManager appWidgetManager,
       int[] appWidgetIds) {
 
-    rds = new RikslunchenDatasource(context);
     String card_id = "32271843";
 
     // Get all ids
@@ -30,9 +31,18 @@ public class RikslunchenWidgetProvider extends AppWidgetProvider {
       RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
           R.layout.widget_layout);
 
-      rds.setResultCallback(new MyResultCallback(context,remoteViews,appWidgetManager,widgetId));
+      /*
+      MyWidgetResultReceiver receiver = new MyWidgetResultReceiver(new Handler(),
+    		  context, remoteViews, appWidgetManager);
 
-      rds.query(context, card_id);
+      final Intent gbintent = new Intent(GetBalanceIntentService.GETBALANCE_INTENT,
+    		  null, context,
+    		  GetBalanceIntentService.class);
+
+      gbintent.putExtra("receiver", receiver);
+      gbintent.putExtra("card_id", card_id);
+      ComponentName cm = context.startService(gbintent);
+       */
 
       // Register an onClickListener
       Intent intent = new Intent(context, RikslunchenWidgetProvider.class);
@@ -47,35 +57,31 @@ public class RikslunchenWidgetProvider extends AppWidgetProvider {
     }
   }
 
-  class MyResultCallback implements UpdateResult {
-      RemoteViews rv;
-      AppWidgetManager awm;
-      int widgetId;
-      Context context;
+    class MyWidgetResultReceiver extends ResultReceiver {
+    	RemoteViews rv;
+    	AppWidgetManager awm;
+    	int widgetId;
+    	Context context;
 
-      MyResultCallback(Context c, RemoteViews rv1, AppWidgetManager am, int wi) {
-          rv = rv1;
-          awm = am;
-          widgetId = wi;
-          context = c;
-      }
+    	public MyWidgetResultReceiver(Handler h,Context c, RemoteViews rv1, AppWidgetManager am) {
+    		super(h);
+    		rv = rv1;
+    		awm = am;
+    		context = c;
+    	}
 
-      @Override
-      public void update(int viewId, String value) {
-    	  switch (viewId) {
-    	  case R.id.widget_balance:
-    		  rv.setTextViewText(viewId, context.getString(R.string.balance) + ":" + value);
-    		  break;
-    	  case R.id.widget_lasttopupdate:
-    		  rv.setTextViewText(viewId, context.getString(R.string.lasttopupdate) + ":" + value);
-    		  break;
-    	  }
-
-
-
-          awm.updateAppWidget(widgetId, rv);
-
-    }
+    	@Override
+    	protected void onReceiveResult(int resultCode, Bundle b) {
+    		String balance = b.getString("balance");
+    		String lasttopupdate = b.getString("lasttopupdate");
+    				rv.setTextViewText(R.id.widget_balance,
+    						context.getString(R.string.balance) + ":" + balance);
+    		rv.setTextViewText(R.id.widget_lasttopupdate,
+    				context.getString(R.string.lasttopupdate) + ":" + lasttopupdate);
+    		rv.setTextViewText(R.id.widget_card_id,
+    				context.getString(R.string.card_id) + ":" + "CARDID");
+    		awm.updateAppWidget(widgetId, rv);
+    	}
   }
 
 }

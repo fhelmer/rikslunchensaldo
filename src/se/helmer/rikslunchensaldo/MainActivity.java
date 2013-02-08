@@ -1,8 +1,11 @@
 package se.helmer.rikslunchensaldo;
 
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
+import android.os.ResultReceiver;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -11,56 +14,51 @@ import android.widget.TextView;
 public class MainActivity extends Activity {
 
 	private static String TAG = "MainActivity";
-    String card_id = "32271843";
-    static String cardbalance = "";
-    static String lasttopdate = "";
 
-    TextView balanceField;
-    TextView lasttopupField;
-    RikslunchenDatasource rd;
+    String mCard_id = "32271843";
+
+    TextView mBalanceField;
+    TextView mLasttopupField;
+
+    ResultReceiver mReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        rd = new RikslunchenDatasource(this);
-        rd.setResultCallback(new MyResultCallback() );
-
-        balanceField = (TextView) findViewById(R.id.balance);
-        lasttopupField = (TextView) findViewById(R.id.topupdate);
+        mBalanceField = (TextView) findViewById(R.id.balance);
+        mLasttopupField = (TextView) findViewById(R.id.topupdate);
 
         Button b = (Button) findViewById(R.id.button_fetch);
+
+        mReceiver = new MyActivityResultReceiver(new Handler());
+
         b.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				// save data
-				rd.query(MainActivity.this,card_id);
+				final Intent intent = new Intent(GetBalanceIntentService.GETBALANCE_INTENT,
+						null, MainActivity.this,
+		                GetBalanceIntentService.class);
+
+		        intent.putExtra("receiver", mReceiver);
+		        intent.putExtra("card_id", mCard_id);
+		        ComponentName cm = startService(intent);
 			}
 		});
     }
 
-    class MyResultCallback implements UpdateResult {
+    class MyActivityResultReceiver extends ResultReceiver {
+    	public MyActivityResultReceiver(Handler handler) {
+            super(handler);
+        }
+
     	@Override
-    	public void update(final int viewId, final String data) {
-    		Log.d(TAG,"MainActivity update in "+data);
-    		runOnUiThread(new Runnable() {
-    			@Override
-    			public void run() {
+    	protected void onReceiveResult(int resultCode, Bundle b) {
 
-    				switch(viewId) {
-    				case  R.id.widget_balance:
-    					balanceField.setText(data);
-    					break;
-    				case R.id.widget_lasttopupdate:
-    					lasttopupField.setText(data);
-    					break;
-    				}
-    			}
-    		});
-    		Log.d(TAG,"MainActivity update out");
-
+    		mBalanceField.setText(b.getString("balance"));
+    		mLasttopupField.setText(b.getString("lasttopupdate"));
     	}
     }
 }

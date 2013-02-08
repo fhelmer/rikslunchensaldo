@@ -25,6 +25,12 @@
             </intent-filter>
         </activity>
         
+        <service android:name=".GetBalanceIntentService">
+            <intent-filter>
+                <action android:name="se.helmer.rikslunchensaldo.START_SERVICE" />
+            </intent-filter>
+        </service>
+
             <receiver android:name="RikslunchenWidgetProvider" >
             <intent-filter >
                 <action 
