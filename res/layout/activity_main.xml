@@ -11,15 +11,17 @@
         android:padding="5dip" >
 
         <TextView
-            android:id="@+id/textView1"
+            android:id="@+id/textView11"
             android:layout_weight="1"
+            android:layout_width="0dp"
             android:text="@string/card_id" />
 
         <EditText
             android:id="@+id/editCardId"
+            android:layout_width="0dp"
             android:layout_weight="1"
-            android:hint="@string/found_on_card"
             android:inputType="number" />
+
     </TableRow>
 
     <TableRow
@@ -27,10 +29,19 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:padding="5dip" >
+
+        <TextView
+            android:id="@+id/textView55"
+            android:layout_width="0dp"
+            android:gravity="right"
+            android:layout_weight="1"
+            android:text="@string/found_on_card"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+        
     </TableRow>
 
     <TableRow
-        android:id="@+id/tableRow3"
+        android:id="@+id/tableRow33"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:padding="15dip" />
@@ -56,11 +67,13 @@
 
         <TextView
             android:id="@+id/textView1"
+            android:layout_width="0dp"
             android:layout_weight="1"
             android:text="@string/balance" />
 
         <TextView
             android:id="@+id/balance"
+            android:layout_width="0dp"
             android:textAppearance="?android:attr/textAppearanceLarge" 
             android:layout_weight="1" />
     </TableRow>
@@ -72,14 +85,22 @@
         android:padding="5dip" >
 
         <TextView
-            android:id="@+id/textView1"
+            android:id="@+id/textView2"
+            android:layout_width="0dp"
             android:layout_weight="1"
             android:text="@string/lasttopupdate" />
 
         <TextView
             android:id="@+id/topupdate"
+            android:layout_width="0dp"
             android:textAppearance="?android:attr/textAppearanceLarge" 
             android:layout_weight="1" />
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/tableRow6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
     </TableRow>
 
 </TableLayout>

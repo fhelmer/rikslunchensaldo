@@ -9,17 +9,20 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 public class RikslunchenWidgetProvider extends AppWidgetProvider {
 
   private static final String ACTION_CLICK = "ACTION_CLICK";
+  private ResultReceiver mReceiver;
+  private static String TAG = "RikslunchenWidgetProvider";
 
   @Override
   public void onUpdate(Context context, AppWidgetManager appWidgetManager,
       int[] appWidgetIds) {
 
-    String card_id = "32271843";
+    String mCard_id = "32271843";
 
     // Get all ids
     ComponentName thisWidget = new ComponentName(context,
@@ -31,18 +34,10 @@ public class RikslunchenWidgetProvider extends AppWidgetProvider {
       RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
           R.layout.widget_layout);
 
-      /*
-      MyWidgetResultReceiver receiver = new MyWidgetResultReceiver(new Handler(),
-    		  context, remoteViews, appWidgetManager);
-
-      final Intent gbintent = new Intent(GetBalanceIntentService.GETBALANCE_INTENT,
-    		  null, context,
-    		  GetBalanceIntentService.class);
-
-      gbintent.putExtra("receiver", receiver);
-      gbintent.putExtra("card_id", card_id);
-      ComponentName cm = context.startService(gbintent);
-       */
+      mReceiver = new MyWidgetResultReceiver(new Handler(),
+    		  context, remoteViews, appWidgetManager,widgetId);
+      RikslunchenDatasource rd = new RikslunchenDatasource();
+      rd.query(context,mReceiver,mCard_id);
 
       // Register an onClickListener
       Intent intent = new Intent(context, RikslunchenWidgetProvider.class);
@@ -63,18 +58,24 @@ public class RikslunchenWidgetProvider extends AppWidgetProvider {
     	int widgetId;
     	Context context;
 
-    	public MyWidgetResultReceiver(Handler h,Context c, RemoteViews rv1, AppWidgetManager am) {
+    	public MyWidgetResultReceiver(Handler h,
+    			Context c,
+    			RemoteViews rv1,
+    			AppWidgetManager am,
+    			int wi) {
     		super(h);
     		rv = rv1;
     		awm = am;
     		context = c;
+    		widgetId = wi;
     	}
 
     	@Override
     	protected void onReceiveResult(int resultCode, Bundle b) {
     		String balance = b.getString("balance");
     		String lasttopupdate = b.getString("lasttopupdate");
-    				rv.setTextViewText(R.id.widget_balance,
+    		Log.d(TAG,"widget onReceiveResult"+balance+lasttopupdate);
+    		rv.setTextViewText(R.id.widget_balance,
     						context.getString(R.string.balance) + ":" + balance);
     		rv.setTextViewText(R.id.widget_lasttopupdate,
     				context.getString(R.string.lasttopupdate) + ":" + lasttopupdate);

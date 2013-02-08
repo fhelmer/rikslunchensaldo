@@ -8,6 +8,6 @@
     <string name="card_id">Card-ID:</string>
     <string name="balance_fetch">Get balance</string>
 	<string name="balance">Balance</string>
-    <string name="found_on_card">This number can be found on the card</string>		
+    <string name="found_on_card">(This number can be found on the card)</string>		
     <string name="lasttopupdate">Last top up date</string>
 </resources>

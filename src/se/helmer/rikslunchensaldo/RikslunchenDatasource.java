@@ -40,7 +40,7 @@ public class RikslunchenDatasource {
         	Bundle b = new Bundle();
         	b.putString("balance", balance);
         	b.putString("lasttopupdate", lasttopupdate);
-        	receiver.send(GetBalanceIntentService.GETBALANCE, b);
+        	receiver.send(0, b);
         }
     }
 }
