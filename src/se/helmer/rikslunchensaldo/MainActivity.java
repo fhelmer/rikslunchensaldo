@@ -55,6 +55,7 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
+			    mLatestUpdate.setText("Querying...");
 				mPrefsEditor.putString("card_id", mCardIdField.getText().toString());
 				mPrefsEditor.commit();
 		        RikslunchenDatasource rd = new RikslunchenDatasource();

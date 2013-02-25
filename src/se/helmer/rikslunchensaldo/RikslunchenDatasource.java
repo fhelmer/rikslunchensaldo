@@ -49,13 +49,13 @@ public class RikslunchenDatasource {
             cal.getTime();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
                     Locale.US);
-            String latestupdate = sdf.format(cal.getTime());
+            String latestupdate = "Updated:"+sdf.format(cal.getTime());
 
             if (!valid) {
                 latestupdate = message;
             }
 
-        	b.putString("latestupdate","Updated "+latestupdate);
+        	b.putString("latestupdate",latestupdate);
         	receiver.send(0, b);
         	Log.d(TAG,"Updated "+latestupdate);
         }

@@ -55,7 +55,7 @@ public class RikslunchenWidgetProvider extends AppWidgetProvider {
 
       PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
           0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-      remoteViews.setOnClickPendingIntent(R.id.balance, pendingIntent);
+      remoteViews.setOnClickPendingIntent(R.id.layout, pendingIntent);
       appWidgetManager.updateAppWidget(widgetId, remoteViews);
     }
   }
