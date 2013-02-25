@@ -18,13 +18,14 @@ public class MainActivity extends Activity {
 	private SharedPreferences mSharedPrefs;
 	private Editor mPrefsEditor;
 
-	private static final String APP_SHARED_PREFS = "se.helmer.riksbankensaldo_prefs";
+	public static final String APP_SHARED_PREFS = "se.helmer.riksbankensaldo_prefs";
 
-    String mCard_id = "32271843";
+    // String mCard_id; //  = "32271843";
 
     TextView mBalanceField;
     TextView mLasttopupField;
     EditText mCardIdField;
+    TextView mLatestUpdate;
 
     ResultReceiver mReceiver;
 
@@ -43,7 +44,8 @@ public class MainActivity extends Activity {
         mLasttopupField.setText(mSharedPrefs.getString("lasttopupdate", ""));
         mCardIdField = (EditText) findViewById(R.id.editCardId);
         mCardIdField.setText(mSharedPrefs.getString("card_id", ""));
-
+        mLatestUpdate = (TextView) findViewById(R.id.latestupdate);
+        mLatestUpdate.setText(mSharedPrefs.getString("latestupdate", ""));
 
         Button b = (Button) findViewById(R.id.button_fetch);
 
@@ -56,7 +58,7 @@ public class MainActivity extends Activity {
 				mPrefsEditor.putString("card_id", mCardIdField.getText().toString());
 				mPrefsEditor.commit();
 		        RikslunchenDatasource rd = new RikslunchenDatasource();
-				rd.query(MainActivity.this,mReceiver,mCard_id);
+				rd.query(MainActivity.this,mReceiver,mCardIdField.getText().toString());
 			}
 		});
     }
@@ -71,9 +73,12 @@ public class MainActivity extends Activity {
 
     		mBalanceField.setText(b.getString("balance"));
     		mLasttopupField.setText(b.getString("lasttopupdate"));
+    		mLatestUpdate.setText(b.getString("latestupdate"));
 
     		mPrefsEditor.putString("balance",b.getString("balance"));
     		mPrefsEditor.putString("lasttopupdate",b.getString("lasttopupdate"));
+    		mPrefsEditor.putString("latestupdate",b.getString("latestupdate"));
+
     		mPrefsEditor.commit();
     	}
     }

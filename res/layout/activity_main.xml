@@ -37,7 +37,6 @@
             android:layout_weight="1"
             android:text="@string/found_on_card"
             android:textAppearance="?android:attr/textAppearanceSmall" />
-        
     </TableRow>
 
     <TableRow
@@ -97,6 +96,25 @@
             android:layout_weight="1" />
     </TableRow>
 
+    <TableRow
+        android:id="@+id/tableRow48"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dip" >
+
+        <TextView
+            android:id="@+id/textView28"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/latestupdate" />
+
+        <TextView
+            android:id="@+id/latestupdate"
+            android:layout_width="0dp"
+            android:textAppearance="?android:attr/textAppearanceSmall" 
+            android:layout_weight="1" />
+    </TableRow>
+    
     <TableRow
         android:id="@+id/tableRow6"
         android:layout_width="wrap_content"

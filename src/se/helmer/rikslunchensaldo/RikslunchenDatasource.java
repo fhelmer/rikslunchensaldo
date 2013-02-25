@@ -1,5 +1,9 @@
 package se.helmer.rikslunchensaldo;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.os.ResultReceiver;
@@ -22,7 +26,7 @@ public class RikslunchenDatasource {
             	Log.d(TAG,"onPageFinished:"+url);
                 view.loadUrl("javascript:" +
                         "cardUtil.getCardData('"+card_id+"', function(cardInfo) {"
-                        + "        accessor.setData(cardInfo.balance,cardInfo.lastTopupDateStr);"
+                        + "        accessor.setData(cardInfo.valid,cardInfo.message,cardInfo.balance,cardInfo.lastTopupDateStr);"
                         + "        return true;" + "    });");
             }
         });
@@ -36,11 +40,24 @@ public class RikslunchenDatasource {
         	receiver = r;
         }
 
-        public void setData(String balance, String lasttopupdate) {
+        public void setData(boolean valid, String message,String balance, String lasttopupdate) {
         	Bundle b = new Bundle();
         	b.putString("balance", balance);
         	b.putString("lasttopupdate", lasttopupdate);
+
+            Calendar cal = Calendar.getInstance();
+            cal.getTime();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
+                    Locale.US);
+            String latestupdate = sdf.format(cal.getTime());
+
+            if (!valid) {
+                latestupdate = message;
+            }
+
+        	b.putString("latestupdate","Updated "+latestupdate);
         	receiver.send(0, b);
+        	Log.d(TAG,"Updated "+latestupdate);
         }
     }
 }

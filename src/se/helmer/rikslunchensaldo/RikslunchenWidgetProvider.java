@@ -1,11 +1,13 @@
 package se.helmer.rikslunchensaldo;
 
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
@@ -17,12 +19,17 @@ public class RikslunchenWidgetProvider extends AppWidgetProvider {
   private static final String ACTION_CLICK = "ACTION_CLICK";
   private ResultReceiver mReceiver;
   private static String TAG = "RikslunchenWidgetProvider";
+  private String mCardId = "-";
 
   @Override
   public void onUpdate(Context context, AppWidgetManager appWidgetManager,
       int[] appWidgetIds) {
 
-    String mCard_id = "32271843";
+    // String mCard_id; //  = "32271843";
+	SharedPreferences sharedPrefs =
+			context.getSharedPreferences(MainActivity.APP_SHARED_PREFS, Activity.MODE_PRIVATE);
+    mCardId = sharedPrefs.getString("card_id", "");
+
 
     // Get all ids
     ComponentName thisWidget = new ComponentName(context,
@@ -37,7 +44,8 @@ public class RikslunchenWidgetProvider extends AppWidgetProvider {
       mReceiver = new MyWidgetResultReceiver(new Handler(),
     		  context, remoteViews, appWidgetManager,widgetId);
       RikslunchenDatasource rd = new RikslunchenDatasource();
-      rd.query(context,mReceiver,mCard_id);
+
+      rd.query(context,mReceiver,mCardId);
 
       // Register an onClickListener
       Intent intent = new Intent(context, RikslunchenWidgetProvider.class);
@@ -74,13 +82,16 @@ public class RikslunchenWidgetProvider extends AppWidgetProvider {
     	protected void onReceiveResult(int resultCode, Bundle b) {
     		String balance = b.getString("balance");
     		String lasttopupdate = b.getString("lasttopupdate");
+    		String latestupdate = b.getString("latestupdate");
     		Log.d(TAG,"widget onReceiveResult"+balance+lasttopupdate);
     		rv.setTextViewText(R.id.widget_balance,
-    						context.getString(R.string.balance) + ":" + balance);
+    						context.getString(R.string.balance) + " : " + balance);
     		rv.setTextViewText(R.id.widget_lasttopupdate,
-    				context.getString(R.string.lasttopupdate) + ":" + lasttopupdate);
+    				context.getString(R.string.lasttopupdate) + " : " + lasttopupdate);
     		rv.setTextViewText(R.id.widget_card_id,
-    				context.getString(R.string.card_id) + ":" + "CARDID");
+    				context.getString(R.string.card_id) + " : " + mCardId);
+    		rv.setTextViewText(R.id.widget_latestupdate,
+                    context.getString(R.string.latestupdate) + " : " + latestupdate);
     		awm.updateAppWidget(widgetId, rv);
     	}
   }
