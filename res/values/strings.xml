@@ -12,4 +12,6 @@
     <string name="lasttopupdate">Last top up date</string>
     <string name="latestupdate">Message:</string>
     <string name="widget_header">Lunchsaldo</string>
+    <string name="largewidgetlabel">Lunchsaldo - Large</string>
+    <string name="smallwidgetlabel">Lunchsaldo - Small</string>
 </resources>

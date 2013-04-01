@@ -25,9 +25,11 @@ public class RikslunchenDatasource {
             public void onPageFinished(WebView view, String url) {
             	Log.d(TAG,"onPageFinished:"+url);
                 view.loadUrl("javascript:" +
-                        "cardUtil.getCardData('"+card_id+"', function(cardInfo) {"
+                        "cardUtil.getCardData('"+card_id+"', document.getElementById('public_key').value, "
+                        + "function(cardInfo) {"
                         + "        accessor.setData(cardInfo.valid,cardInfo.message,cardInfo.balance,cardInfo.lastTopupDateStr);"
                         + "        return true;" + "    });");
+
             }
         });
 
@@ -38,6 +40,10 @@ public class RikslunchenDatasource {
     	private final ResultReceiver receiver;
         public MyAccessor(ResultReceiver r) {
         	receiver = r;
+        }
+
+        public void test(String txt) {
+            Log.d(TAG,"test:"+txt);
         }
 
         public void setData(boolean valid, String message,String balance, String lasttopupdate) {

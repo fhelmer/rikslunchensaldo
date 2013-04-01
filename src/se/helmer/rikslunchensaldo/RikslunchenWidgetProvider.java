@@ -41,6 +41,7 @@ public class RikslunchenWidgetProvider extends AppWidgetProvider {
       RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
           R.layout.widget_layout);
 
+
       mReceiver = new MyWidgetResultReceiver(new Handler(),
     		  context, remoteViews, appWidgetManager,widgetId);
       RikslunchenDatasource rd = new RikslunchenDatasource();
