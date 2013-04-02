@@ -8,6 +8,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.util.Log;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -24,11 +25,14 @@ public class RikslunchenDatasource {
             @Override
             public void onPageFinished(WebView view, String url) {
             	Log.d(TAG,"onPageFinished:"+url);
+
                 view.loadUrl("javascript:" +
-                        "cardUtil.getCardData('"+card_id+"', document.getElementById('public_key').value, "
+                        "var public_key = document.getElementById('public_key').value;"+
+                        "accessor.test(public_key);"+
+                        "cardUtil.getCardData("+card_id+",public_key, "
                         + "function(cardInfo) {"
                         + "        accessor.setData(cardInfo.valid,cardInfo.message,cardInfo.balance,cardInfo.lastTopupDateStr);"
-                        + "        return true;" + "    });");
+                        + "        return true;" + " });");
 
             }
         });
@@ -42,10 +46,12 @@ public class RikslunchenDatasource {
         	receiver = r;
         }
 
+        @JavascriptInterface
         public void test(String txt) {
             Log.d(TAG,"test:"+txt);
         }
 
+        @JavascriptInterface
         public void setData(boolean valid, String message,String balance, String lasttopupdate) {
         	Bundle b = new Bundle();
         	b.putString("balance", balance);
