@@ -27,8 +27,9 @@ public class RikslunchenDatasource {
             	Log.d(TAG,"onPageFinished:"+url);
 
                 view.loadUrl("javascript:" +
-                        "accessor.test('"+card_id+"');"+
-                        "cardUtil.getCardData('"+card_id+"', "
+                        "var public_key = document.getElementById('public_key').value;"+
+                        "accessor.test(public_key);"+
+                        "cardUtil.getCardData('"+card_id+"',public_key, "
                         + "function(cardInfo) {"
                         + "        accessor.setData(cardInfo.valid,cardInfo.message,cardInfo.balance,cardInfo.lastTopupDateStr);"
                         + "        return true;" + " });");
