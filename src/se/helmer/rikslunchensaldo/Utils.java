@@ -1,0 +1,113 @@
+package se.helmer.rikslunchensaldo;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
+import android.app.Activity;
+import android.app.PendingIntent;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.ResultReceiver;
+import android.util.Log;
+import android.widget.RemoteViews;
+
+public class Utils {
+
+    private static String TAG = "Utils";
+
+    static SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
+            Locale.US);
+
+    static String getCurrentTime() {
+        Calendar cal = Calendar.getInstance();
+        String latestupdate = mDateFormat.format(cal.getTime());
+        return latestupdate;
+    }
+
+    static void saveSharedPreferences(Context context, Bundle b) {
+        SharedPreferences sharedPrefs =
+                context.getSharedPreferences(MainActivity.APP_SHARED_PREFS, Activity.MODE_PRIVATE);
+
+        Editor prefsEditor = sharedPrefs.edit();
+
+        prefsEditor.putString(RikslunchenDatasource.BALANCE,b.getString(RikslunchenDatasource.BALANCE));
+        prefsEditor.putString(RikslunchenDatasource.LAST_TOPUP_DATE,b.getString(RikslunchenDatasource.LAST_TOPUP_DATE));
+        prefsEditor.putString(RikslunchenDatasource.LATEST_UPDATE,b.getString(RikslunchenDatasource.LATEST_UPDATE));
+
+        prefsEditor.commit();
+
+    }
+
+    static void updateWidgets(Context context, int layout, AppWidgetManager appWidgetManager, int[] appWidgetIds, Class<?> cls) {
+
+        SharedPreferences sharedPrefs =
+                context.getSharedPreferences(MainActivity.APP_SHARED_PREFS, Activity.MODE_PRIVATE);
+        String cardId = sharedPrefs.getString("card_id", "");
+
+        // Get all ids for this class
+        ComponentName thisWidget = new ComponentName(context,cls);
+
+        int[] allWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
+
+        for (int widgetId : allWidgetIds) {
+          // Create some random data
+
+          RemoteViews remoteViews = new RemoteViews(context.getPackageName(),layout);
+
+          ResultReceiver receiver = new MyWidgetResultReceiver(new Handler(),
+                  context, remoteViews, appWidgetManager,widgetId,cardId);
+
+          String latestupdatestr = sharedPrefs.getString(RikslunchenDatasource.LATEST_UPDATE, "");
+          Log.d(TAG,"updateWidgets: latestupdatestr=" + latestupdatestr);
+          RikslunchenDatasource rd = new RikslunchenDatasource();
+
+          if (latestupdatestr.length() > 0) {
+              Calendar cal = Calendar.getInstance();
+              Date now = cal.getTime();
+              try {
+                  Date latestupdate = mDateFormat.parse(latestupdatestr);
+                  long diff = now.getTime() - latestupdate.getTime();
+                  long diffSeconds = diff / 1000 % 60;
+
+                  if (diffSeconds > 5) {
+                      rd.query(context,receiver,cardId);
+                  } else { // Just send what is currently stored in shared prefs
+                      Bundle b = new Bundle();
+                      b.putString(RikslunchenDatasource.BALANCE, sharedPrefs.getString(RikslunchenDatasource.BALANCE, ""));
+                      b.putString(RikslunchenDatasource.LAST_TOPUP_DATE, sharedPrefs.getString(RikslunchenDatasource.LAST_TOPUP_DATE, ""));
+                      b.putString(RikslunchenDatasource.LATEST_UPDATE, latestupdatestr);
+                      receiver.send(0,b);
+                  }
+              } catch (java.text.ParseException pe) {
+                  // Version 1.5 has "Updated" in timestamp, so we need to retry
+                  Log.d(TAG,"parseException " + latestupdatestr);
+                  rd.query(context,receiver,cardId);
+              }
+          } else {
+              rd.query(context,receiver,cardId);
+          }
+
+          // Register an onClickListener
+          Intent intent = new Intent(context, MainActivity.class);
+          intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+          intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+          intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
+          intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
+
+          PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+          remoteViews.setOnClickPendingIntent(R.id.layout, pendingIntent);
+          appWidgetManager.updateAppWidget(widgetId, remoteViews);
+        }
+    }
+
+}

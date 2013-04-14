@@ -1,6 +1,8 @@
 package se.helmer.rikslunchensaldo;
 
 import android.app.Activity;
+import android.appwidget.AppWidgetManager;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
@@ -60,8 +62,22 @@ public class MainActivity extends Activity {
 				mPrefsEditor.commit();
 		        RikslunchenDatasource rd = new RikslunchenDatasource();
 				rd.query(MainActivity.this,mReceiver,mCardIdField.getText().toString());
+
+				updateWidget(RikslunchenWidgetProvider.class,R.xml.widget_info);
+				updateWidget(RikslunchenWidgetProviderSmall.class,R.xml.small_widget_info);
 			}
 		});
+
+    }
+
+    void updateWidget(Class<?> cls, int widgetid) {
+        Intent intent = new Intent(this,cls);
+        intent.setAction("android.appwidget.action.APPWIDGET_UPDATE");
+        // Use an array and EXTRA_APPWIDGET_IDS instead of AppWidgetManager.EXTRA_APPWIDGET_ID,
+        // since it seems the onUpdate() is only fired on that:
+        int[] ids = {widgetid};
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids);
+        sendBroadcast(intent);
     }
 
     class MyActivityResultReceiver extends ResultReceiver {
@@ -72,15 +88,13 @@ public class MainActivity extends Activity {
     	@Override
     	protected void onReceiveResult(int resultCode, Bundle b) {
 
-    		mBalanceField.setText(b.getString("balance"));
-    		mLasttopupField.setText(b.getString("lasttopupdate"));
-    		mLatestUpdate.setText(b.getString("latestupdate"));
+            mBalanceField.setText(b.getString(RikslunchenDatasource.BALANCE));
+            mLasttopupField.setText(b
+                    .getString(RikslunchenDatasource.LAST_TOPUP_DATE));
+            mLatestUpdate.setText(b
+                    .getString(RikslunchenDatasource.LATEST_UPDATE));
 
-    		mPrefsEditor.putString("balance",b.getString("balance"));
-    		mPrefsEditor.putString("lasttopupdate",b.getString("lasttopupdate"));
-    		mPrefsEditor.putString("latestupdate",b.getString("latestupdate"));
-
-    		mPrefsEditor.commit();
+            Utils.saveSharedPreferences(MainActivity.this, b);
     	}
     }
 }

@@ -1,9 +1,5 @@
 package se.helmer.rikslunchensaldo;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.os.ResultReceiver;
@@ -15,6 +11,10 @@ import android.webkit.WebViewClient;
 public class RikslunchenDatasource {
 
 	private static String TAG = "RikslunchenDatasource";
+
+	public static String BALANCE = "balance";
+	public static String LAST_TOPUP_DATE  = "lasttopupdate";
+	public static String LATEST_UPDATE = "latestupdate";
 
     public void query(Context c,ResultReceiver receiver, final String card_id) {
     	Log.d(TAG,"Querying "+card_id);
@@ -54,20 +54,16 @@ public class RikslunchenDatasource {
         @JavascriptInterface
         public void setData(boolean valid, String message,String balance, String lasttopupdate) {
         	Bundle b = new Bundle();
-        	b.putString("balance", balance);
-        	b.putString("lasttopupdate", lasttopupdate);
+            b.putString(BALANCE, balance);
+            b.putString(LAST_TOPUP_DATE, lasttopupdate);
 
-            Calendar cal = Calendar.getInstance();
-            cal.getTime();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
-                    Locale.US);
-            String latestupdate = "Updated:"+sdf.format(cal.getTime());
+            String latestupdate = Utils.getCurrentTime();
 
             if (!valid) {
                 latestupdate = message;
             }
 
-        	b.putString("latestupdate",latestupdate);
+            b.putString(LATEST_UPDATE,latestupdate);
         	receiver.send(0, b);
         	Log.d(TAG,"Updated "+latestupdate);
         }
