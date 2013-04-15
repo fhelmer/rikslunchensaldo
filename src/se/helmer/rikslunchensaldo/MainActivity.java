@@ -37,17 +37,13 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         this.mSharedPrefs =
-        		getSharedPreferences(APP_SHARED_PREFS, Activity.MODE_PRIVATE);
+                getSharedPreferences(APP_SHARED_PREFS, Activity.MODE_PRIVATE);
         this.mPrefsEditor = mSharedPrefs.edit();
 
         mBalanceField = (TextView) findViewById(R.id.balance);
-        mBalanceField.setText(mSharedPrefs.getString("balance", ""));
         mLasttopupField = (TextView) findViewById(R.id.topupdate);
-        mLasttopupField.setText(mSharedPrefs.getString("lasttopupdate", ""));
         mCardIdField = (EditText) findViewById(R.id.editCardId);
-        mCardIdField.setText(mSharedPrefs.getString("card_id", ""));
         mLatestUpdate = (TextView) findViewById(R.id.latestupdate);
-        mLatestUpdate.setText(mSharedPrefs.getString("latestupdate", ""));
 
         Button b = (Button) findViewById(R.id.button_fetch);
 
@@ -67,6 +63,19 @@ public class MainActivity extends Activity {
 				updateWidget(RikslunchenWidgetProviderSmall.class,R.xml.small_widget_info);
 			}
 		});
+
+    }
+
+    @Override
+    protected void onResume() {
+        // TODO Auto-generated method stub
+        super.onResume();
+
+        mBalanceField.setText(mSharedPrefs.getString(RikslunchenDatasource.BALANCE, ""));
+        mLasttopupField.setText(mSharedPrefs.getString(RikslunchenDatasource.LAST_TOPUP_DATE, ""));
+        mCardIdField.setText(mSharedPrefs.getString(RikslunchenDatasource.CARD_ID, ""));
+        mLatestUpdate.setText(mSharedPrefs.getString(RikslunchenDatasource.LATEST_UPDATE, ""));
+
 
     }
 

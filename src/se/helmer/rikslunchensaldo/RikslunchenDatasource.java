@@ -15,6 +15,7 @@ public class RikslunchenDatasource {
 	public static String BALANCE = "balance";
 	public static String LAST_TOPUP_DATE  = "lasttopupdate";
 	public static String LATEST_UPDATE = "latestupdate";
+	public static String CARD_ID = "card_id";
 
     public void query(Context c,ResultReceiver receiver, final String card_id) {
     	Log.d(TAG,"Querying "+card_id);

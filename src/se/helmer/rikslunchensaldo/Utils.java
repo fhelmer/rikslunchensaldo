@@ -51,7 +51,7 @@ public class Utils {
 
         SharedPreferences sharedPrefs =
                 context.getSharedPreferences(MainActivity.APP_SHARED_PREFS, Activity.MODE_PRIVATE);
-        String cardId = sharedPrefs.getString("card_id", "");
+        String cardId = sharedPrefs.getString(RikslunchenDatasource.CARD_ID, "");
 
         // Get all ids for this class
         ComponentName thisWidget = new ComponentName(context,cls);
