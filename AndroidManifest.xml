@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="se.helmer.rikslunchensaldo"
-    android:versionCode="6"
-    android:versionName="1.5" >
+    android:versionCode="7"
+    android:versionName="1.6" >
 
     <uses-sdk
         android:minSdkVersion="11"
         android:targetSdkVersion="17" />
     
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     
     <application
         android:allowBackup="true"
@@ -24,7 +25,7 @@
         </activity>
 
         <receiver 
-            android:name="se.helmer.rikslunchensaldo.RikslunchenWidgetProvider"
+            android:name=".RikslunchenWidgetProvider"
             android:label="@string/largewidgetlabel">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -43,6 +44,18 @@
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/small_widget_info"/>
+        </receiver>
+
+        <receiver android:name=".AlarmSetter" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".AlarmReceiver">
+            <intent-filter>
+                <action android:name="se.helmer.rikslunchensaldo.FETCH"/>
+            </intent-filter>
         </receiver>
 </application>
 

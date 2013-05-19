@@ -47,7 +47,7 @@ public class MainActivity extends Activity {
 
         Button b = (Button) findViewById(R.id.button_fetch);
 
-        mReceiver = new MyActivityResultReceiver(new Handler());
+        mReceiver = new ActivityResultReceiver(new Handler());
 
         b.setOnClickListener(new OnClickListener() {
 
@@ -59,8 +59,6 @@ public class MainActivity extends Activity {
 		        RikslunchenDatasource rd = new RikslunchenDatasource();
 				rd.query(MainActivity.this,mReceiver,mCardIdField.getText().toString());
 
-				updateWidget(RikslunchenWidgetProvider.class,R.xml.widget_info);
-				updateWidget(RikslunchenWidgetProviderSmall.class,R.xml.small_widget_info);
 			}
 		});
 
@@ -78,7 +76,6 @@ public class MainActivity extends Activity {
 
 
     }
-
     void updateWidget(Class<?> cls, int widgetid) {
         Intent intent = new Intent(this,cls);
         intent.setAction("android.appwidget.action.APPWIDGET_UPDATE");
@@ -89,13 +86,13 @@ public class MainActivity extends Activity {
         sendBroadcast(intent);
     }
 
-    class MyActivityResultReceiver extends ResultReceiver {
-    	public MyActivityResultReceiver(Handler handler) {
+    class ActivityResultReceiver extends ResultReceiver {
+        public ActivityResultReceiver(Handler handler) {
             super(handler);
         }
 
-    	@Override
-    	protected void onReceiveResult(int resultCode, Bundle b) {
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle b) {
 
             mBalanceField.setText(b.getString(RikslunchenDatasource.BALANCE));
             mLasttopupField.setText(b
@@ -104,7 +101,11 @@ public class MainActivity extends Activity {
                     .getString(RikslunchenDatasource.LATEST_UPDATE));
 
             Utils.saveSharedPreferences(MainActivity.this, b);
-    	}
+
+            updateWidget(RikslunchenWidgetProvider.class,R.xml.widget_info);
+            updateWidget(RikslunchenWidgetProviderSmall.class,R.xml.small_widget_info);
+        }
     }
+
 }
 

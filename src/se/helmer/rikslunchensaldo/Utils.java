@@ -2,7 +2,6 @@ package se.helmer.rikslunchensaldo;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
 import android.app.Activity;
@@ -34,6 +33,7 @@ public class Utils {
     }
 
     static void saveSharedPreferences(Context context, Bundle b) {
+        Log.d(TAG,"Saving shared preferences");
         SharedPreferences sharedPrefs =
                 context.getSharedPreferences(MainActivity.APP_SHARED_PREFS, Activity.MODE_PRIVATE);
 
@@ -67,34 +67,14 @@ public class Utils {
                   context, remoteViews, appWidgetManager,widgetId,cardId);
 
           String latestupdatestr = sharedPrefs.getString(RikslunchenDatasource.LATEST_UPDATE, "");
-          Log.d(TAG,"updateWidgets: latestupdatestr=" + latestupdatestr);
-          RikslunchenDatasource rd = new RikslunchenDatasource();
+          Log.d(TAG,"updateWidgets: latestupdatestr=" + latestupdatestr + " cardId="+cardId);
 
-          if (latestupdatestr.length() > 0) {
-              Calendar cal = Calendar.getInstance();
-              Date now = cal.getTime();
-              try {
-                  Date latestupdate = mDateFormat.parse(latestupdatestr);
-                  long diff = now.getTime() - latestupdate.getTime();
-                  long diffSeconds = diff / 1000 % 60;
-
-                  if (diffSeconds > 5) {
-                      rd.query(context,receiver,cardId);
-                  } else { // Just send what is currently stored in shared prefs
-                      Bundle b = new Bundle();
-                      b.putString(RikslunchenDatasource.BALANCE, sharedPrefs.getString(RikslunchenDatasource.BALANCE, ""));
-                      b.putString(RikslunchenDatasource.LAST_TOPUP_DATE, sharedPrefs.getString(RikslunchenDatasource.LAST_TOPUP_DATE, ""));
-                      b.putString(RikslunchenDatasource.LATEST_UPDATE, latestupdatestr);
-                      receiver.send(0,b);
-                  }
-              } catch (java.text.ParseException pe) {
-                  // Version 1.5 has "Updated" in timestamp, so we need to retry
-                  Log.d(TAG,"parseException " + latestupdatestr);
-                  rd.query(context,receiver,cardId);
-              }
-          } else {
-              rd.query(context,receiver,cardId);
-          }
+          // Get contents from shared preferences and send to widget(s)
+          Bundle b = new Bundle();
+          b.putString(RikslunchenDatasource.BALANCE, sharedPrefs.getString(RikslunchenDatasource.BALANCE, ""));
+          b.putString(RikslunchenDatasource.LAST_TOPUP_DATE, sharedPrefs.getString(RikslunchenDatasource.LAST_TOPUP_DATE, ""));
+          b.putString(RikslunchenDatasource.LATEST_UPDATE, latestupdatestr);
+          receiver.send(0,b);
 
           // Register an onClickListener
           Intent intent = new Intent(context, MainActivity.class);
@@ -108,6 +88,7 @@ public class Utils {
           remoteViews.setOnClickPendingIntent(R.id.layout, pendingIntent);
           appWidgetManager.updateAppWidget(widgetId, remoteViews);
         }
+        Log.d(TAG,"updateWidgets done");
     }
 
 }

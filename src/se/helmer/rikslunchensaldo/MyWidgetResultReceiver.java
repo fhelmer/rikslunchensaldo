@@ -45,7 +45,6 @@ class MyWidgetResultReceiver extends ResultReceiver {
                 context.getString(R.string.card_id) + " " + mCardId);
         rv.setTextViewText(R.id.widget_latestupdate,
                 context.getString(R.string.latestupdate) + " " + latestupdate);
-        Utils.saveSharedPreferences(context, b);
         awm.updateAppWidget(widgetId, rv);
     }
 }
