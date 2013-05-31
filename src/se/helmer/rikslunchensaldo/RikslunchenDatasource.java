@@ -16,9 +16,13 @@ public class RikslunchenDatasource {
 	public static String LAST_TOPUP_DATE  = "lasttopupdate";
 	public static String LATEST_UPDATE = "latestupdate";
 	public static String CARD_ID = "card_id";
+	public static String AUTO_UPDATE = "auto_update";
 
     public void query(Context c,ResultReceiver receiver, final String card_id) {
-    	Log.d(TAG,"Querying "+card_id);
+        Log.d(TAG,"Querying "+card_id);
+        if (card_id.length() == 0) {
+            return;
+        }
         WebView webView = new WebView(c);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(new MyAccessor(receiver), "accessor");

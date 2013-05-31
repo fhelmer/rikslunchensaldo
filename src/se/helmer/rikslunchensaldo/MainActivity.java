@@ -11,6 +11,9 @@ import android.os.ResultReceiver;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -28,6 +31,7 @@ public class MainActivity extends Activity {
     TextView mLasttopupField;
     EditText mCardIdField;
     TextView mLatestUpdate;
+    CheckBox mAutoUpdate;
 
     ResultReceiver mReceiver;
 
@@ -44,6 +48,7 @@ public class MainActivity extends Activity {
         mLasttopupField = (TextView) findViewById(R.id.topupdate);
         mCardIdField = (EditText) findViewById(R.id.editCardId);
         mLatestUpdate = (TextView) findViewById(R.id.latestupdate);
+        mAutoUpdate = (CheckBox) findViewById(R.id.autoupdatecb);
 
         Button b = (Button) findViewById(R.id.button_fetch);
 
@@ -62,6 +67,19 @@ public class MainActivity extends Activity {
 			}
 		});
 
+        mAutoUpdate.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mPrefsEditor.putBoolean(RikslunchenDatasource.AUTO_UPDATE, isChecked);
+                mPrefsEditor.commit();
+                if (isChecked) {
+                    RikslunchenDatasource rd = new RikslunchenDatasource();
+                    rd.query(MainActivity.this,mReceiver,mCardIdField.getText().toString());
+                }
+            }
+        });
+
     }
 
     @Override
@@ -73,9 +91,9 @@ public class MainActivity extends Activity {
         mLasttopupField.setText(mSharedPrefs.getString(RikslunchenDatasource.LAST_TOPUP_DATE, ""));
         mCardIdField.setText(mSharedPrefs.getString(RikslunchenDatasource.CARD_ID, ""));
         mLatestUpdate.setText(mSharedPrefs.getString(RikslunchenDatasource.LATEST_UPDATE, ""));
-
-
+        mAutoUpdate.setChecked(mSharedPrefs.getBoolean(RikslunchenDatasource.AUTO_UPDATE, false));
     }
+
     void updateWidget(Class<?> cls, int widgetid) {
         Intent intent = new Intent(this,cls);
         intent.setAction("android.appwidget.action.APPWIDGET_UPDATE");

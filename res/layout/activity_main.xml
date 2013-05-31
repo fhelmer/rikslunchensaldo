@@ -121,4 +121,34 @@
         android:layout_height="wrap_content" >
     </TableRow>
 
+    <TableRow
+        android:id="@+id/cbRow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <CheckBox
+            android:id="@+id/autoupdatecb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dailyautomaticupdate" />
+    </TableRow>
+
+    <TableRow 
+        android:id="@+id/adRow"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+    <com.google.ads.AdView
+        xmlns:ads= "http://schemas.android.com/apk/lib/com.google.ads"
+        android:id="@+id/adView"
+            android:layout_width="0dp"
+            android:gravity="right|bottom"
+            android:layout_weight="1"
+        android:layout_height="200dp"
+        ads:adSize="BANNER"
+        ads:adUnitId="a151a90e906e286"
+        ads:loadAdOnCreate="true" >
+    </com.google.ads.AdView>
+
+	</TableRow>
 </TableLayout>

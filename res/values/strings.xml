@@ -14,4 +14,5 @@
     <string name="widget_header">Lunchsaldo</string>
     <string name="largewidgetlabel">Lunchsaldo - Large</string>
     <string name="smallwidgetlabel">Lunchsaldo - Small</string>
+    <string name="dailyautomaticupdate">Daily automatic update</string>
 </resources>
