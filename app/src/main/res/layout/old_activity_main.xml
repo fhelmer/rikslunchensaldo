@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/tableLayout1"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <TableRow
+        android:id="@+id/tableRow1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dip" >
+
+        <TextView
+            android:id="@+id/textView11"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:text="@string/card_id" />
+
+        <EditText
+            android:id="@+id/editCardId"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:inputType="number" />
+
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/tableRow2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dip" >
+
+        <TextView
+            android:id="@+id/textView55"
+            android:layout_width="0dp"
+            android:gravity="right"
+            android:layout_weight="1"
+            android:text="@string/found_on_card"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/tableRow33"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="15dip" />
+
+    <TableRow
+        android:id="@+id/tableRow5"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dip" >
+
+        <Button
+            android:id="@+id/button_fetch"
+            android:layout_width="fill_parent"
+            android:layout_weight="1"
+            android:text="@string/balance_fetch" />
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/tableRow3"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dip" >
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/balance" />
+
+        <TextView
+            android:id="@+id/balance"
+            android:layout_width="0dp"
+            android:textAppearance="?android:attr/textAppearanceLarge" 
+            android:layout_weight="1" />
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/tableRow4"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dip" >
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/lasttopupdate" />
+
+        <TextView
+            android:id="@+id/topupdate"
+            android:layout_width="0dp"
+            android:textAppearance="?android:attr/textAppearanceLarge" 
+            android:layout_weight="1" />
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/tableRow48"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dip" >
+
+        <TextView
+            android:id="@+id/textView28"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/latestupdate" />
+
+        <TextView
+            android:id="@+id/latestupdate"
+            android:layout_width="0dp"
+            android:textAppearance="?android:attr/textAppearanceSmall" 
+            android:layout_weight="1" />
+    </TableRow>
+    
+    <TableRow
+        android:id="@+id/tableRow6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/cbRow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <CheckBox
+            android:id="@+id/autoupdatecb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dailyautomaticupdate" />
+    </TableRow>
+
+
+    <TableRow 
+        android:id="@+id/adRow"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+
+
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/adView"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:gravity="right|bottom"
+            android:layout_weight="1"
+            android:layout_centerHorizontal="true"
+            ads:adSize="BANNER"
+            ads:adUnitId="@string/banner_ad_unit_id">
+        </com.google.android.gms.ads.AdView>
+
+
+	</TableRow>
+
+
+</TableLayout>
