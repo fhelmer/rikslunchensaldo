@@ -21,7 +21,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         String action = intent.getAction();
         if(FETCH.equals(action)) {
             SharedPreferences sharedPrefs =
-                    context.getSharedPreferences(PrevMainActivity.APP_SHARED_PREFS, Activity.MODE_PRIVATE);
+                    context.getSharedPreferences(SummaryFragment.APP_SHARED_PREFS, Activity.MODE_PRIVATE);
             String cardId = sharedPrefs.getString(RikslunchenDatasource.CARD_ID, "");
             boolean autoupdate = sharedPrefs.getBoolean(RikslunchenDatasource.AUTO_UPDATE, false);
 

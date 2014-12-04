@@ -35,7 +35,7 @@ public class Utils {
     static void saveSharedPreferences(Context context, Bundle b) {
         Log.d(TAG,"Saving shared preferences");
         SharedPreferences sharedPrefs =
-                context.getSharedPreferences(PrevMainActivity.APP_SHARED_PREFS, Activity.MODE_PRIVATE);
+                context.getSharedPreferences(SummaryFragment.APP_SHARED_PREFS, Activity.MODE_PRIVATE);
 
         Editor prefsEditor = sharedPrefs.edit();
 
@@ -50,7 +50,7 @@ public class Utils {
     static void updateWidgets(Context context, int layout, AppWidgetManager appWidgetManager, int[] appWidgetIds, Class<?> cls) {
 
         SharedPreferences sharedPrefs =
-                context.getSharedPreferences(PrevMainActivity.APP_SHARED_PREFS, Activity.MODE_PRIVATE);
+                context.getSharedPreferences(SummaryFragment.APP_SHARED_PREFS, Activity.MODE_PRIVATE);
         String cardId = sharedPrefs.getString(RikslunchenDatasource.CARD_ID, "");
 
         // Get all ids for this class
@@ -77,7 +77,7 @@ public class Utils {
           receiver.send(0,b);
 
           // Register an onClickListener
-          Intent intent = new Intent(context, PrevMainActivity.class);
+          Intent intent = new Intent(context, MainActivity.class);
           intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
           intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);

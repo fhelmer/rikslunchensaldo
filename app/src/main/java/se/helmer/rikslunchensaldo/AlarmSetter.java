@@ -38,7 +38,7 @@ public class AlarmSetter extends BroadcastReceiver {
         RikslunchenDatasource rd = new RikslunchenDatasource();
         ResultReceiver receiver = new AlarmResultReceiver(new Handler(),context);
         SharedPreferences sharedPrefs =
-                context.getSharedPreferences(PrevMainActivity.APP_SHARED_PREFS, Activity.MODE_PRIVATE);
+                context.getSharedPreferences(SummaryFragment.APP_SHARED_PREFS, Activity.MODE_PRIVATE);
 
         String cardId = sharedPrefs.getString(RikslunchenDatasource.CARD_ID, "");
         Log.d(TAG,"About to fetch using "+cardId);

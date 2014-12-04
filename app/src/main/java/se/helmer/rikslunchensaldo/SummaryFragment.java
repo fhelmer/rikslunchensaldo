@@ -1,12 +1,22 @@
 package se.helmer.rikslunchensaldo;
 
 import android.app.Activity;
+import android.appwidget.AppWidgetManager;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Handler;
+import android.os.ResultReceiver;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.AdRequest;
@@ -29,7 +39,21 @@ public class SummaryFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    TextView mBalanceField;
+    TextView mLasttopupField;
+    EditText mCardIdField;
+    TextView mLatestUpdate;
+    CheckBox mAutoUpdate;
+    AdView mAdView;
+
+    private SharedPreferences mSharedPrefs;
+    private SharedPreferences.Editor mPrefsEditor;
+
+    public static final String APP_SHARED_PREFS = "se.helmer.riksbankensaldo_prefs";
+
     private OnFragmentInteractionListener mListener;
+
+    ResultReceiver mReceiver;
 
     /**
      * Use this factory method to create a new instance of
@@ -85,14 +109,82 @@ public class SummaryFragment extends Fragment {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+        mSharedPrefs =
+                getActivity().getSharedPreferences(APP_SHARED_PREFS, Activity.MODE_PRIVATE);
+
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        AdView mAdView = (AdView) getView().findViewById(R.id.adView);
+
+        mPrefsEditor = mSharedPrefs.edit();
+
+        mBalanceField = (TextView) getView().findViewById(R.id.balance);
+        mLasttopupField = (TextView) getView().findViewById(R.id.topupdate);
+        mCardIdField = (EditText) getView().findViewById(R.id.editCardId);
+        mLatestUpdate = (TextView) getView().findViewById(R.id.latestupdate);
+        mAutoUpdate = (CheckBox) getView().findViewById(R.id.autoupdatecb);
+
+        Button b = (Button) getView().findViewById(R.id.button_fetch);
+
+        mReceiver = new ActivityResultReceiver(new Handler());
+
+        b.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mLatestUpdate.setText("Querying...");
+                mPrefsEditor.putString("card_id", mCardIdField.getText().toString());
+                mPrefsEditor.commit();
+                RikslunchenDatasource rd = new RikslunchenDatasource();
+                rd.query(getActivity(),mReceiver,mCardIdField.getText().toString());
+
+            }
+        });
+
+        mAutoUpdate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mPrefsEditor.putBoolean(RikslunchenDatasource.AUTO_UPDATE, isChecked);
+                mPrefsEditor.commit();
+                if (isChecked) {
+                    RikslunchenDatasource rd = new RikslunchenDatasource();
+                    rd.query(getActivity(),mReceiver,mCardIdField.getText().toString());
+                }
+            }
+        });
+
+
+        mAdView = (AdView) getView().findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
+    }
+
+    @Override
+    public void onPause() {
+        mAdView.pause();
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        mAdView.destroy();
+        super.onDestroy();
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        mBalanceField.setText(mSharedPrefs.getString(RikslunchenDatasource.BALANCE, ""));
+        mLasttopupField.setText(mSharedPrefs.getString(RikslunchenDatasource.LAST_TOPUP_DATE, ""));
+        mCardIdField.setText(mSharedPrefs.getString(RikslunchenDatasource.CARD_ID, ""));
+        mLatestUpdate.setText(mSharedPrefs.getString(RikslunchenDatasource.LATEST_UPDATE, ""));
+        mAutoUpdate.setChecked(mSharedPrefs.getBoolean(RikslunchenDatasource.AUTO_UPDATE, false));
+        mAdView.resume();
     }
 
     @Override
@@ -115,5 +207,37 @@ public class SummaryFragment extends Fragment {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
     }
+
+    void updateWidget(Class<?> cls, int widgetid) {
+        Intent intent = new Intent(getActivity(),cls);
+        intent.setAction("android.appwidget.action.APPWIDGET_UPDATE");
+        // Use an array and EXTRA_APPWIDGET_IDS instead of AppWidgetManager.EXTRA_APPWIDGET_ID,
+        // since it seems the onUpdate() is only fired on that:
+        int[] ids = {widgetid};
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids);
+        getActivity().sendBroadcast(intent);
+    }
+
+    class ActivityResultReceiver extends ResultReceiver {
+        public ActivityResultReceiver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle b) {
+
+            mBalanceField.setText(b.getString(RikslunchenDatasource.BALANCE));
+            mLasttopupField.setText(b
+                    .getString(RikslunchenDatasource.LAST_TOPUP_DATE));
+            mLatestUpdate.setText(b
+                    .getString(RikslunchenDatasource.LATEST_UPDATE));
+
+            Utils.saveSharedPreferences(getActivity(), b);
+
+            updateWidget(RikslunchenWidgetProvider.class,R.xml.widget_info);
+            updateWidget(RikslunchenWidgetProviderSmall.class,R.xml.small_widget_info);
+        }
+    }
+
 
 }
