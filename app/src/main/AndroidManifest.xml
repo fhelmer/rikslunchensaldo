@@ -20,6 +20,8 @@
             </intent-filter>
         </activity>
 
+        <service android:exported="false" android:name=".MyIntentService"/>
+
         <receiver 
             android:name=".RikslunchenWidgetProvider"
             android:label="@string/largewidgetlabel">

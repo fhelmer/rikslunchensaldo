@@ -91,4 +91,36 @@ public class Utils {
         Log.d(TAG,"updateWidgets done");
     }
 
+    public static long getThreadId()
+    {
+        Thread t = Thread.currentThread();
+        return t.getId();
+    }
+    public static String getThreadSignature()
+    {
+        Thread t = Thread.currentThread();
+        long l = t.getId();
+        String name = t.getName();
+        long p = t.getPriority();
+        String gname = t.getThreadGroup().getName();
+        return "N="+name + ",id=" + l + ",p=" + p
+                + ":TGN=" + gname;
+    }
+    public static void logThreadSignature(String tag)
+    {
+        Log.d(tag, getThreadSignature());
+    }
+    public static void log(String tag,String msg) {
+    	Log.d(tag,getThreadSignature()+":"+msg);
+    }
+
+    public static String getTimestamp() {
+        Calendar cal = Calendar.getInstance();
+        cal.getTime();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
+                Locale.US);
+        String result = sdf.format(cal.getTime());
+        return result;
+    }
+
 }

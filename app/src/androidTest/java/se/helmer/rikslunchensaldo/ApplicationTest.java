@@ -14,4 +14,8 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
     public void testExample() {
         assertTrue(true);
     }
+
+    public void testDatabase() {
+
+    }
 }
