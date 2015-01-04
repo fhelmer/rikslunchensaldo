@@ -1,7 +1,6 @@
 package se.helmer.rikslunchensaldo;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -10,6 +9,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,7 +20,7 @@ import android.view.ViewGroup;
 import java.util.Locale;
 
 
-public class MainActivity extends Activity implements ActionBar.TabListener,
+public class MainActivity extends FragmentActivity implements ActionBar.TabListener,
         SummaryFragment.OnFragmentInteractionListener {
 
     /**
@@ -32,6 +32,16 @@ public class MainActivity extends Activity implements ActionBar.TabListener,
      * {@link android.support.v13.app.FragmentStatePagerAdapter}.
      */
     SectionsPagerAdapter mSectionsPagerAdapter;
+
+    // Tabs
+    public final static int SUMMARY = 0;
+    public final static int TRANSACTIONS = 1;
+    public final static int LOGPAGE = 2;
+    public final static int LAST = 3;
+
+    private final String[] pageTitles = new String[] { "Summary", "Transactions",
+            "Log" };
+
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -151,9 +161,12 @@ public class MainActivity extends Activity implements ActionBar.TabListener,
         public Fragment getItem(int position) {
             Fragment newFragment = null;
             switch(position) {
-                case 0:
+                case SUMMARY:
                     newFragment =  SummaryFragment.newInstance("Str1","Str2");
-                break;
+                    break;
+                case TRANSACTIONS:
+                    newFragment = TransactionFragment.newInstance(1);
+                    break;
                 default:
                     newFragment = PlaceholderFragment.newInstance(position + 1);
                 break;
@@ -164,21 +177,13 @@ public class MainActivity extends Activity implements ActionBar.TabListener,
         @Override
         public int getCount() {
             // Show 3 total pages.
-            return 3;
+            return LAST;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
             Locale l = Locale.getDefault();
-            switch (position) {
-                case 0:
-                    return getString(R.string.title_section1).toUpperCase(l);
-                case 1:
-                    return getString(R.string.title_section2).toUpperCase(l);
-                case 2:
-                    return getString(R.string.title_section3).toUpperCase(l);
-            }
-            return null;
+            return pageTitles[position].toUpperCase(l);
         }
     }
 

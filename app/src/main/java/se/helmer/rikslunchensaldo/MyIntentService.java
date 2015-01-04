@@ -23,6 +23,7 @@ public class MyIntentService extends IntentService {
         Utils.log(TAG, "onHandleIntent in");
         // Message.Command msgCommand = (Message.Command) intent.getSerializableExtra("command");
     //    final ResultReceiver receiver = intent.getParcelableExtra("receiver");
+
     }
 
     @Override

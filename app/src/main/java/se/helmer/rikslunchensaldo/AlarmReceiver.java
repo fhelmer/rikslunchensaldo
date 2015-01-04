@@ -25,13 +25,13 @@ public class AlarmReceiver extends BroadcastReceiver {
             String cardId = sharedPrefs.getString(RikslunchenDatasource.CARD_ID, "");
             boolean autoupdate = sharedPrefs.getBoolean(RikslunchenDatasource.AUTO_UPDATE, false);
 
-            Log.d(TAG,"Fetching balance from server using "+cardId+" "+Utils.getCurrentTime());
+            Log.d(TAG,"Fetching balance from server using "+cardId+" "+Utils.getCurrentLocalTimeString());
 
             RikslunchenDatasource rd = new RikslunchenDatasource();
             ResultReceiver receiver = new AlarmResultReceiver(new Handler(),context);
             Log.d(TAG,"About to fetch using "+cardId+" autoupdate="+autoupdate);
             if (cardId.length() > 0 && autoupdate) {
-                rd.query(context,receiver,cardId);
+                rd.query(context,cardId);
             }
 
         }

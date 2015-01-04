@@ -4,13 +4,19 @@ import java.sql.SQLException;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.test.AndroidTestCase;
 import android.util.Log;
 
+import com.j256.ormlite.android.AndroidConnectionSource;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.RuntimeExceptionDao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+
+import junit.framework.Assert;
+
+import se.helmer.rikslunchensaldo.Utils;
 
 /**
  * Database helper class used to manage the creation and upgrading of your
@@ -74,7 +80,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
      */
     @Override
     public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource, int oldVersion,
-            int newVersion) {
+                          int newVersion) {
         try {
             Log.i(DatabaseHelper.class.getName(), "onUpgrade");
             TableUtils.dropTable(connectionSource, Transaction.class, true);
@@ -110,3 +116,4 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         transactionRuntimeDao = null;
     }
 }
+

@@ -1,5 +1,6 @@
 package se.helmer.rikslunchensaldo.model;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import com.j256.ormlite.field.DatabaseField;
@@ -12,5 +13,5 @@ public class EnterButton {
     @DatabaseField
     String description;
     @DatabaseField
-    float amount;
+    BigDecimal amount;
 }

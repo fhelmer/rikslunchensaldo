@@ -43,7 +43,7 @@ public class AlarmSetter extends BroadcastReceiver {
         String cardId = sharedPrefs.getString(RikslunchenDatasource.CARD_ID, "");
         Log.d(TAG,"About to fetch using "+cardId);
         if (false && cardId.length() > 0) {
-            rd.query(context,receiver,cardId);
+            rd.query(context,cardId);
         }
     }
 

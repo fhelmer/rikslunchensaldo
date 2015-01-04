@@ -8,6 +8,18 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.j256.ormlite.android.AndroidConnectionSource;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.table.TableUtils;
+
+import java.math.BigDecimal;
+import java.sql.SQLException;
+
+import se.helmer.rikslunchensaldo.model.DatabaseHelper;
+import se.helmer.rikslunchensaldo.model.Transaction;
+import se.helmer.rikslunchensaldo.model.TransactionContentProvider;
+
 public class RikslunchenDatasource {
 
 	private static String TAG = "RikslunchenDatasource";
@@ -18,18 +30,18 @@ public class RikslunchenDatasource {
 	public static String CARD_ID = "card_id";
 	public static String AUTO_UPDATE = "auto_update";
 
-    public void query(Context c,ResultReceiver receiver, final String card_id) {
+    public void query(Context c, final String card_id) {
         Log.d(TAG,"Querying "+card_id);
         if (card_id.length() == 0) {
             return;
         }
         WebView webView = new WebView(c);
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.addJavascriptInterface(new MyAccessor(receiver), "accessor");
+        webView.addJavascriptInterface(new MyAccessor(c), "accessor");
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
-            	Log.d(TAG,"onPageFinished:"+url);
+            	Log.d(TAG,"onPageFinished:"+url+card_id);
 
                 view.loadUrl("javascript:" +
                         "var public_key = document.getElementById('public_key').value;"+
@@ -46,9 +58,10 @@ public class RikslunchenDatasource {
     }
 
     class MyAccessor {
-    	private final ResultReceiver receiver;
-        public MyAccessor(ResultReceiver r) {
-        	receiver = r;
+    	private final Context context;
+
+        public MyAccessor(Context c) {
+        	context = c;
         }
 
         @JavascriptInterface
@@ -58,19 +71,37 @@ public class RikslunchenDatasource {
 
         @JavascriptInterface
         public void setData(boolean valid, String message,String balance, String lasttopupdate) {
+            Log.d(TAG,"setData:"+message+balance+lasttopupdate);
         	Bundle b = new Bundle();
             b.putString(BALANCE, balance);
             b.putString(LAST_TOPUP_DATE, lasttopupdate);
 
-            String latestupdate = Utils.getCurrentTime();
-
+            String latestupdate = Utils.getCurrentLocalTimeString();
+            context.getContentResolver().notifyChange(TransactionContentProvider.CONTENT_URI, null);
             if (!valid) {
                 latestupdate = message;
             }
 
             b.putString(LATEST_UPDATE,latestupdate);
-        	receiver.send(0, b);
         	Log.d(TAG,"Updated "+latestupdate);
+
+            try {
+                DatabaseHelper databaseHelper = DatabaseHelper.getInstance(context);
+                ConnectionSource connectionSource = new AndroidConnectionSource(databaseHelper);
+                TableUtils.createTableIfNotExists(connectionSource, Transaction.class);
+
+                Dao<Transaction, Integer> transactionDao =
+                        databaseHelper.getTransactionDao();
+                // create transaction only if the amount if differenc
+                Transaction transaction =
+                        new Transaction(message, new BigDecimal(balance));
+                if (transactionDao.create(transaction) != 1) {
+                    Utils.log("ApplicationTest", "Failure adding Transaction");
+                }
+                context.getContentResolver().notifyChange(TransactionContentProvider.CONTENT_URI,null);
+            } catch (SQLException se) {
+
+            }
         }
     }
 }

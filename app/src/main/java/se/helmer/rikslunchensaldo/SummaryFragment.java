@@ -138,8 +138,7 @@ public class SummaryFragment extends Fragment {
                 mPrefsEditor.putString("card_id", mCardIdField.getText().toString());
                 mPrefsEditor.commit();
                 RikslunchenDatasource rd = new RikslunchenDatasource();
-                rd.query(getActivity(),mReceiver,mCardIdField.getText().toString());
-
+                rd.query(getActivity(),mCardIdField.getText().toString());
             }
         });
 
@@ -151,7 +150,7 @@ public class SummaryFragment extends Fragment {
                 mPrefsEditor.commit();
                 if (isChecked) {
                     RikslunchenDatasource rd = new RikslunchenDatasource();
-                    rd.query(getActivity(),mReceiver,mCardIdField.getText().toString());
+                    rd.query(getActivity(),mCardIdField.getText().toString());
                 }
             }
         });
@@ -206,6 +205,7 @@ public class SummaryFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
+        // public onQueryOK()
     }
 
     void updateWidget(Class<?> cls, int widgetid) {

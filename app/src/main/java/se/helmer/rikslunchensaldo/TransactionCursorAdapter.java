@@ -12,10 +12,9 @@ import android.widget.TextView;
 
 public class TransactionCursorAdapter extends ResourceCursorAdapter {
 
-	private static String TAG = "CrashCursorAdapter";
+	private static String TAG = "TransactionCursorAdapter";
     private final TransactionFragment m_fragment;
 	private final ResultReceiver m_result_receiver = null;
-	private final int mMode = -1;
 
     public TransactionCursorAdapter(TransactionFragment fragment, Cursor c) {
         super(fragment.getActivity(), R.layout.rowbuttonlayout, c);
@@ -34,7 +33,7 @@ public class TransactionCursorAdapter extends ResourceCursorAdapter {
         		Button b = (Button) v;
         		String txt = b.getText().toString();
     			int crash_id = (Integer) v.getTag();
-    			MainActivity ma = (MainActivity) m_fragment.getActivity();
+    			// MainActivity ma =  (MainActivity) getActivity();
                 // if (txt.equals(Message.ACTION_UPLOAD)) {
                     /*
                      * Crash c = Crash.get(crash_id);
@@ -55,16 +54,15 @@ public class TransactionCursorAdapter extends ResourceCursorAdapter {
                 // }
         	}});
 
-        final Button editButton = null; // (Button)
-                                        // view.findViewById(R.id.edit_button);
+        final Button editButton = (Button) view.findViewById(R.id.edit_button);
         editButton.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 Button b = (Button) v;
                 String txt = b.getText().toString();
-                int crash_id = (Integer) v.getTag();
-                MainActivity ma = (MainActivity) m_fragment.getActivity();
+                // int crash_id = (Integer) v.getTag();
+                 // MainActivity ma = (MainActivity) m_fragment.getActivity();
                 if (txt.equals("Edit")) {
                     // Intent i = new Intent(m_fragment.getActivity(),
                     // CrashDetailActivity.class);

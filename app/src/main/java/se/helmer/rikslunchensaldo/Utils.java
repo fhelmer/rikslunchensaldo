@@ -1,8 +1,11 @@
 package se.helmer.rikslunchensaldo;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -23,14 +26,46 @@ public class Utils {
 
     private static String TAG = "Utils";
 
-    static SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
-            Locale.US);
+    static final String mDateFormat = "yyyy-MM-dd HH:mm:ss";
 
-    static String getCurrentTime() {
+    static final SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat(mDateFormat, Locale.US);
+
+    static String getCurrentLocalTimeString() {
         Calendar cal = Calendar.getInstance();
-        String latestupdate = mDateFormat.format(cal.getTime());
+        String latestupdate = mSimpleDateFormat.format(cal.getTime());
         return latestupdate;
     }
+
+    public static Date LocalToGmt(Date localDate) {
+        Utils.log(TAG,"localDateToGmt"+localDate);
+        SimpleDateFormat dateFormatGmt = new SimpleDateFormat(mDateFormat, Locale.US);
+        dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+        SimpleDateFormat dateFormatLocal = new SimpleDateFormat(mDateFormat, Locale.US);
+        Date d = null;
+        try {
+            d = dateFormatLocal.parse(dateFormatGmt.format(localDate));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return d;
+    }
+
+    public static Date GmtToLocal(Date gmtDate) {
+        SimpleDateFormat dateFormatGmt = new SimpleDateFormat(mDateFormat, Locale.US);
+        dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+        SimpleDateFormat dateFormatLocal = new SimpleDateFormat(mDateFormat, Locale.US);
+        Date d = null;
+        try {
+            d = dateFormatGmt.parse(dateFormatLocal.format(gmtDate));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return d;
+    }
+
+
 
     static void saveSharedPreferences(Context context, Bundle b) {
         Log.d(TAG,"Saving shared preferences");
@@ -108,18 +143,17 @@ public class Utils {
     }
     public static void logThreadSignature(String tag)
     {
-        Log.d(tag, getThreadSignature());
+        Log.i(tag, getThreadSignature());
     }
     public static void log(String tag,String msg) {
-    	Log.d(tag,getThreadSignature()+":"+msg);
+    	Log.i(tag,getThreadSignature()+":"+msg);
     }
 
     public static String getTimestamp() {
         Calendar cal = Calendar.getInstance();
         cal.getTime();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
-                Locale.US);
-        String result = sdf.format(cal.getTime());
+
+        String result = mSimpleDateFormat.format(cal.getTime());
         return result;
     }
 

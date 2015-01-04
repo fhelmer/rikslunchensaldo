@@ -43,8 +43,9 @@ public class TransactionContentProvider extends ContentProvider {
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection,
-            String[] selectionArgs, String sortOrder) {
-        return null;
+            String[] selectionArgs, String sortOrder)
+    {
+
     }
 
     @Override
@@ -69,16 +70,6 @@ public class TransactionContentProvider extends ContentProvider {
         return 0;
     }
 
-    private void checkColumns(String[] projection) {
-        if (projection != null) {
-            HashSet<String> requestedColumns = new HashSet<String>(Arrays.asList(projection));
-            HashSet<String> availableColumns = new HashSet<String>(Arrays.asList(projection));
-            // Check if all columns which are requested are available
-            if (!availableColumns.containsAll(requestedColumns)) {
-                throw new IllegalArgumentException("Unknown columns in projection");
-            }
-        }
-    }
 
 }
 
