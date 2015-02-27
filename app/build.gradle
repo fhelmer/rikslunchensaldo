@@ -12,8 +12,8 @@ android {
         versionName "1.8"
     }
     buildTypes {
-        release {
-            runProguard false
+        def type = release {
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -25,4 +25,5 @@ dependencies {
     compile 'com.google.android.gms:play-services:4.2.42'
     compile 'com.j256.ormlite:ormlite-core:4.48'
     compile 'com.j256.ormlite:ormlite-android:4.48'
+    compile 'com.tojc.ormlite.android:ormlite-content-provider-library:1.0.4'
 }

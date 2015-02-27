@@ -1,5 +1,6 @@
 package se.helmer.rikslunchensaldo;
 
+import se.helmer.rikslunchensaldo.model.Contract;
 import se.helmer.rikslunchensaldo.model.TransactionContentProvider;
 
 import android.app.ListFragment;
@@ -112,7 +113,7 @@ public class TransactionFragment extends ListFragment implements
         String[] selectionArgs = null;
 
         CursorLoader cursorLoader = new CursorLoader(getActivity(),
-                TransactionContentProvider.CONTENT_URI, projection, selectionClause, selectionArgs,
+                Contract.Transaction.contentUri, projection, selectionClause, selectionArgs,
                 null);
 
         return cursorLoader;

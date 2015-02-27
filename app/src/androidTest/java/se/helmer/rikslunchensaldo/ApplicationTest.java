@@ -10,12 +10,9 @@ import com.j256.ormlite.table.TableUtils;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.TimeZone;
 
-import se.helmer.rikslunchensaldo.model.DatabaseHelper;
+import se.helmer.rikslunchensaldo.model.RikslunchenDatabaseHelper;
 import se.helmer.rikslunchensaldo.model.Transaction;
 
 /**
@@ -23,14 +20,14 @@ import se.helmer.rikslunchensaldo.model.Transaction;
  */
 public class ApplicationTest extends ApplicationTestCase<Application> {
 
-    DatabaseHelper databaseHelper;
+    RikslunchenDatabaseHelper rikslunchenDatabaseHelper;
     ConnectionSource connectionSource;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        databaseHelper = DatabaseHelper.getInstance(getContext());
-        connectionSource = new AndroidConnectionSource(databaseHelper);
+        rikslunchenDatabaseHelper = RikslunchenDatabaseHelper.getInstance(getContext());
+        connectionSource = new AndroidConnectionSource(rikslunchenDatabaseHelper);
         TableUtils.createTableIfNotExists(connectionSource, Transaction.class);
     }
 
@@ -61,7 +58,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
 
         try {
             Dao<Transaction, Integer> transactionDao =
-                    databaseHelper.getTransactionDao();
+                    rikslunchenDatabaseHelper.getTransactionDao();
 
             Date localDate = new Date();
             Date gmtDate = Utils.LocalToGmt(localDate);

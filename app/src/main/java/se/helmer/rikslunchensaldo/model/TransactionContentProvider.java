@@ -1,75 +1,29 @@
 package se.helmer.rikslunchensaldo.model;
 
-import java.util.Arrays;
-import java.util.HashSet;
 
+import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
+import com.tojc.ormlite.android.OrmLiteSimpleContentProvider;
+import com.tojc.ormlite.android.framework.MatcherController;
+import com.tojc.ormlite.android.framework.MimeTypeVnd;
 
-import android.content.ContentProvider;
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.UriMatcher;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteQueryBuilder;
-import android.net.Uri;
-import android.text.TextUtils;
-
-public class TransactionContentProvider extends ContentProvider {
-
-    // database
-    private DatabaseHelper database;
-
-    // Used for the UriMacher
-    private static final int TRANSACTION = 10;
-    private static final int TRANSACTION_ID = 20;
-
-    private static final String AUTHORITY = "se.helmer.risklunchensaldo.transactionprovider";
-
-    private static final String BASE_PATH = "transactions";
-    public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
-            + "/" + BASE_PATH);
-
-    private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-    static {
-        sURIMatcher.addURI(AUTHORITY, BASE_PATH, TRANSACTION);
-        sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/#", TRANSACTION_ID);
-    }
+public class TransactionContentProvider extends OrmLiteSimpleContentProvider<RikslunchenDatabaseHelper> {
 
     @Override
-    public boolean onCreate() {
-        database = DatabaseHelper.getInstance(getContext());
-        return false;
-    }
-
-    @Override
-    public Cursor query(Uri uri, String[] projection, String selection,
-            String[] selectionArgs, String sortOrder)
+    protected Class<RikslunchenDatabaseHelper> getHelperClass()
     {
-
+        return RikslunchenDatabaseHelper.class;
     }
 
     @Override
-    public String getType(Uri uri) {
-        return null;
+    public boolean onCreate()
+    {
+        setMatcherController(new MatcherController()
+                        .add(Transaction.class, MimeTypeVnd.SubType.DIRECTORY, "",
+                                Contract.Transaction.CONTENT_URI_PATTERN_MANY)
+                        .add(Transaction.class, MimeTypeVnd.SubType.ITEM, "#",
+                                Contract.Transaction.CONTENT_URI_PATTERN_ONE)
+        );
+        return true;
     }
-
-    @Override
-    public Uri insert(Uri uri, ContentValues values) {
-
-        return Uri.parse(BASE_PATH + "/" + 0);
-    }
-
-    @Override
-    public int delete(Uri uri, String selection, String[] selectionArgs) {
-        return 0;
-    }
-
-    @Override
-    public int update(Uri uri, ContentValues values, String selection,
-            String[] selectionArgs) {
-        return 0;
-    }
-
-
 }
 

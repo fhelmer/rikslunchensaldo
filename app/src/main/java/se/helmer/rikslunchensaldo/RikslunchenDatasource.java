@@ -2,23 +2,12 @@ package se.helmer.rikslunchensaldo;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.ResultReceiver;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.j256.ormlite.android.AndroidConnectionSource;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.table.TableUtils;
-
-import java.math.BigDecimal;
-import java.sql.SQLException;
-
-import se.helmer.rikslunchensaldo.model.DatabaseHelper;
-import se.helmer.rikslunchensaldo.model.Transaction;
-import se.helmer.rikslunchensaldo.model.TransactionContentProvider;
+import se.helmer.rikslunchensaldo.model.Contract;
 
 public class RikslunchenDatasource {
 
@@ -77,7 +66,7 @@ public class RikslunchenDatasource {
             b.putString(LAST_TOPUP_DATE, lasttopupdate);
 
             String latestupdate = Utils.getCurrentLocalTimeString();
-            context.getContentResolver().notifyChange(TransactionContentProvider.CONTENT_URI, null);
+            context.getContentResolver().notifyChange(Contract.Transaction.contentUri, null);
             if (!valid) {
                 latestupdate = message;
             }
@@ -85,11 +74,9 @@ public class RikslunchenDatasource {
             b.putString(LATEST_UPDATE,latestupdate);
         	Log.d(TAG,"Updated "+latestupdate);
 
-            try {
-                DatabaseHelper databaseHelper = DatabaseHelper.getInstance(context);
-                ConnectionSource connectionSource = new AndroidConnectionSource(databaseHelper);
-                TableUtils.createTableIfNotExists(connectionSource, Transaction.class);
-
+            //try {
+                /*
+                TODO: Use MyIntentService to create the transaction? or create it here directly?
                 Dao<Transaction, Integer> transactionDao =
                         databaseHelper.getTransactionDao();
                 // create transaction only if the amount if differenc
@@ -98,10 +85,11 @@ public class RikslunchenDatasource {
                 if (transactionDao.create(transaction) != 1) {
                     Utils.log("ApplicationTest", "Failure adding Transaction");
                 }
-                context.getContentResolver().notifyChange(TransactionContentProvider.CONTENT_URI,null);
-            } catch (SQLException se) {
+                */
+                context.getContentResolver().notifyChange(Contract.Transaction.contentUri,null);
+            // } catch (SQLException se) {
 
-            }
+            //}
         }
     }
 }
