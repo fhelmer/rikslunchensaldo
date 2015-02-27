@@ -4,6 +4,7 @@ import android.app.Application;
 import android.test.ApplicationTestCase;
 
 import com.j256.ormlite.android.AndroidConnectionSource;
+import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
@@ -26,7 +27,8 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        rikslunchenDatabaseHelper = RikslunchenDatabaseHelper.getInstance(getContext());
+
+        RikslunchenDatabaseHelper databaseHelper = OpenHelperManager.getHelper(getContext(), RikslunchenDatabaseHelper.class);
         connectionSource = new AndroidConnectionSource(rikslunchenDatabaseHelper);
         TableUtils.createTableIfNotExists(connectionSource, Transaction.class);
     }
@@ -71,11 +73,11 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
             }
 
             Transaction t3 =
-                    new Transaction("Description Local", Utils.GmtToLocal(gmtDate) , new BigDecimal("123.99"));
+                    new Transaction("Description Local", new BigDecimal("123.99"));
             transactionDao.create(t3);
 
             Transaction t4 =
-                    new Transaction("Description Original Local", localDate , new BigDecimal("123.99"));
+                    new Transaction("Description Original Local", new BigDecimal("123.99"));
             transactionDao.create(t4);
             assertEquals(localDate.toString(),Utils.GmtToLocal(gmtDate).toString());
 
