@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_column="0">
+
+    <TableLayout
+        android:id="@+id/tableLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <TableRow
+            android:id="@+id/buttonRow"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dip" >
+
+            <Button
+                android:id="@+id/button_amount1"
+                android:text="50"
+                android:layout_width="0pt"
+                android:layout_weight="1" />
+            <Button
+                android:id="@+id/button_amount2"
+                android:text="75"
+                android:layout_width="0pt"
+                android:layout_weight="1" />
+            <Button
+                android:id="@+id/button_edit_amounts"
+                android:text="Edit..."
+                android:layout_width="0pt"
+                android:layout_weight="1" />
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow5"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dip" >
+
+            <Button
+                android:id="@+id/button_other_amount"
+                android:text="Other amount"
+                android:layout_width="0pt"
+                android:layout_weight="1" />
+
+
+            <Button
+                android:id="@+id/button_reconciliation_reset"
+                android:text="Reset"
+                android:layout_width="0pt"
+                android:layout_weight="1" />
+        </TableRow>
+
+    </TableLayout>
+
+    <ListView
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/reconciliationListView"
+        android:layout_below="@id/tableLayout1"
+        android:layout_above="@+id/adView"/>
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/banner_ad_unit_id">
+    </com.google.android.gms.ads.AdView>
+
+
+</RelativeLayout>
