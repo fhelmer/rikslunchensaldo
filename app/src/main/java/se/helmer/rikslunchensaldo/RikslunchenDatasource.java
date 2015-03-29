@@ -15,6 +15,8 @@ public class RikslunchenDatasource {
 
 	private static String TAG = "RikslunchenDatasource";
 
+    private String cardId;
+
 	public static String BALANCE = "balance";
 	public static String LAST_TOPUP_DATE  = "lasttopupdate";
 	public static String LATEST_UPDATE = "latestupdate";
@@ -23,6 +25,7 @@ public class RikslunchenDatasource {
 
     public void query(Context c, final String card_id) {
         Log.d(TAG,"Querying "+card_id);
+        this.cardId = card_id;
         if (card_id.length() == 0) {
             return;
         }
@@ -67,6 +70,7 @@ public class RikslunchenDatasource {
             b.putString(BALANCE, balance);
             b.putString(LAST_TOPUP_DATE, lasttopupdate);
             b.putString(MESSAGE, message);
+            b.putString(CARD_ID, cardId);
             b.putSerializable(LATEST_UPDATE, Utils.LocalToGmt(new Date()));
 
             final Intent intent = new Intent(context, MyIntentService.class);

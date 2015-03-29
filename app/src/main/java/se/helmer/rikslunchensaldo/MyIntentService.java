@@ -17,6 +17,7 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
+import se.helmer.rikslunchensaldo.model.Contract;
 import se.helmer.rikslunchensaldo.model.RikslunchenDatabaseHelper;
 import se.helmer.rikslunchensaldo.model.Transaction;
 
@@ -79,6 +80,7 @@ public class MyIntentService extends IntentService {
                 Date updated = (Date) b.getSerializable(RikslunchenDatasource.LATEST_UPDATE);
                 Utils.createTransaction(getBaseContext(),"Updated: " + updated,
                         b.getString(RikslunchenDatasource.BALANCE));
+                getApplicationContext().getContentResolver().notifyChange(Contract.Transaction.contentUri, null);
 
             default:
                 break;

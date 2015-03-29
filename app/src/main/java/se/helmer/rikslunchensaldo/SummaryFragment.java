@@ -40,6 +40,7 @@ public class SummaryFragment extends ListFragment implements
     TextView mLatestUpdate;
     CheckBox mAutoUpdate;
     AdView mAdView;
+    View mView;
 
     private SharedPreferences mSharedPrefs;
     private SharedPreferences.Editor mPrefsEditor;
@@ -67,21 +68,18 @@ public class SummaryFragment extends ListFragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_summary, container, false);
+        mView = inflater.inflate(R.layout.fragment_summary, container, false);
+        return mView;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        
+        update(null);
         m_adapter = new TransactionCursorAdapter(this, null);
         setListAdapter(m_adapter);
         getActivity().getLoaderManager().initLoader(0, null, this);
-
-        mBalanceField = (TextView) getView().findViewById(R.id.tvBalance);
-        mLasttopupField = (TextView) getView().findViewById(R.id.topupdate);
-        mCardIdField = (EditText) getView().findViewById(R.id.editCardId);
 
         Button b = (Button) getView().findViewById(R.id.button_fetch);
         b.setOnClickListener(new View.OnClickListener() {
@@ -151,9 +149,17 @@ public class SummaryFragment extends ListFragment implements
     }
 
     public void update(Bundle b) {
+        if (mView != null) {
+            mBalanceField = (TextView) getView().findViewById(R.id.tvBalance);
+            mCardIdField = (EditText) getView().findViewById(R.id.editCardId);
+            mLasttopupField = (TextView) getView().findViewById(R.id.topupdate);
 
-        mBalanceField.setText(b.getString(RikslunchenDatasource.BALANCE));
-        mLatestUpdate.setText(b.getString(RikslunchenDatasource.LATEST_UPDATE));
+            if (b != null) {
+                mBalanceField.setText(b.getString(RikslunchenDatasource.BALANCE));
+                mCardIdField.setText(b.getString(RikslunchenDatasource.CARD_ID));
+                mLasttopupField.setText(b.getString(RikslunchenDatasource.LAST_TOPUP_DATE));
+            }
+        }
 
     }
 

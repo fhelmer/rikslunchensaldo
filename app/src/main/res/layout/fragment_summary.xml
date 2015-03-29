@@ -41,11 +41,11 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Balance: 123.23" />
+            android:text="" />
 
         <Button
             android:id="@+id/button_fetch"
-            android:text="Fetch"
+            android:text="@string/balance_fetch"
             android:layout_width="0pt"
             android:layout_weight="1" />
     </TableRow>
