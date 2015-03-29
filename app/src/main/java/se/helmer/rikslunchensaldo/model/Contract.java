@@ -4,9 +4,6 @@ import android.content.ContentResolver;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-/**
- * Created by 23058500 on 2/27/15.
- */
 public class Contract {
     public static final String DATABASE_NAME = "MyDatabase";
     public static final int DATABASE_VERSION = 1;
@@ -22,6 +19,7 @@ public class Contract {
         public static final String MIMETYPE_NAME = AUTHORITY + ".provider";
 
         // field info
+        public static final String _ID = "_id";
         public static final String DESCRIPTION = "description";
         public static final String BALANCE = "balance";
         public static final String DATE = "date";

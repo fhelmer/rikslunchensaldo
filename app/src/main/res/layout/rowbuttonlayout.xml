@@ -29,34 +29,18 @@
 
         </TextView>
         
-        <ProgressBar
-            android:id="@+id/rowprogressbar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
-        </ProgressBar>
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/edit_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        
-        android:text="Edit"
-        android:layout_toLeftOf="@+id/action_button"
-        android:layout_marginLeft="4px"
-        android:layout_marginRight="10px" />
-    
     <Button
         android:id="@+id/action_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:text="Upload"
+        android:text="Delete"
         android:layout_marginLeft="4px"
         android:layout_marginRight="10px" />
 
-    
+
 
 </RelativeLayout>

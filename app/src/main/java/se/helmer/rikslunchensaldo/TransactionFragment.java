@@ -1,19 +1,18 @@
 package se.helmer.rikslunchensaldo;
 
-import se.helmer.rikslunchensaldo.model.Contract;
-import se.helmer.rikslunchensaldo.model.TransactionContentProvider;
-
-import android.app.ListFragment;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import se.helmer.rikslunchensaldo.model.Contract;
 
 public class TransactionFragment extends ListFragment implements
 	LoaderManager.LoaderCallbacks<Cursor> {
@@ -41,7 +40,7 @@ public class TransactionFragment extends ListFragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
     		Bundle savedInstanceState) {
 
-        View v = inflater.inflate(R.layout.transactionfragment, container, false);
+        View v = inflater.inflate(R.layout.fragment_reconciliation, container, false);
         assignButtonListeners(v);
     	return v;
     }
@@ -70,7 +69,7 @@ public class TransactionFragment extends ListFragment implements
     }
 
     private void assignButtonListeners(View v) {
-        final MainActivity a = (MainActivity) getActivity();
+        final OldMainActivity a = (OldMainActivity) getActivity();
 
         final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override

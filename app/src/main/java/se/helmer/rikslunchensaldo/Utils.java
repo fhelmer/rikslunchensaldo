@@ -1,8 +1,9 @@
 package se.helmer.rikslunchensaldo;
 
+import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -22,18 +23,24 @@ import android.os.ResultReceiver;
 import android.util.Log;
 import android.widget.RemoteViews;
 
+import com.j256.ormlite.android.AndroidConnectionSource;
+import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.support.ConnectionSource;
+
+import se.helmer.rikslunchensaldo.model.RikslunchenDatabaseHelper;
+import se.helmer.rikslunchensaldo.model.Transaction;
+
 public class Utils {
 
     private static String TAG = "Utils";
 
     static final String mDateFormat = "yyyy-MM-dd HH:mm:ss";
 
-    static final SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat(mDateFormat, Locale.US);
-
     static String getCurrentLocalTimeString() {
-        Calendar cal = Calendar.getInstance();
-        String latestupdate = mSimpleDateFormat.format(cal.getTime());
-        return latestupdate;
+        Date date = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat(mDateFormat, Locale.US);
+        return dateFormat.format(date);
     }
 
     public static Date LocalToGmt(Date localDate) {
@@ -63,6 +70,28 @@ public class Utils {
             e.printStackTrace();
         }
         return d;
+    }
+
+    static void createTestData(Context context) {
+        createTransaction(context, "Setup GMT time", "888.23");
+    }
+
+    static void createTransaction(Context context, String description, String amount) {
+        RikslunchenDatabaseHelper rikslunchenDatabaseHelper = OpenHelperManager.getHelper(context,
+                RikslunchenDatabaseHelper.class);
+        ConnectionSource connectionSource = new AndroidConnectionSource(rikslunchenDatabaseHelper);
+
+        try {
+            Dao<Transaction, Integer> transactionDao =
+                    rikslunchenDatabaseHelper.getTransactionDao();
+            Date localDate = new Date();
+            Date gmtDate = Utils.LocalToGmt(localDate);
+            Transaction transaction =
+                    new Transaction(description, new BigDecimal(amount));
+            transactionDao.create(transaction);
+        } catch (SQLException se) {
+
+        }
     }
 
 
@@ -112,7 +141,7 @@ public class Utils {
           receiver.send(0,b);
 
           // Register an onClickListener
-          Intent intent = new Intent(context, MainActivity.class);
+          Intent intent = new Intent(context, OldMainActivity.class);
           intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
           intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
@@ -147,14 +176,6 @@ public class Utils {
     }
     public static void log(String tag,String msg) {
     	Log.i(tag,getThreadSignature()+":"+msg);
-    }
-
-    public static String getTimestamp() {
-        Calendar cal = Calendar.getInstance();
-        cal.getTime();
-
-        String result = mSimpleDateFormat.format(cal.getTime());
-        return result;
     }
 
 }

@@ -1,7 +1,10 @@
 package se.helmer.rikslunchensaldo;
 
 import android.app.Application;
+import android.database.Cursor;
+import android.net.Uri;
 import android.test.ApplicationTestCase;
+import android.widget.Toast;
 
 import com.j256.ormlite.android.AndroidConnectionSource;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
@@ -13,6 +16,7 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Date;
 
+import se.helmer.rikslunchensaldo.model.Contract;
 import se.helmer.rikslunchensaldo.model.RikslunchenDatabaseHelper;
 import se.helmer.rikslunchensaldo.model.Transaction;
 
@@ -22,20 +26,23 @@ import se.helmer.rikslunchensaldo.model.Transaction;
 public class ApplicationTest extends ApplicationTestCase<Application> {
 
     RikslunchenDatabaseHelper rikslunchenDatabaseHelper;
+
     ConnectionSource connectionSource;
+    final static String TAG = "ApplicationTest";
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-
-        RikslunchenDatabaseHelper databaseHelper = OpenHelperManager.getHelper(getContext(), RikslunchenDatabaseHelper.class);
+        rikslunchenDatabaseHelper = OpenHelperManager.getHelper(getContext(),
+                RikslunchenDatabaseHelper.class);
         connectionSource = new AndroidConnectionSource(rikslunchenDatabaseHelper);
-        TableUtils.createTableIfNotExists(connectionSource, Transaction.class);
+
+        Utils.createTestData(getContext());
     }
 
     @Override
     protected void tearDown() throws Exception {
-        // TableUtils.dropTable(connectionSource, Transaction.class, true);
+        TableUtils.dropTable(connectionSource, Transaction.class, true);
         connectionSource.close();
         super.tearDown();
     }
@@ -92,4 +99,24 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
 
     }
 
+    public void testContentProvider() {
+
+        // Run query
+        Uri uri = Contract.Transaction.contentUri;
+        String[] projection = new String[] { Contract.Transaction._ID,
+                Contract.Transaction.DESCRIPTION, Contract.Transaction.AMOUNT };
+        String[] selectionArgs = null;
+
+        Cursor c = getContext().getContentResolver().query(uri, projection, null, null, null);
+
+        if (c.moveToFirst()) {
+            do {
+                Utils.log(TAG,
+                        c.getString(c.getColumnIndex(Contract.Transaction._ID)) +
+                                ", " + c.getString(c.getColumnIndex(Contract.Transaction.DESCRIPTION)) +
+                                ", " + c.getString(c.getColumnIndex(Contract.Transaction.AMOUNT)));
+
+            } while (c.moveToNext());
+        }
+    }
 }

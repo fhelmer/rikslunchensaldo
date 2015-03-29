@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:ads="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_column="0">
+
+<TableLayout
     android:id="@+id/tableLayout1"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_height="wrap_content" >
 
     <TableRow
         android:id="@+id/tableRow1"
@@ -26,55 +31,22 @@
     </TableRow>
 
     <TableRow
-        android:id="@+id/tableRow2"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:padding="5dip" >
-
-        <TextView
-            android:id="@+id/textView55"
-            android:layout_width="0dp"
-            android:gravity="right"
-            android:layout_weight="1"
-            android:text="@string/found_on_card"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-    </TableRow>
-
-    <TableRow
-        android:id="@+id/tableRow33"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:padding="15dip" />
-
-    <TableRow
         android:id="@+id/tableRow5"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:padding="5dip" >
 
+        <TextView
+            android:id="@+id/tvBalance"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Balance: 123.23" />
+
         <Button
             android:id="@+id/button_fetch"
-            android:layout_width="fill_parent"
-            android:layout_weight="1"
-            android:text="@string/balance_fetch" />
-    </TableRow>
-
-    <TableRow
-        android:id="@+id/tableRow3"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:padding="5dip" >
-
-        <TextView
-            android:id="@+id/textView1"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:text="@string/balance" />
-
-        <TextView
-            android:id="@+id/balance"
-            android:layout_width="0dp"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Fetch"
+            android:layout_width="0pt"
             android:layout_weight="1" />
     </TableRow>
 
@@ -93,68 +65,26 @@
         <TextView
             android:id="@+id/topupdate"
             android:layout_width="0dp"
-            android:textAppearance="?android:attr/textAppearanceLarge"
             android:layout_weight="1" />
     </TableRow>
+    </TableLayout>
 
-    <TableRow
-        android:id="@+id/tableRow48"
+    <ListView
         android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/android:list"
+        android:layout_below="@id/tableLayout1"
+        android:layout_above="@+id/adView"/>
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
         android:layout_height="wrap_content"
-        android:padding="5dip" >
-
-        <TextView
-            android:id="@+id/textView28"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:text="@string/latestupdate" />
-
-        <TextView
-            android:id="@+id/latestupdate"
-            android:layout_width="0dp"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:layout_weight="1" />
-    </TableRow>
-
-    <TableRow
-        android:id="@+id/tableRow6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
-    </TableRow>
-
-    <TableRow
-        android:id="@+id/cbRow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
-
-        <CheckBox
-            android:id="@+id/autoupdatecb"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/dailyautomaticupdate" />
-    </TableRow>
-
-
-    <TableRow
-        android:id="@+id/adRow"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/banner_ad_unit_id">
+    </com.google.android.gms.ads.AdView>
 
 
-
-        <com.google.android.gms.ads.AdView
-            android:id="@+id/adView"
-            android:layout_height="wrap_content"
-            android:layout_width="0dp"
-            android:gravity="right|bottom"
-            android:layout_weight="1"
-            android:layout_centerHorizontal="true"
-            ads:adSize="BANNER"
-            ads:adUnitId="@string/banner_ad_unit_id">
-        </com.google.android.gms.ads.AdView>
-
-
-    </TableRow>
-
-
-</TableLayout>
+</RelativeLayout>

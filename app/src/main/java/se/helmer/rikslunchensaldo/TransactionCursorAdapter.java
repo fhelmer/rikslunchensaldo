@@ -3,6 +3,7 @@ package se.helmer.rikslunchensaldo;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.ResultReceiver;
+import android.support.v4.app.Fragment;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -10,71 +11,43 @@ import android.widget.Button;
 import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
 
+import se.helmer.rikslunchensaldo.model.Contract;
+
 public class TransactionCursorAdapter extends ResourceCursorAdapter {
 
 	private static String TAG = "TransactionCursorAdapter";
-    private final TransactionFragment m_fragment;
 	private final ResultReceiver m_result_receiver = null;
 
-    public TransactionCursorAdapter(TransactionFragment fragment, Cursor c) {
+    public TransactionCursorAdapter(Fragment fragment, Cursor c) {
         super(fragment.getActivity(), R.layout.rowbuttonlayout, c);
-		m_fragment = fragment;
 	}
 
 	@Override
 	public View newView(final Context context, Cursor cursor, ViewGroup parent) {
         final View view = super.newView(context,cursor,parent);
 
-        final Button b = (Button) view.findViewById(R.id.button_fetch);
+        final Button b = (Button) view.findViewById(R.id.action_button);
         b.setOnClickListener(new OnClickListener() {
 
         	@Override
         	public void onClick(View v) {
         		Button b = (Button) v;
         		String txt = b.getText().toString();
-    			int crash_id = (Integer) v.getTag();
-    			// MainActivity ma =  (MainActivity) getActivity();
-                // if (txt.equals(Message.ACTION_UPLOAD)) {
-                    /*
-                     * Crash c = Crash.get(crash_id);
-                     * c.setState(Crash.STATE_PENDING);
-                     * b.setText(Message.ACTION_CANCEL); c.save();
-                     * c.notifyChange(); ma.doWork(Message.CMD_UPLOAD_PENDING,
-                     * crash_id); } else if (txt.equals(Message.ACTION_CANCEL))
-                     * { Crash c = Crash.get(crash_id);
-                     * c.setState(Crash.STATE_NEW); c.save(); c.notifyChange();
-                     * UploadIntentService.cancel(crash_id); } else if
-                     * (txt.equals(Message.ACTION_DELETE)) {
-                     * ma.doWork(Message.CMD_DELETE, crash_id); } else if
-                     * (txt.equals(Message.ACTION_RESTART)) { Crash c =
-                     * Crash.get(crash_id); c.setState(Crash.STATE_NEW);
-                     * c.setInfo("Re-queued by user"); c.save();
-                     * c.notifyChange();
-                     */
-                // }
-        	}});
+    			// int crash_id = (Integer) v.getTag();
+                /*
+        	Bundle b = new Bundle();
+            b.putString(BALANCE, balance);
+            b.putString(LAST_TOPUP_DATE, lasttopupdate);
+            b.putString(MESSAGE, message);
+            b.putSerializable(LATEST_UPDATE, Utils.LocalToGmt(new Date()));
 
-        final Button editButton = (Button) view.findViewById(R.id.edit_button);
-        editButton.setOnClickListener(new OnClickListener() {
+            final Intent intent = new Intent(context, MyIntentService.class);
+            intent.putExtra("command", MyIntentService.SEND_BALANCE);
+            intent.putExtra(PAYLOAD, b);
+            ComponentName cm = context.startService(intent);
+            */
 
-            @Override
-            public void onClick(View v) {
-                Button b = (Button) v;
-                String txt = b.getText().toString();
-                // int crash_id = (Integer) v.getTag();
-                 // MainActivity ma = (MainActivity) m_fragment.getActivity();
-                if (txt.equals("Edit")) {
-                    // Intent i = new Intent(m_fragment.getActivity(),
-                    // CrashDetailActivity.class);
-
-                    // i.putExtra(MainActivity.CRASH_EDIT_INTENT,
-                    // Crash.get(crash_id));
-
-                    // Activity returns an result if called with startActivityForResult
-                    // m_fragment.getActivity().startActivity(i);
-                }
-            }
-        });
+            }});
 
 		return view;
 	}
@@ -83,17 +56,17 @@ public class TransactionCursorAdapter extends ResourceCursorAdapter {
 	public void bindView(View view, Context context, Cursor cursor) {
         // Crash crash = Crash.makeObject(cursor);
 
-        // TextView row1 = (TextView) view.findViewById(R.id.row1);
-        // TextView row2 = (TextView) view.findViewById(R.id.row2);
+        TextView row1 = (TextView) view.findViewById(R.id.row1);
+        TextView row2 = (TextView) view.findViewById(R.id.row2);
 
-        // row1.setText(crash.getName());
-        // row2.setText(crash.getUploadInfo());
+        String amount = cursor.getString(cursor.getColumnIndex(Contract.Transaction.AMOUNT));
+        String description = cursor.getString(cursor.getColumnIndex(Contract.Transaction.DESCRIPTION));
+        String id = cursor.getString(cursor.getColumnIndex(Contract.Transaction._ID));
+        row1.setText(description);
+        row2.setText(amount);
 
-        // Button actionButton = (Button) view.findViewById(R.id.action_button);
-        // Button editButton = (Button) view.findViewById(R.id.edit_button);
+        Button actionButton = (Button) view.findViewById(R.id.action_button);
 
-        // actionButton.setTag(crash.getId());
-        // editButton.setTag(crash.getId());
-
+        actionButton.setTag(id);
 	}
 }

@@ -23,7 +23,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             SharedPreferences sharedPrefs =
                     context.getSharedPreferences(SummaryFragment.APP_SHARED_PREFS, Activity.MODE_PRIVATE);
             String cardId = sharedPrefs.getString(RikslunchenDatasource.CARD_ID, "");
-            boolean autoupdate = sharedPrefs.getBoolean(RikslunchenDatasource.AUTO_UPDATE, false);
+            boolean autoupdate = false; // sharedPrefs.getBoolean(RikslunchenDatasource.AUTO_UPDATE, false);
 
             Log.d(TAG,"Fetching balance from server using "+cardId+" "+Utils.getCurrentLocalTimeString());
 

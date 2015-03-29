@@ -1,223 +1,107 @@
 package se.helmer.rikslunchensaldo;
 
-import android.app.ActionBar;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
-import android.content.ComponentName;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.v13.app.FragmentPagerAdapter;
+import android.os.Handler;
+import android.os.ResultReceiver;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 
-import java.util.Locale;
+import se.helmer.rikslunchensaldo.model.RikslunchenDatabaseHelper;
 
+public class MainActivity extends FragmentActivity implements MyResultReceiver.Receiver  {
+    static final int ITEMS = 4;
+    MyAdapter mAdapter;
+    ViewPager mPager;
+    private static MyResultReceiver mReceiver;
 
-public class MainActivity extends FragmentActivity implements ActionBar.TabListener,
-        SummaryFragment.OnFragmentInteractionListener {
+    public static final int SUMMARY = 1;
 
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v13.app.FragmentStatePagerAdapter}.
-     */
-    SectionsPagerAdapter mSectionsPagerAdapter;
-
-    // Tabs
-    public final static int SUMMARY = 0;
-    public final static int TRANSACTIONS = 1;
-    public final static int LOGPAGE = 2;
-    public final static int LAST = 3;
-
-    private final String[] pageTitles = new String[] { "Summary", "Transactions",
-            "Log" };
-
-
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
-    ViewPager mViewPager;
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
+    public static ResultReceiver getReceiver() {
+        return mReceiver;
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.fragment_pager);
 
-        // Set up the action bar.
-        final ActionBar actionBar = getActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        mReceiver = new MyResultReceiver(new Handler());
+        mReceiver.setReceiver(this);
 
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
+        mAdapter = new MyAdapter(getSupportFragmentManager());
+        mPager = (ViewPager) findViewById(R.id.pager);
+        mPager.setAdapter(mAdapter);
 
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.pager);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        // When swiping between different sections, select the corresponding
-        // tab. We can also use ActionBar.Tab#select() to do this if we have
-        // a reference to the Tab.
-        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                actionBar.setSelectedNavigationItem(position);
+        Button button = (Button) findViewById(R.id.first);
+        button.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                mPager.setCurrentItem(0);
             }
         });
+        button = (Button) findViewById(R.id.last);
+        button.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                mPager.setCurrentItem(ITEMS - 1);
+            }
+        });
+    }
 
-        // For each of the sections in the app, add a tab to the action bar.
-        for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
-            // Create a tab with text corresponding to the page title defined by
-            // the adapter. Also specify this Activity object, which implements
-            // the TabListener interface, as the callback (listener) for when
-            // this tab is selected.
-            actionBar.addTab(
-                    actionBar.newTab()
-                            .setText(mSectionsPagerAdapter.getPageTitle(i))
-                            .setTabListener(this));
+    public static class MyAdapter extends FragmentPagerAdapter {
+        public MyAdapter(FragmentManager fragmentManager) {
+            super(fragmentManager);
         }
 
+        @Override
+        public int getCount() {
+            return ITEMS;
+        }
 
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        doWork(MyIntentService.CHECK_DATABASE);
-
-    }
-
-    void doWork(int command) {
-        final Intent intent = new Intent(this, MyIntentService.class);
-        intent.putExtra("command", command);
-
-        ComponentName cm = startService(intent);
-
+        @Override
+        public Fragment getItem(int position) {
+            switch (position) {
+                case 0: // Fragment # 0 - This will show image
+                    return ImageFragment.init(position);
+                case SUMMARY:
+                    return SummaryFragment.init(position);
+                default:// Fragment # 2-9 - Will show list
+                    return TransactionListFragment.init(position);
+            }
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        // getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+    public void onReceiveResult(int resultCode, Bundle resultData) {
+        SummaryFragment summaryFragment = (SummaryFragment) mAdapter.getItem(SUMMARY);
+        summaryFragment.update(resultData);
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+        
     }
 
     @Override
-    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-        // When the given tab is selected, switch to the corresponding page in
-        // the ViewPager.
-        mViewPager.setCurrentItem(tab.getPosition());
+    protected void onPause() {
+        mReceiver.setReceiver(null); // clear receiver so no leaks.
+        super.onPause();
     }
 
     @Override
-    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-    }
-
-    @Override
-    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-    }
-
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            Fragment newFragment = null;
-            switch(position) {
-                case SUMMARY:
-                    newFragment =  SummaryFragment.newInstance("Str1","Str2");
-                    break;
-                case TRANSACTIONS:
-                    newFragment = TransactionFragment.newInstance(1);
-                    break;
-                default:
-                    newFragment = PlaceholderFragment.newInstance(position + 1);
-                break;
-            }
-            return newFragment;
-        }
-
-        @Override
-        public int getCount() {
-            // Show 3 total pages.
-            return LAST;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            Locale l = Locale.getDefault();
-            return pageTitles[position].toUpperCase(l);
-        }
-    }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            return rootView;
-        }
+    protected void onResume() {
+        super.onResume();
+        mReceiver.setReceiver(this);
     }
 
 }

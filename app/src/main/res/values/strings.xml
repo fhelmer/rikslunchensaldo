@@ -13,9 +13,12 @@
     <string name="found_on_card">(This number can be found on the card)</string>
     <string name="lasttopupdate">Last top up date: </string>
     <string name="latestupdate">Updated: </string>
+    <string name="push_to_update">Push balance button to query server</string>
     <string name="widget_header">Lunchsaldo</string>
     <string name="largewidgetlabel">Lunchsaldo - Large</string>
     <string name="smallwidgetlabel">Lunchsaldo - Small</string>
     <string name="dailyautomaticupdate">Daily automatic update</string>
     <string name="banner_ad_unit_id">a151a90e906e286</string>
+    <string name="title_activity_main">MainActivity</string>
+
 </resources>

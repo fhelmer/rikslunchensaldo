@@ -23,12 +23,24 @@ public class RikslunchenDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private Dao<Transaction, Integer> transactionDao = null;
     private RuntimeExceptionDao<Transaction, Integer> transactionRuntimeDao = null;
 
-    public RikslunchenDatabaseHelper(Context context) {
-        super(context, Contract.DATABASE_NAME, null, Contract.DATABASE_VERSION);
-    }
-
     private static RikslunchenDatabaseHelper sSingleton = null;
     private static Context mContext;
+
+    public RikslunchenDatabaseHelper(Context context)
+    {
+        super(context,
+                Contract.DATABASE_NAME,
+                null,
+                Contract.DATABASE_VERSION
+        );
+    }
+
+    public static RikslunchenDatabaseHelper getInstance(Context context) {
+        if (sSingleton == null) {
+            sSingleton = new RikslunchenDatabaseHelper(context);
+        }
+        return sSingleton;
+    }
 
     /**
      * This is called when the database is first created. Usually you should
@@ -39,8 +51,9 @@ public class RikslunchenDatabaseHelper extends OrmLiteSqliteOpenHelper {
     public void onCreate(SQLiteDatabase db, ConnectionSource connectionSource) {
         try {
             Log.i(RikslunchenDatabaseHelper.class.getName(), "onCreate");
-            TableUtils.createTable(connectionSource, Transaction.class);
-            TableUtils.createTable(connectionSource, EnterButton.class);
+            TableUtils.createTableIfNotExists(connectionSource, Transaction.class);
+            TableUtils.createTableIfNotExists(connectionSource, EnterButton.class);
+            TableUtils.createTableIfNotExists(connectionSource, Card.class);
 
         } catch (SQLException e) {
             Log.e(RikslunchenDatabaseHelper.class.getName(), "Can't create database", e);
@@ -60,6 +73,7 @@ public class RikslunchenDatabaseHelper extends OrmLiteSqliteOpenHelper {
             Log.i(RikslunchenDatabaseHelper.class.getName(), "onUpgrade");
             TableUtils.dropTable(connectionSource, Transaction.class, true);
             TableUtils.dropTable(connectionSource, EnterButton.class, true);
+            TableUtils.dropTable(connectionSource, Card.class, true);
 
             // after we drop the old databases, we create the new ones
             onCreate(db, connectionSource);

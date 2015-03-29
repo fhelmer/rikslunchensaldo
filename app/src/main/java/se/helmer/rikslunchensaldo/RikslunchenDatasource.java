@@ -1,13 +1,15 @@
 package se.helmer.rikslunchensaldo;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import se.helmer.rikslunchensaldo.model.Contract;
+import java.util.Date;
 
 public class RikslunchenDatasource {
 
@@ -17,7 +19,7 @@ public class RikslunchenDatasource {
 	public static String LAST_TOPUP_DATE  = "lasttopupdate";
 	public static String LATEST_UPDATE = "latestupdate";
 	public static String CARD_ID = "card_id";
-	public static String AUTO_UPDATE = "auto_update";
+    public static String MESSAGE = "message";
 
     public void query(Context c, final String card_id) {
         Log.d(TAG,"Querying "+card_id);
@@ -64,32 +66,14 @@ public class RikslunchenDatasource {
         	Bundle b = new Bundle();
             b.putString(BALANCE, balance);
             b.putString(LAST_TOPUP_DATE, lasttopupdate);
+            b.putString(MESSAGE, message);
+            b.putSerializable(LATEST_UPDATE, Utils.LocalToGmt(new Date()));
 
-            String latestupdate = Utils.getCurrentLocalTimeString();
-            context.getContentResolver().notifyChange(Contract.Transaction.contentUri, null);
-            if (!valid) {
-                latestupdate = message;
-            }
-
-            b.putString(LATEST_UPDATE,latestupdate);
-        	Log.d(TAG,"Updated "+latestupdate);
-
-            //try {
-                /*
-                TODO: Use MyIntentService to create the transaction? or create it here directly?
-                Dao<Transaction, Integer> transactionDao =
-                        databaseHelper.getTransactionDao();
-                // create transaction only if the amount if differenc
-                Transaction transaction =
-                        new Transaction(message, new BigDecimal(balance));
-                if (transactionDao.create(transaction) != 1) {
-                    Utils.log("ApplicationTest", "Failure adding Transaction");
-                }
-                */
-                context.getContentResolver().notifyChange(Contract.Transaction.contentUri,null);
-            // } catch (SQLException se) {
-
-            //}
+            final Intent intent = new Intent(context, MyIntentService.class);
+            intent.putExtra(MyIntentService.COMMAND, MyIntentService.SEND_BALANCE);
+            intent.putExtra(MyIntentService.RECEIVER, MainActivity.getReceiver());
+            intent.putExtra(MyIntentService.PAYLOAD, b);
+            ComponentName cm = context.startService(intent);
         }
     }
 }
