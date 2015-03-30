@@ -64,7 +64,7 @@ public class RikslunchenDatasource {
         }
 
         @JavascriptInterface
-        public void setData(boolean valid, String message,String balance, String lasttopupdate) {
+        public void setData(boolean valid, String message, String balance, String lasttopupdate) {
             Log.d(TAG,"setData:"+message+balance+lasttopupdate);
         	Bundle b = new Bundle();
             b.putString(BALANCE, balance);

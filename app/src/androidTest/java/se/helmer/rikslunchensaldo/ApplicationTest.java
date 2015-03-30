@@ -36,6 +36,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         rikslunchenDatabaseHelper = OpenHelperManager.getHelper(getContext(),
                 RikslunchenDatabaseHelper.class);
         connectionSource = new AndroidConnectionSource(rikslunchenDatabaseHelper);
+        TableUtils.createTableIfNotExists(connectionSource, Transaction.class);
 
         Utils.createTestData(getContext());
     }
@@ -43,6 +44,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
     @Override
     protected void tearDown() throws Exception {
         TableUtils.dropTable(connectionSource, Transaction.class, true);
+        TableUtils.createTableIfNotExists(connectionSource, Transaction.class);
         connectionSource.close();
         super.tearDown();
     }
@@ -62,6 +64,15 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         assertEquals(backToLocal.toString(), localDate.toString());
     }
 
+    public void testInsertDatabase() {
+        Transaction t1 = Utils.createOrUpdateTransaction(getContext(),"Descr", new BigDecimal("50"));
+        Transaction t2 = Utils.createOrUpdateTransaction(getContext(),"Descr", new BigDecimal("100.0"));
+        Transaction t3 = Utils.createOrUpdateTransaction(getContext(),"Descr", new BigDecimal("100.0"));
+        assertEquals(t2.getId(), t3.getId());
+        assertTrue(t2.getAmount().compareTo(new BigDecimal("50")) == 0);
+        assertFalse(t1.getId() == t2.getId());
+    }
+
     public void testDatabase() {
 
 
@@ -72,7 +83,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
             Date localDate = new Date();
             Date gmtDate = Utils.LocalToGmt(localDate);
             Transaction transaction =
-                    new Transaction("GMT time", new BigDecimal("123.23"));
+                    new Transaction("GMT time", new BigDecimal("0"), new BigDecimal("123.23"));
 
 
             if (transactionDao.create(transaction) != 1) {
@@ -80,11 +91,11 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
             }
 
             Transaction t3 =
-                    new Transaction("Description Local", new BigDecimal("123.99"));
+                    new Transaction("Description Local", new BigDecimal("1"), new BigDecimal("123.99"));
             transactionDao.create(t3);
 
             Transaction t4 =
-                    new Transaction("Description Original Local", new BigDecimal("123.99"));
+                    new Transaction("Description Original Local", new BigDecimal("1"), new BigDecimal("123.99"));
             transactionDao.create(t4);
             assertEquals(localDate.toString(),Utils.GmtToLocal(gmtDate).toString());
 

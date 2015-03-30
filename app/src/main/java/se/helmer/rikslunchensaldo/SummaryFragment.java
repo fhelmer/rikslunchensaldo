@@ -125,7 +125,10 @@ public class SummaryFragment extends ListFragment implements
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-        String[] projection = { "_id", "amount", "date", "description" };
+        String[] projection = { Contract.Transaction._ID,
+                Contract.Transaction.AMOUNT,
+                Contract.Transaction.BALANCE, Contract.Transaction.DATE,
+                Contract.Transaction.DESCRIPTION};
 
         String selectionClause = null;
         String[] selectionArgs = null;

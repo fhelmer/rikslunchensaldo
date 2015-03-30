@@ -60,10 +60,12 @@ public class TransactionCursorAdapter extends ResourceCursorAdapter {
         TextView row2 = (TextView) view.findViewById(R.id.row2);
 
         String amount = cursor.getString(cursor.getColumnIndex(Contract.Transaction.AMOUNT));
+        String balance = cursor.getString(cursor.getColumnIndex(Contract.Transaction.BALANCE));
         String description = cursor.getString(cursor.getColumnIndex(Contract.Transaction.DESCRIPTION));
+        String datestr = cursor.getString(cursor.getColumnIndex(Contract.Transaction.DATE));
         String id = cursor.getString(cursor.getColumnIndex(Contract.Transaction._ID));
         row1.setText(description);
-        row2.setText(amount);
+        row2.setText(amount + ":" + balance);
 
         Button actionButton = (Button) view.findViewById(R.id.action_button);
 

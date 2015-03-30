@@ -26,6 +26,8 @@ import android.widget.RemoteViews;
 import com.j256.ormlite.android.AndroidConnectionSource;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.GenericRawResults;
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 
 import se.helmer.rikslunchensaldo.model.RikslunchenDatabaseHelper;
@@ -72,11 +74,12 @@ public class Utils {
         return d;
     }
 
-    static void createTestData(Context context) {
-        createTransaction(context, "Setup GMT time", "888.23");
+    static Transaction createTestData(Context context) {
+        return createOrUpdateTransaction(context, "Setup GMT time", new BigDecimal("888.23"));
     }
 
-    static void createTransaction(Context context, String description, String amount) {
+    static Transaction createOrUpdateTransaction(Context context, String description, BigDecimal balance) {
+        Transaction transaction = null;
         RikslunchenDatabaseHelper rikslunchenDatabaseHelper = OpenHelperManager.getHelper(context,
                 RikslunchenDatabaseHelper.class);
         ConnectionSource connectionSource = new AndroidConnectionSource(rikslunchenDatabaseHelper);
@@ -84,14 +87,50 @@ public class Utils {
         try {
             Dao<Transaction, Integer> transactionDao =
                     rikslunchenDatabaseHelper.getTransactionDao();
-            Date localDate = new Date();
-            Date gmtDate = Utils.LocalToGmt(localDate);
-            Transaction transaction =
-                    new Transaction(description, new BigDecimal(amount));
-            transactionDao.create(transaction);
+
+            QueryBuilder<Transaction, Integer> qb = transactionDao.queryBuilder();
+
+            qb.selectRaw("MAX(_id)");
+            GenericRawResults<String[]> results = transactionDao.queryRaw(qb.prepareStatementString());
+            String[] values = results.getFirstResult();
+            BigDecimal amount = new BigDecimal("0");
+            boolean createNew = true;
+            if (values.length > 0 && values[0] != null) {
+                Transaction t = transactionDao.queryForId(Integer.valueOf(values[0]));
+                if (t != null) {
+                    if (t.getBalance().compareTo(balance) == 0) {
+                        t.updateTimestamp();
+                        transactionDao.update(t);
+                        createNew = false;
+                        transaction = t;
+                    } else {
+                        amount = balance.subtract(t.getBalance());
+                    }
+                }
+            }
+
+            if (createNew) {
+                transaction =
+                        new Transaction(description, amount, balance);
+                transactionDao.create(transaction);
+            }
         } catch (SQLException se) {
 
         }
+        return transaction;
+    }
+
+    static Bundle getSharedPreferences(Context context) {
+        Bundle b = new Bundle();
+        SharedPreferences sharedPrefs =
+                context.getSharedPreferences(SummaryFragment.APP_SHARED_PREFS, Activity.MODE_PRIVATE);
+
+        b.putString(RikslunchenDatasource.BALANCE, sharedPrefs.getString(RikslunchenDatasource.BALANCE, ""));
+        b.putString(RikslunchenDatasource.LAST_TOPUP_DATE, sharedPrefs.getString(RikslunchenDatasource.LAST_TOPUP_DATE, ""));
+        b.putString(RikslunchenDatasource.LATEST_UPDATE, sharedPrefs.getString(RikslunchenDatasource.LATEST_UPDATE, ""));
+        b.putString(RikslunchenDatasource.CARD_ID, sharedPrefs.getString(RikslunchenDatasource.CARD_ID, ""));
+
+        return b;
     }
 
 
@@ -141,7 +180,7 @@ public class Utils {
           receiver.send(0,b);
 
           // Register an onClickListener
-          Intent intent = new Intent(context, OldMainActivity.class);
+          Intent intent = new Intent(context, MainActivity.class);
           intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
           intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);

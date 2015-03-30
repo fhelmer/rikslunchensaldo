@@ -30,10 +30,27 @@ public class Transaction {
     public Transaction() {
 
     }
-    public Transaction(String description, BigDecimal amount) {
+    public Transaction(String description, BigDecimal amount, BigDecimal balance) {
         this.description = description;
         Date now = new Date();
         this.date = Utils.LocalToGmt(now);
         this.amount = amount;
+        this.balance = balance;
+    }
+
+    public BigDecimal getBalance() {
+        return balance;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public int getId() {
+        return _id;
+    }
+
+    public void updateTimestamp() {
+        this.date = Utils.LocalToGmt(new Date());
     }
 }
