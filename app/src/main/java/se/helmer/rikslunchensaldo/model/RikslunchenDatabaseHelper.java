@@ -4,13 +4,14 @@ import java.sql.SQLException;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.RuntimeExceptionDao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+
+import se.helmer.rikslunchensaldo.Utils;
 
 /**
  * Database helper class used to manage the creation and upgrading of your
@@ -19,12 +20,14 @@ import com.j256.ormlite.table.TableUtils;
  */
 public class RikslunchenDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
-    // the DAO object we use to access the SimpleData table
     private Dao<Transaction, Integer> transactionDao = null;
     private RuntimeExceptionDao<Transaction, Integer> transactionRuntimeDao = null;
 
-    private static RikslunchenDatabaseHelper sSingleton = null;
-    private static Context mContext;
+    private Dao<Card, Integer> cardDao = null;
+    private RuntimeExceptionDao<Card, Integer> cardRuntimeDao = null;
+
+    private Dao<LogMessage, Integer> logMessageDao = null;
+    private RuntimeExceptionDao<LogMessage, Integer> logMessageRuntimeDao = null;
 
     public RikslunchenDatabaseHelper(Context context)
     {
@@ -35,13 +38,6 @@ public class RikslunchenDatabaseHelper extends OrmLiteSqliteOpenHelper {
         );
     }
 
-    public static RikslunchenDatabaseHelper getInstance(Context context) {
-        if (sSingleton == null) {
-            sSingleton = new RikslunchenDatabaseHelper(context);
-        }
-        return sSingleton;
-    }
-
     /**
      * This is called when the database is first created. Usually you should
      * call createTable statements here to create the tables that will store
@@ -50,13 +46,14 @@ public class RikslunchenDatabaseHelper extends OrmLiteSqliteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db, ConnectionSource connectionSource) {
         try {
-            Log.i(RikslunchenDatabaseHelper.class.getName(), "onCreate");
+            Utils.debug(RikslunchenDatabaseHelper.class.getName(), "onCreate");
             TableUtils.createTableIfNotExists(connectionSource, Transaction.class);
             TableUtils.createTableIfNotExists(connectionSource, EnterButton.class);
             TableUtils.createTableIfNotExists(connectionSource, Card.class);
+            TableUtils.createTableIfNotExists(connectionSource, LogMessage.class);
 
         } catch (SQLException e) {
-            Log.e(RikslunchenDatabaseHelper.class.getName(), "Can't create database", e);
+            Utils.error(RikslunchenDatabaseHelper.class.getName(), "Can't create database " +  e);
             throw new RuntimeException(e);
         }
     }
@@ -70,15 +67,16 @@ public class RikslunchenDatabaseHelper extends OrmLiteSqliteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource, int oldVersion,
                           int newVersion) {
         try {
-            Log.i(RikslunchenDatabaseHelper.class.getName(), "onUpgrade");
+            Utils.log(RikslunchenDatabaseHelper.class.getName(), "onUpgrade");
             TableUtils.dropTable(connectionSource, Transaction.class, true);
             TableUtils.dropTable(connectionSource, EnterButton.class, true);
             TableUtils.dropTable(connectionSource, Card.class, true);
+            TableUtils.dropTable(connectionSource, LogMessage.class, true);
 
             // after we drop the old databases, we create the new ones
             onCreate(db, connectionSource);
         } catch (SQLException e) {
-            Log.e(RikslunchenDatabaseHelper.class.getName(), "Can't drop databases", e);
+            Utils.error(RikslunchenDatabaseHelper.class.getName(), "Can't drop databases: "+e);
             throw new RuntimeException(e);
         }
     }
@@ -97,12 +95,44 @@ public class RikslunchenDatabaseHelper extends OrmLiteSqliteOpenHelper {
         return transactionRuntimeDao;
     }
 
+    public Dao<Card, Integer> getCardDao() throws SQLException {
+        if (cardDao == null) {
+            cardDao = getDao(Card.class);
+        }
+        return cardDao;
+    }
+
+    public RuntimeExceptionDao<Card, Integer> getRuntimeExceptionCardDao() {
+        if (cardRuntimeDao == null) {
+            cardRuntimeDao = getRuntimeExceptionDao(Card.class);
+        }
+        return cardRuntimeDao;
+    }
+    public Dao<LogMessage, Integer> getLogMessageDao() throws SQLException {
+        if (logMessageDao == null) {
+            logMessageDao = getDao(LogMessage.class);
+        }
+        return logMessageDao;
+    }
+
+    public RuntimeExceptionDao<LogMessage, Integer> getRuntimeExceptionLogMessageDao() {
+        if (logMessageRuntimeDao == null) {
+            logMessageRuntimeDao = getRuntimeExceptionDao(LogMessage.class);
+        }
+        return logMessageRuntimeDao;
+    }
+
 
     @Override
     public void close() {
         super.close();
         transactionDao = null;
         transactionRuntimeDao = null;
+        cardDao = null;
+        cardRuntimeDao = null;
+        logMessageDao = null;
+        logMessageRuntimeDao = null;
+
     }
 }
 

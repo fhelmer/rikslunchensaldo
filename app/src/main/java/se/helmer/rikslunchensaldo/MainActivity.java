@@ -2,7 +2,9 @@ package se.helmer.rikslunchensaldo;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
@@ -12,9 +14,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 
 public class MainActivity extends FragmentActivity
         implements MyResultReceiver.Receiver, ActionBar.TabListener   {
@@ -24,6 +23,8 @@ public class MainActivity extends FragmentActivity
     private static MyResultReceiver mReceiver;
 
     public static final int SUMMARY = 0;
+    public static final int RECONCILIATION = 1;
+    public static final int LOG = 2;
 
     public static ResultReceiver getReceiver() {
         return mReceiver;
@@ -94,14 +95,14 @@ public class MainActivity extends FragmentActivity
                     case SUMMARY:
                         this.fragments[i] = SummaryFragment.init(i);
                         break;
-                    default:
-                        this.fragments[i] = TransactionListFragment.init(i);
+                    case RECONCILIATION:
+                        this.fragments[i] = ReconciliationFragment.init(i);
+                        break;
+                    case LOG:
+                        this.fragments[i] = LogMessageFragment.init(i);
                         break;
                     }
-                    Utils.log(
-                            TAG,
-                            "fragment newInstance "
-                                    + this.fragments[i].getTag());
+                    Utils.log(TAG, "fragment newInstance " + this.fragments[i].getTag());
                 }
             }
             return fragments[i];
@@ -159,6 +160,11 @@ public class MainActivity extends FragmentActivity
     protected void onResume() {
         super.onResume();
         mReceiver.setReceiver(this);
+
+        final Intent intent = new Intent(this, MyIntentService.class);
+        intent.putExtra(MyIntentService.COMMAND, MyIntentService.CHECK_DATABASE);
+        intent.putExtra(MyIntentService.RECEIVER, MainActivity.getReceiver());
+        ComponentName cm = startService(intent);
     }
 
 }

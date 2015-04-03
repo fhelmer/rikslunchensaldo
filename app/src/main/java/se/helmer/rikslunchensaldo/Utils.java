@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -30,6 +31,8 @@ import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 
+import se.helmer.rikslunchensaldo.model.Card;
+import se.helmer.rikslunchensaldo.model.Contract;
 import se.helmer.rikslunchensaldo.model.RikslunchenDatabaseHelper;
 import se.helmer.rikslunchensaldo.model.Transaction;
 
@@ -74,56 +77,11 @@ public class Utils {
         return d;
     }
 
-    static Transaction createTestData(Context context) {
-        return createOrUpdateTransaction(context, "Setup GMT time", new BigDecimal("888.23"));
-    }
-
-    static Transaction createOrUpdateTransaction(Context context, String description, BigDecimal balance) {
-        Transaction transaction = null;
-        RikslunchenDatabaseHelper rikslunchenDatabaseHelper = OpenHelperManager.getHelper(context,
-                RikslunchenDatabaseHelper.class);
-        ConnectionSource connectionSource = new AndroidConnectionSource(rikslunchenDatabaseHelper);
-
-        try {
-            Dao<Transaction, Integer> transactionDao =
-                    rikslunchenDatabaseHelper.getTransactionDao();
-
-            QueryBuilder<Transaction, Integer> qb = transactionDao.queryBuilder();
-
-            qb.selectRaw("MAX(_id)");
-            GenericRawResults<String[]> results = transactionDao.queryRaw(qb.prepareStatementString());
-            String[] values = results.getFirstResult();
-            BigDecimal amount = new BigDecimal("0");
-            boolean createNew = true;
-            if (values.length > 0 && values[0] != null) {
-                Transaction t = transactionDao.queryForId(Integer.valueOf(values[0]));
-                if (t != null) {
-                    if (t.getBalance().compareTo(balance) == 0) {
-                        t.updateTimestamp();
-                        transactionDao.update(t);
-                        createNew = false;
-                        transaction = t;
-                    } else {
-                        amount = balance.subtract(t.getBalance());
-                    }
-                }
-            }
-
-            if (createNew) {
-                transaction =
-                        new Transaction(description, amount, balance);
-                transactionDao.create(transaction);
-            }
-        } catch (SQLException se) {
-
-        }
-        return transaction;
-    }
-
     static Bundle getSharedPreferences(Context context) {
         Bundle b = new Bundle();
         SharedPreferences sharedPrefs =
-                context.getSharedPreferences(SummaryFragment.APP_SHARED_PREFS, Activity.MODE_PRIVATE);
+                context.getSharedPreferences(SummaryFragment.APP_SHARED_PREFS,
+                        Activity.MODE_PRIVATE);
 
         b.putString(RikslunchenDatasource.BALANCE, sharedPrefs.getString(RikslunchenDatasource.BALANCE, ""));
         b.putString(RikslunchenDatasource.LAST_TOPUP_DATE, sharedPrefs.getString(RikslunchenDatasource.LAST_TOPUP_DATE, ""));
@@ -136,7 +94,7 @@ public class Utils {
 
 
     static void saveSharedPreferences(Context context, Bundle b) {
-        Log.d(TAG,"Saving shared preferences");
+        info(TAG,"Saving shared preferences");
         SharedPreferences sharedPrefs =
                 context.getSharedPreferences(SummaryFragment.APP_SHARED_PREFS, Activity.MODE_PRIVATE);
 
@@ -145,6 +103,7 @@ public class Utils {
         prefsEditor.putString(RikslunchenDatasource.BALANCE,b.getString(RikslunchenDatasource.BALANCE));
         prefsEditor.putString(RikslunchenDatasource.LAST_TOPUP_DATE,b.getString(RikslunchenDatasource.LAST_TOPUP_DATE));
         prefsEditor.putString(RikslunchenDatasource.LATEST_UPDATE,b.getString(RikslunchenDatasource.LATEST_UPDATE));
+        prefsEditor.putString(RikslunchenDatasource.CARD_ID, b.getString(RikslunchenDatasource.CARD_ID, ""));
 
         prefsEditor.commit();
 
@@ -209,6 +168,24 @@ public class Utils {
         return "N="+name + ",id=" + l + ",p=" + p
                 + ":TGN=" + gname;
     }
+
+    public static void error(String tag, String message) {
+        log(tag, "ERROR:"+message);
+    }
+
+    public static void warning(String tag, String message) {
+        log(tag, "WARNING:"+message);
+    }
+
+    public static void info(String tag, String message) {
+        log(tag, "INFO:"+message);
+    }
+
+    public static void debug(String tag, String message) {
+        log(tag, message);
+    }
+
+
     public static void logThreadSignature(String tag)
     {
         Log.i(tag, getThreadSignature());

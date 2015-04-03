@@ -10,13 +10,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class TransactionListFragment extends ListFragment {
+public class ReconciliationFragment extends ListFragment {
     int fragNum;
     String arr[] = {"This is", "a Transaction", "Demo", "App", "For", "Showing",
             "FragmentPagerAdapter", "and ViewPager", "Implementation"};
 
-    static TransactionListFragment init(int val) {
-        TransactionListFragment TransactionList = new TransactionListFragment();
+    static ReconciliationFragment init(int val) {
+        ReconciliationFragment TransactionList = new ReconciliationFragment();
 
         // Supply val input as an argument.
         Bundle args = new Bundle();
@@ -42,10 +42,10 @@ public class TransactionListFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View layoutView = inflater.inflate(R.layout.fragment_pager_list,
+        View layoutView = inflater.inflate(R.layout.fragment_reconciliation,
                 container, false);
         View tv = layoutView.findViewById(R.id.text);
-        ((TextView) tv).setText("Transaction Fragment #" + fragNum);
+        // ((TextView) tv).setText("Transaction Fragment #" + fragNum);
         return layoutView;
     }
 

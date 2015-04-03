@@ -20,13 +20,14 @@
             android:id="@+id/textView11"
             android:layout_weight="1"
             android:layout_width="0dp"
-            android:text="@string/card_id" />
+            android:text= "@string/card_id" />
 
         <EditText
             android:id="@+id/editCardId"
             android:layout_width="0dp"
-            android:layout_weight="1"
-            android:inputType="number" />
+            android:inputType="number"
+            android:text="See card"
+            android:layout_weight="1"/>
 
     </TableRow>
 

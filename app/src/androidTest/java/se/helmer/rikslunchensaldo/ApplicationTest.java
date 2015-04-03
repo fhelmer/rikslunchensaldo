@@ -3,6 +3,7 @@ package se.helmer.rikslunchensaldo;
 import android.app.Application;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 import android.test.ApplicationTestCase;
 import android.widget.Toast;
 
@@ -16,6 +17,7 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Date;
 
+import se.helmer.rikslunchensaldo.model.Card;
 import se.helmer.rikslunchensaldo.model.Contract;
 import se.helmer.rikslunchensaldo.model.RikslunchenDatabaseHelper;
 import se.helmer.rikslunchensaldo.model.Transaction;
@@ -25,27 +27,25 @@ import se.helmer.rikslunchensaldo.model.Transaction;
  */
 public class ApplicationTest extends ApplicationTestCase<Application> {
 
-    RikslunchenDatabaseHelper rikslunchenDatabaseHelper;
-
     ConnectionSource connectionSource;
     final static String TAG = "ApplicationTest";
+    DbSession session;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        rikslunchenDatabaseHelper = OpenHelperManager.getHelper(getContext(),
-                RikslunchenDatabaseHelper.class);
-        connectionSource = new AndroidConnectionSource(rikslunchenDatabaseHelper);
-        TableUtils.createTableIfNotExists(connectionSource, Transaction.class);
+        session = new DbSession(getContext());
+        connectionSource = session.getConnectionSource();
+        TableUtils.dropTable(connectionSource, Transaction.class, true);
+        TableUtils.dropTable(connectionSource, Card.class, true);
 
-        Utils.createTestData(getContext());
+        TableUtils.createTableIfNotExists(connectionSource, Transaction.class);
+        TableUtils.createTableIfNotExists(connectionSource, Card.class);
     }
 
     @Override
     protected void tearDown() throws Exception {
-        TableUtils.dropTable(connectionSource, Transaction.class, true);
-        TableUtils.createTableIfNotExists(connectionSource, Transaction.class);
-        connectionSource.close();
+        session.close();
         super.tearDown();
     }
 
@@ -57,6 +57,22 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         assertTrue(true);
     }
 
+    public void testCard() {
+        Bundle b = new Bundle();
+        b.putString(RikslunchenDatasource.CARD_ID,"12345");
+        b.putString(RikslunchenDatasource.LAST_TOPUP_DATE,"2015-01-01");
+        Card c = session.createOrUpdateCard(b);
+
+        Card c1 = session.getCard( "12345");
+        assertEquals(c1.getCardId(), "12345");
+
+        b.putString(RikslunchenDatasource.LAST_TOPUP_DATE,"2015-02-02");
+        Card c2 = session.createOrUpdateCard(b);
+
+        assertEquals(c2.getLastTopupDate(),"2015-02-02");
+
+    }
+
     public void testDate() {
         Date localDate = new Date();
         Date gmtDate = Utils.LocalToGmt(localDate);
@@ -64,10 +80,10 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         assertEquals(backToLocal.toString(), localDate.toString());
     }
 
-    public void testInsertDatabase() {
-        Transaction t1 = Utils.createOrUpdateTransaction(getContext(),"Descr", new BigDecimal("50"));
-        Transaction t2 = Utils.createOrUpdateTransaction(getContext(),"Descr", new BigDecimal("100.0"));
-        Transaction t3 = Utils.createOrUpdateTransaction(getContext(),"Descr", new BigDecimal("100.0"));
+    public void testInsertTransactions() {
+        Transaction t1 = session.createOrUpdateTransaction("Descr", new BigDecimal("50"));
+        Transaction t2 = session.createOrUpdateTransaction("Descr", new BigDecimal("100.0"));
+        Transaction t3 = session.createOrUpdateTransaction("Descr", new BigDecimal("100.0"));
         assertEquals(t2.getId(), t3.getId());
         assertTrue(t2.getAmount().compareTo(new BigDecimal("50")) == 0);
         assertFalse(t1.getId() == t2.getId());
@@ -77,29 +93,19 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
 
 
         try {
-            Dao<Transaction, Integer> transactionDao =
-                    rikslunchenDatabaseHelper.getTransactionDao();
-
             Date localDate = new Date();
             Date gmtDate = Utils.LocalToGmt(localDate);
-            Transaction transaction =
-                    new Transaction("GMT time", new BigDecimal("0"), new BigDecimal("123.23"));
-
-
-            if (transactionDao.create(transaction) != 1) {
-                Utils.log("ApplicationTest", "Failure adding Transaction");
-            }
+            Transaction transaction = session.createOrUpdateTransaction
+                    ("GMT time", new BigDecimal("123.23"));
 
             Transaction t3 =
-                    new Transaction("Description Local", new BigDecimal("1"), new BigDecimal("123.99"));
-            transactionDao.create(t3);
-
+                    session.createOrUpdateTransaction("Description Local", new BigDecimal("123.99"));
             Transaction t4 =
-                    new Transaction("Description Original Local", new BigDecimal("1"), new BigDecimal("123.99"));
-            transactionDao.create(t4);
+                    session.createOrUpdateTransaction("Description Original Local", new BigDecimal("123.99"));
+
             assertEquals(localDate.toString(),Utils.GmtToLocal(gmtDate).toString());
 
-            Transaction t2 = transactionDao.queryForId(2);
+            Transaction t2 = session.getTransactionDao().queryForId(2);
             if (t2 != null) {
                 Utils.log("Transaction: ", t2.toString());
             }

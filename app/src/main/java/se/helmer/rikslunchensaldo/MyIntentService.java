@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 
+import se.helmer.rikslunchensaldo.model.Card;
 import se.helmer.rikslunchensaldo.model.Contract;
 import se.helmer.rikslunchensaldo.model.Transaction;
 
@@ -36,6 +37,7 @@ public class MyIntentService extends IntentService {
         int msgCommand = intent.getIntExtra(COMMAND, 0);
         Bundle b = intent.getBundleExtra(PAYLOAD);
         final ResultReceiver receiver = intent.getParcelableExtra(RECEIVER);
+        DbSession session = new DbSession(getBaseContext());
 
         switch (msgCommand) {
             case CHECK_DATABASE:
@@ -43,23 +45,31 @@ public class MyIntentService extends IntentService {
                 Bundle prefs = Utils.getSharedPreferences(this);
                 String cardId = prefs.getString(RikslunchenDatasource.CARD_ID, "");
                 String latestupdatestr ="";
-                if (cardId.length() > 0) {
-
-
+                Card card = null;
+                if (cardId.length() > 0) { // Upgrade from previous version
+                    card = session.createOrUpdateCard(prefs);
                 }
+
+                b = session.fetchSummary(getBaseContext(), card.getCardId());
+
 
                 break;
             case SEND_BALANCE:
                 String message = b.getString(RikslunchenDatasource.MESSAGE);
-                Transaction t = Utils.createOrUpdateTransaction(getBaseContext(), message,
-                        new BigDecimal(b.getString(RikslunchenDatasource.BALANCE)));
+                if (message == null) {
+                    message = "";
+                }
+                String balance = b.getString(RikslunchenDatasource.BALANCE);
+                Transaction t = session.createOrUpdateTransaction(
+                        Utils.getCurrentLocalTimeString()+" "+message,
+                        new BigDecimal(balance.replace(',','.')));
                 getApplicationContext().getContentResolver().notifyChange(Contract.Transaction.contentUri, null);
 
             default:
                 break;
         }
 
-
+        session.close();
         if (receiver != null) {
             receiver.send(RETURN_DATA,b);
         }
