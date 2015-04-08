@@ -57,11 +57,11 @@ public class DbSession {
         OpenHelperManager.releaseHelper();
     }
 
-    public Card getCard(String cardId) {
+    public Card getCard() {
         Card card = null;
 
         try {
-            List<Card> cards = getCardDao().queryForEq(Contract.Card.CARD_ID, cardId);
+            List<Card> cards = getCardDao().queryForAll();
             if (cards.size() == 1) {
                 card = cards.get(0);
             }
@@ -76,7 +76,7 @@ public class DbSession {
         Card card = null;
 
         try {
-            card = getCard(b.getString(RikslunchenDatasource.CARD_ID));
+            card = getCard();
             if (card != null) {
                 card.setData(b.getString(RikslunchenDatasource.CARD_ID),
                         b.getString(RikslunchenDatasource.LAST_TOPUP_DATE));
@@ -92,12 +92,20 @@ public class DbSession {
         return card;
     }
 
-    Bundle fetchSummary(Context context, String cardId) {
-        Card card = getCard(cardId);
+    Bundle fetchSummary(Context context) {
+        Card card = getCard();
         Bundle b = new Bundle();
         Transaction transaction = getLatestTransaction();
+        if (transaction != null) {
+            b.putString(RikslunchenDatasource.BALANCE, transaction.getBalance().toString());
+            b.putString(RikslunchenDatasource.LATEST_UPDATE, transaction.getDate().toString());
+        }
+        if (card != null) {
+            b.putString(RikslunchenDatasource.CARD_ID, card.getCardId());
+            b.putString(RikslunchenDatasource.LAST_TOPUP_DATE, card.getLastTopupDate());
+        }
 
-        return new Bundle();
+        return b;
     }
 
     Transaction getLatestTransaction() {
@@ -106,7 +114,8 @@ public class DbSession {
 
             QueryBuilder<Transaction, Integer> qb = getTransactionDao().queryBuilder();
             qb.selectRaw("MAX(_id)");
-            GenericRawResults<String[]> results = getTransactionDao().queryRaw(qb.prepareStatementString());
+            GenericRawResults<String[]> results =
+                    getTransactionDao().queryRaw(qb.prepareStatementString());
             String[] values = new String[0];
             values = results.getFirstResult();
             if (values.length > 0 && values[0] != null) {
@@ -118,8 +127,11 @@ public class DbSession {
         return transaction;
     }
 
-    Transaction createOrUpdateTransaction(String description, BigDecimal balance) {
+    Transaction createOrUpdateTransaction(Bundle b) {
         Transaction transaction = getLatestTransaction();
+        String amountStr = b.getString(RikslunchenDatasource.BALANCE);
+        String description = b.getString(RikslunchenDatasource.MESSAGE);
+        BigDecimal balance = new BigDecimal(amountStr.replace(',','.'));
         BigDecimal amount = new BigDecimal("0");
         boolean createNew = true;
         try {

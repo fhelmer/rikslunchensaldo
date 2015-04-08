@@ -46,6 +46,8 @@ public class Transaction {
         return amount;
     }
 
+    public Date getDate() { return date; }
+
     public int getId() {
         return _id;
     }

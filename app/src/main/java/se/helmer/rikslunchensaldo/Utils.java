@@ -40,10 +40,13 @@ public class Utils {
 
     private static String TAG = "Utils";
 
-    static final String mDateFormat = "yyyy-MM-dd HH:mm:ss";
+    public static final String mDateFormat = "yyyy-MM-dd HH:mm:ss";
 
-    static String getCurrentLocalTimeString() {
-        Date date = new Date();
+    public static String getCurrentLocalTimeString() {
+        return getFormattedTimeString(new Date());
+    }
+
+    public static String getFormattedTimeString(Date date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(mDateFormat, Locale.US);
         return dateFormat.format(date);
     }
@@ -91,7 +94,18 @@ public class Utils {
         return b;
     }
 
+    // Previous version used shared preferences. When migrating to database, the preferences
+    // are no longer needed
+    static void clearPreferences(Context context) {
+        info(TAG, "Clearing preferences");
+        Bundle b = new Bundle();
+        SharedPreferences sharedPrefs =
+                context.getSharedPreferences(SummaryFragment.APP_SHARED_PREFS, Activity.MODE_PRIVATE);
 
+        Editor prefsEditor = sharedPrefs.edit();
+        b.putString(RikslunchenDatasource.CARD_ID,"");
+        prefsEditor.commit();
+    }
 
     static void saveSharedPreferences(Context context, Bundle b) {
         info(TAG,"Saving shared preferences");

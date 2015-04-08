@@ -36,7 +36,7 @@ public class SummaryFragment extends ListFragment implements
 
     TextView mBalanceField;
     TextView mLasttopupField;
-    EditText mCardIdField;
+    TextView mCardIdField;
     TextView mLatestUpdate;
     CheckBox mAutoUpdate;
     AdView mAdView;
@@ -80,16 +80,6 @@ public class SummaryFragment extends ListFragment implements
         m_adapter = new TransactionCursorAdapter(this, null);
         setListAdapter(m_adapter);
         getActivity().getLoaderManager().initLoader(0, null, this);
-
-        Button b = (Button) getView().findViewById(R.id.button_fetch);
-        b.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mBalanceField.setText("Querying...");
-                RikslunchenDatasource rd = new RikslunchenDatasource();
-                rd.query(getActivity(),"32271843");
-            }
-        });
 
         mAdView = (AdView) getView().findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
@@ -154,7 +144,7 @@ public class SummaryFragment extends ListFragment implements
     public void update(Bundle b) {
         if (mView != null) {
             mBalanceField = (TextView) getView().findViewById(R.id.tvBalance);
-            mCardIdField = (EditText) getView().findViewById(R.id.editCardId);
+            mCardIdField = (TextView) getView().findViewById(R.id.card_id);
             mLasttopupField = (TextView) getView().findViewById(R.id.topupdate);
 
             if (b != null) {

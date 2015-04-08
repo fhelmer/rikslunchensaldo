@@ -22,6 +22,7 @@ public class MyIntentService extends IntentService {
 
     public static final int CHECK_DATABASE = 1;
     public static final int SEND_BALANCE = 2;
+    public static final int TRANSACTION_DELETE = 3;
 
     public static final int RETURN_DATA = 10;
 
@@ -37,32 +38,31 @@ public class MyIntentService extends IntentService {
         int msgCommand = intent.getIntExtra(COMMAND, 0);
         Bundle b = intent.getBundleExtra(PAYLOAD);
         final ResultReceiver receiver = intent.getParcelableExtra(RECEIVER);
-        DbSession session = new DbSession(getBaseContext());
+        DbSession session = new DbSession(getApplicationContext());
 
         switch (msgCommand) {
             case CHECK_DATABASE:
-                // If we have a balance + card id in shared preferences, populate database
-                Bundle prefs = Utils.getSharedPreferences(this);
-                String cardId = prefs.getString(RikslunchenDatasource.CARD_ID, "");
-                String latestupdatestr ="";
-                Card card = null;
-                if (cardId.length() > 0) { // Upgrade from previous version
-                    card = session.createOrUpdateCard(prefs);
+                // First check if there is a card already
+                Card card = session.getCard();
+                if (card == null) {
+                    Bundle prefs = Utils.getSharedPreferences(getApplicationContext());
+                    String cardId = prefs.getString(RikslunchenDatasource.CARD_ID, "");
+                    if (cardId.length() > 0) { // Upgrade from previous version
+                        card = session.createOrUpdateCard(prefs);
+                        Utils.info(TAG, "Upgrading: Using card id " + cardId +
+                                " listed in shared preferences");
+                        Utils.clearPreferences(getApplicationContext()); // Prefer database from now on
+                    }
                 }
-
-                b = session.fetchSummary(getBaseContext(), card.getCardId());
+                if (card != null) {
+                    b = session.fetchSummary(getApplicationContext());
+                }
 
 
                 break;
             case SEND_BALANCE:
-                String message = b.getString(RikslunchenDatasource.MESSAGE);
-                if (message == null) {
-                    message = "";
-                }
-                String balance = b.getString(RikslunchenDatasource.BALANCE);
-                Transaction t = session.createOrUpdateTransaction(
-                        Utils.getCurrentLocalTimeString()+" "+message,
-                        new BigDecimal(balance.replace(',','.')));
+                Card card2 = session.createOrUpdateCard(b);
+                Transaction t = session.createOrUpdateTransaction(b);
                 getApplicationContext().getContentResolver().notifyChange(Contract.Transaction.contentUri, null);
 
             default:

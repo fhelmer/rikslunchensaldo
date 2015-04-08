@@ -71,7 +71,6 @@ public class RikslunchenDatasource {
             b.putString(LAST_TOPUP_DATE, lasttopupdate);
             b.putString(MESSAGE, message);
             b.putString(CARD_ID, cardId);
-            b.putSerializable(LATEST_UPDATE, Utils.LocalToGmt(new Date()));
 
             final Intent intent = new Intent(context, MyIntentService.class);
             intent.putExtra(MyIntentService.COMMAND, MyIntentService.SEND_BALANCE);

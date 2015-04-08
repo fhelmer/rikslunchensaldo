@@ -1,9 +1,11 @@
 package se.helmer.rikslunchensaldo;
 
 import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,7 +15,13 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.InputType;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.EditText;
+
+import se.helmer.rikslunchensaldo.model.Card;
 
 public class MainActivity extends FragmentActivity
         implements MyResultReceiver.Receiver, ActionBar.TabListener   {
@@ -122,9 +130,66 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        // getMenuInflater().inflate(R.menu.main, menu);
-        return true;
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_activity_actions, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.action_ask_for_card_id:
+                AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+                alert.setTitle("Please enter card ID");
+                alert.setMessage("The number can be found on the card");
+
+                final EditText input = new EditText(this);
+                input.setInputType(InputType.TYPE_CLASS_NUMBER);
+                alert.setView(input);
+
+                alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String value = input.getText().toString().trim();
+                        RikslunchenDatasource rd = new RikslunchenDatasource();
+                        rd.query(getApplicationContext(), value); // 32271843
+                        dialog.dismiss();
+                    }
+                });
+
+                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.dismiss();
+                    }
+                });
+
+                alert.show();
+                return true;
+            case R.id.action_refresh:
+                DbSession session = new DbSession(this);
+                Card card = session.getCard();
+                if (card == null) {
+                    AlertDialog.Builder noCardAlert = new AlertDialog.Builder(this);
+                    noCardAlert.setTitle("No card");
+                    noCardAlert.setMessage("Please select action menu -> Card ID");
+                    noCardAlert.setPositiveButton("OK", null);
+                    noCardAlert.show();
+                } else {
+                    RikslunchenDatasource rd = new RikslunchenDatasource();
+                    rd.query(this, card.getCardId()); // 32271843
+                }
+                session.close();
+                return true;
+
+            case R.id.action_settings:
+                // openSettings();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override

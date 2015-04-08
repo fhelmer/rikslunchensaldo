@@ -1,7 +1,10 @@
 package se.helmer.rikslunchensaldo;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.support.v4.app.Fragment;
 import android.view.View;
@@ -10,6 +13,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
+
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import se.helmer.rikslunchensaldo.model.Contract;
 
@@ -31,26 +40,27 @@ public class TransactionCursorAdapter extends ResourceCursorAdapter {
 
         	@Override
         	public void onClick(View v) {
-        		Button b = (Button) v;
-        		String txt = b.getText().toString();
-    			// int crash_id = (Integer) v.getTag();
-                /*
-        	Bundle b = new Bundle();
-            b.putString(BALANCE, balance);
-            b.putString(LAST_TOPUP_DATE, lasttopupdate);
-            b.putString(MESSAGE, message);
-            b.putSerializable(LATEST_UPDATE, Utils.LocalToGmt(new Date()));
+        		Button button = (Button) v;
+        		String txt = button.getText().toString();
+    			int id = (Integer) v.getTag();
 
-            final Intent intent = new Intent(context, MyIntentService.class);
-            intent.putExtra("command", MyIntentService.SEND_BALANCE);
-            intent.putExtra(PAYLOAD, b);
-            ComponentName cm = context.startService(intent);
-            */
+                Bundle b = new Bundle();
+                b.putInt(Contract.Transaction._ID, id);
 
+
+                final Intent intent = new Intent(context, MyIntentService.class);
+                intent.putExtra("command", MyIntentService.TRANSACTION_DELETE);
+                intent.putExtra(MyIntentService.PAYLOAD, b);
+                ComponentName cm = context.startService(intent);
             }});
 
 		return view;
 	}
+
+    @Override
+    public Object getItem(int position) {
+        return super.getItem(super.getCount() - position - 1);
+    }
 
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
@@ -61,11 +71,21 @@ public class TransactionCursorAdapter extends ResourceCursorAdapter {
 
         String amount = cursor.getString(cursor.getColumnIndex(Contract.Transaction.AMOUNT));
         String balance = cursor.getString(cursor.getColumnIndex(Contract.Transaction.BALANCE));
-        String description = cursor.getString(cursor.getColumnIndex(Contract.Transaction.DESCRIPTION));
+
         String datestr = cursor.getString(cursor.getColumnIndex(Contract.Transaction.DATE));
-        String id = cursor.getString(cursor.getColumnIndex(Contract.Transaction._ID));
-        row1.setText(description);
-        row2.setText(amount + ":" + balance);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+        Date parsedDate = null;
+        try {
+            parsedDate = dateFormat.parse(datestr);
+
+        } catch (ParseException pe) {
+            Utils.error(TAG, "Parse exception "+pe);
+        }
+
+        String datestr2 = Utils.getFormattedTimeString(Utils.GmtToLocal(parsedDate));
+        int id = cursor.getInt(cursor.getColumnIndex(Contract.Transaction._ID));
+        row1.setText(datestr2);
+        row2.setText(String.format("%-10s %-10s", amount, balance));
 
         Button actionButton = (Button) view.findViewById(R.id.action_button);
 

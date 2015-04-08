@@ -20,6 +20,6 @@
     <string name="smallwidgetlabel">Lunchsaldo - Small</string>
     <string name="dailyautomaticupdate">Daily automatic update</string>
     <string name="banner_ad_unit_id">a151a90e906e286</string>
-    <string name="title_activity_main">Lunchensaldo</string>
-
+    <string name="title_activity_main">Lunchsaldo</string>
+    <string name="action_ask_for_card_id">Enter card ID</string>
 </resources>
