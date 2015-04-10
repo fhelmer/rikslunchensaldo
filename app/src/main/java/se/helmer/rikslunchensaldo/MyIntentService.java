@@ -63,7 +63,15 @@ public class MyIntentService extends IntentService {
             case SEND_BALANCE:
                 Card card2 = session.createOrUpdateCard(b);
                 Transaction t = session.createOrUpdateTransaction(b);
+                b = session.fetchSummary(getApplicationContext());
                 getApplicationContext().getContentResolver().notifyChange(Contract.Transaction.contentUri, null);
+                break;
+
+            case TRANSACTION_DELETE:
+                int id = b.getInt(Contract.Transaction._ID);
+                session.deleteTransaction(id);
+                getApplicationContext().getContentResolver().notifyChange(Contract.Transaction.contentUri, null);
+                break;
 
             default:
                 break;

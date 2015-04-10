@@ -57,11 +57,6 @@ public class TransactionCursorAdapter extends ResourceCursorAdapter {
 		return view;
 	}
 
-    @Override
-    public Object getItem(int position) {
-        return super.getItem(super.getCount() - position - 1);
-    }
-
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
         // Crash crash = Crash.makeObject(cursor);
@@ -85,7 +80,7 @@ public class TransactionCursorAdapter extends ResourceCursorAdapter {
         String datestr2 = Utils.getFormattedTimeString(Utils.GmtToLocal(parsedDate));
         int id = cursor.getInt(cursor.getColumnIndex(Contract.Transaction._ID));
         row1.setText(datestr2);
-        row2.setText(String.format("%-10s %-10s", amount, balance));
+        row2.setText(String.format("%-15s %-15s", amount, balance));
 
         Button actionButton = (Button) view.findViewById(R.id.action_button);
 

@@ -136,6 +136,12 @@ public class MainActivity extends FragmentActivity
         return super.onCreateOptionsMenu(menu);
     }
 
+    private void showMessage(String msg) {
+        SummaryFragment summaryFragment = (SummaryFragment) mAdapter.getItem(SUMMARY);
+        Bundle b = new Bundle();
+        b.putString(RikslunchenDatasource.BALANCE, msg);
+        summaryFragment.update(b);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -154,6 +160,7 @@ public class MainActivity extends FragmentActivity
                 alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         String value = input.getText().toString().trim();
+                        showMessage("Querying ...");
                         RikslunchenDatasource rd = new RikslunchenDatasource();
                         rd.query(getApplicationContext(), value); // 32271843
                         dialog.dismiss();
@@ -179,6 +186,7 @@ public class MainActivity extends FragmentActivity
                     noCardAlert.show();
                 } else {
                     RikslunchenDatasource rd = new RikslunchenDatasource();
+                    showMessage("Querying ...");
                     rd.query(this, card.getCardId()); // 32271843
                 }
                 session.close();
@@ -230,6 +238,7 @@ public class MainActivity extends FragmentActivity
         intent.putExtra(MyIntentService.COMMAND, MyIntentService.CHECK_DATABASE);
         intent.putExtra(MyIntentService.RECEIVER, MainActivity.getReceiver());
         ComponentName cm = startService(intent);
+        Utils.debug(TAG, "onResume");
     }
 
 }

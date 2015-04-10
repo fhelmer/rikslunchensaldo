@@ -103,6 +103,7 @@ public class SummaryFragment extends ListFragment implements
     public void onResume() {
         super.onResume();
         mAdView.resume();
+        Utils.debug(TAG, "onResume");
     }
 
     @Override
@@ -148,9 +149,19 @@ public class SummaryFragment extends ListFragment implements
             mLasttopupField = (TextView) getView().findViewById(R.id.topupdate);
 
             if (b != null) {
-                mBalanceField.setText(b.getString(RikslunchenDatasource.BALANCE));
-                mCardIdField.setText(b.getString(RikslunchenDatasource.CARD_ID));
-                mLasttopupField.setText(b.getString(RikslunchenDatasource.LAST_TOPUP_DATE));
+                String balance = b.getString(RikslunchenDatasource.BALANCE);
+                String cardId = b.getString(RikslunchenDatasource.CARD_ID);
+                String lastTopupDate = b.getString(RikslunchenDatasource.LAST_TOPUP_DATE);
+                if (balance != null) {
+                    mBalanceField.setText(balance);
+                }
+                if (cardId != null) {
+                    mCardIdField.setText(cardId);
+                }
+                if (lastTopupDate != null) {
+                    mLasttopupField.setText(lastTopupDate);
+                }
+
             }
         }
 

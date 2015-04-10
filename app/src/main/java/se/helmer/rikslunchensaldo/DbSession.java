@@ -111,7 +111,6 @@ public class DbSession {
     Transaction getLatestTransaction() {
         Transaction transaction = null;
         try {
-
             QueryBuilder<Transaction, Integer> qb = getTransactionDao().queryBuilder();
             qb.selectRaw("MAX(_id)");
             GenericRawResults<String[]> results =
@@ -125,6 +124,14 @@ public class DbSession {
             e.printStackTrace();
         }
         return transaction;
+    }
+
+    void deleteTransaction(int id) {
+        try {
+            getTransactionDao().deleteById(id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     Transaction createOrUpdateTransaction(Bundle b) {
