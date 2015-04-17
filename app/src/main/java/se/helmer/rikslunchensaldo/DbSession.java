@@ -11,10 +11,12 @@ import com.j256.ormlite.support.ConnectionSource;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 import se.helmer.rikslunchensaldo.model.Card;
 import se.helmer.rikslunchensaldo.model.Contract;
+import se.helmer.rikslunchensaldo.model.LogMessage;
 import se.helmer.rikslunchensaldo.model.RikslunchenDatabaseHelper;
 import se.helmer.rikslunchensaldo.model.Transaction;
 
@@ -45,6 +47,10 @@ public class DbSession {
 
     public Dao<Card, Integer> getCardDao() throws SQLException {
         return rikslunchenDatabaseHelper.getCardDao();
+    }
+
+    public Dao<LogMessage, Integer> getLogMessageDao() throws SQLException {
+        return rikslunchenDatabaseHelper.getLogMessageDao();
     }
 
     public void close() {
@@ -162,6 +168,23 @@ public class DbSession {
             Utils.error("createOrUpdateTransaction",""+e);
         }
         return transaction;
+    }
+
+    LogMessage createLogMessage(Bundle b) {
+        LogMessage logMessage = new LogMessage(b.getString(Contract.LogMessage.DESCRIPTION));
+        try {
+            getLogMessageDao().create(logMessage);
+        } catch (SQLException e) {
+            e.printStackTrace();;
+            Utils.error("createLogMessage","Error saving log message");
+        }
+        return logMessage;
+    }
+
+    LogMessage createLogMessage(String message) {
+        Bundle b = new Bundle();
+        b.putString(Contract.LogMessage.DESCRIPTION, message);
+        return createLogMessage(b);
     }
 
 }

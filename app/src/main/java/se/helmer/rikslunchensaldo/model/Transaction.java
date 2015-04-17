@@ -11,7 +11,7 @@ import com.tojc.ormlite.android.annotation.AdditionalAnnotation;
 import se.helmer.rikslunchensaldo.Utils;
 
 @DatabaseTable(tableName = Contract.Transaction.TABLE_NAME)
-@AdditionalAnnotation.DefaultContentUri(authority=Contract.AUTHORITY, path=Contract.Transaction.CONTENT_URI_PATH)
+@AdditionalAnnotation.DefaultContentUri(authority=Contract.Transaction.AUTHORITY, path=Contract.Transaction.CONTENT_URI_PATH)
 @AdditionalAnnotation.DefaultContentMimeTypeVnd(name=Contract.Transaction.MIMETYPE_NAME, type=Contract.Transaction.MIMETYPE_TYPE)
 public class Transaction {
 

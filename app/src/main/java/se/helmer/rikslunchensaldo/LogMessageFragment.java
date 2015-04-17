@@ -20,6 +20,8 @@ LoaderManager.LoaderCallbacks<Cursor> {
 
     private static String TAG = "LogMessageFragment";
 
+    private LogMessageCursorAdapter m_adapter = null;
+
 
     static LogMessageFragment init(int val) {
         LogMessageFragment logMessageFrag = new LogMessageFragment();
@@ -67,11 +69,9 @@ LoaderManager.LoaderCallbacks<Cursor> {
         Bundle b = getArguments();
         // mMode = b.getInt("num");
 
-        /*
-        m_adapter = new CrashLogCursorAdapter(mMode, this, null);
+        m_adapter = new LogMessageCursorAdapter(this, null);
         setListAdapter(m_adapter);
-        getActivity().getLoaderManager().initLoader(mMode, null, this);
-        */
+        getActivity().getLoaderManager().initLoader(2, null, this);
         Utils.log(TAG, "fillData");
     }
 
@@ -113,20 +113,20 @@ LoaderManager.LoaderCallbacks<Cursor> {
         String[] selectionArgs = null;
 
         CursorLoader cursorLoader = new CursorLoader(getActivity(),
-                Contract.LogMessage.contentUri, projection, selectionClause, selectionArgs, null);
+                Contract.LogMessage.contentUri, projection, selectionClause, selectionArgs,
+                "_id DESC");
 
         return cursorLoader;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        // m_adapter.swapCursor(data);
+        m_adapter.swapCursor(data);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        // data is not available anymore, delete reference
-        // m_adapter.swapCursor(null);
+        m_adapter.swapCursor(null);
     }
 
 }

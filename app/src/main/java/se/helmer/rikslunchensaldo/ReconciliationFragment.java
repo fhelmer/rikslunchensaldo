@@ -44,7 +44,7 @@ public class ReconciliationFragment extends ListFragment {
                              Bundle savedInstanceState) {
         View layoutView = inflater.inflate(R.layout.fragment_reconciliation,
                 container, false);
-        View tv = layoutView.findViewById(R.id.text);
+        // View tv = layoutView.findViewById(R.id.);
         // ((TextView) tv).setText("Transaction Fragment #" + fragNum);
         return layoutView;
     }

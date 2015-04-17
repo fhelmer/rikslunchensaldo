@@ -60,7 +60,13 @@
         <provider
             android:exported="false"
             android:name=".model.TransactionContentProvider"
-            android:authorities="se.helmer.rikslunchensaldo" >
+            android:authorities="se.helmer.rikslunchensaldo.transactionprovider" >
+        </provider>
+
+        <provider
+            android:exported="false"
+            android:name=".model.LogMessageContentProvider"
+            android:authorities="se.helmer.rikslunchensaldo.logmessageprovider" >
         </provider>
 
         <activity android:name="com.google.android.gms.ads.AdActivity"

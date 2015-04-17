@@ -211,6 +211,20 @@ public class MainActivity extends FragmentActivity
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
         mPager.setCurrentItem(tab.getPosition());
+
+        switch(tab.getPosition()) {
+            case SUMMARY:
+                mReceiver.setReceiver(this);
+
+                final Intent intent = new Intent(this, MyIntentService.class);
+                intent.putExtra(MyIntentService.COMMAND, MyIntentService.CHECK_DATABASE);
+                intent.putExtra(MyIntentService.RECEIVER, MainActivity.getReceiver());
+                ComponentName cm = startService(intent);
+                Utils.debug(TAG, "onTabSelected");
+                break;
+            default:
+                break;
+        }
     }
 
     @Override

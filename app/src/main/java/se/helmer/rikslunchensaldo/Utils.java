@@ -97,7 +97,7 @@ public class Utils {
     // Previous version used shared preferences. When migrating to database, the preferences
     // are no longer needed
     static void clearPreferences(Context context) {
-        info(TAG, "Clearing preferences");
+        info(context, TAG, "Clearing preferences");
         Bundle b = new Bundle();
         SharedPreferences sharedPrefs =
                 context.getSharedPreferences(SummaryFragment.APP_SHARED_PREFS, Activity.MODE_PRIVATE);
@@ -108,7 +108,7 @@ public class Utils {
     }
 
     static void saveSharedPreferences(Context context, Bundle b) {
-        info(TAG,"Saving shared preferences");
+        info(context, TAG,"Saving shared preferences");
         SharedPreferences sharedPrefs =
                 context.getSharedPreferences(SummaryFragment.APP_SHARED_PREFS, Activity.MODE_PRIVATE);
 
@@ -191,7 +191,7 @@ public class Utils {
         log(tag, "WARNING:"+message);
     }
 
-    public static void info(String tag, String message) {
+    public static void info(Context context, String tag, String message) {
         log(tag, "INFO:"+message);
     }
 
@@ -205,7 +205,19 @@ public class Utils {
         Log.i(tag, getThreadSignature());
     }
     public static void log(String tag,String msg) {
-    	Log.i(tag,getThreadSignature()+":"+msg);
+        Log.i(tag, getThreadSignature() + ":" + msg);
+    }
+
+    public static void logToDatabase(Context context, String tag,String msg) {
+        Bundle b = new Bundle();
+        b.putString(Contract.LogMessage.DESCRIPTION, msg);
+
+        final Intent intent = new Intent(context, MyIntentService.class);
+        intent.putExtra(MyIntentService.COMMAND, MyIntentService.LOG_MESSAGE_SAVE);
+        intent.putExtra(MyIntentService.RECEIVER, MainActivity.getReceiver());
+        intent.putExtra(MyIntentService.PAYLOAD, b);
+        ComponentName cm = context.startService(intent);
+
     }
 
 }

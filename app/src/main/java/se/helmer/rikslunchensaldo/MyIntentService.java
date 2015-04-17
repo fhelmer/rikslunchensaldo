@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
@@ -23,6 +24,7 @@ public class MyIntentService extends IntentService {
     public static final int CHECK_DATABASE = 1;
     public static final int SEND_BALANCE = 2;
     public static final int TRANSACTION_DELETE = 3;
+    public static final int LOG_MESSAGE_SAVE = 4;
 
     public static final int RETURN_DATA = 10;
 
@@ -39,6 +41,7 @@ public class MyIntentService extends IntentService {
         Bundle b = intent.getBundleExtra(PAYLOAD);
         final ResultReceiver receiver = intent.getParcelableExtra(RECEIVER);
         DbSession session = new DbSession(getApplicationContext());
+        Context context = getApplicationContext();
 
         switch (msgCommand) {
             case CHECK_DATABASE:
@@ -49,7 +52,7 @@ public class MyIntentService extends IntentService {
                     String cardId = prefs.getString(RikslunchenDatasource.CARD_ID, "");
                     if (cardId.length() > 0) { // Upgrade from previous version
                         card = session.createOrUpdateCard(prefs);
-                        Utils.info(TAG, "Upgrading: Using card id " + cardId +
+                        session.createLogMessage("Upgrading: Using card id " + cardId +
                                 " listed in shared preferences");
                         Utils.clearPreferences(getApplicationContext()); // Prefer database from now on
                     }
@@ -57,10 +60,11 @@ public class MyIntentService extends IntentService {
                 if (card != null) {
                     b = session.fetchSummary(getApplicationContext());
                 }
-
+                getApplicationContext().getContentResolver().notifyChange(Contract.Transaction.contentUri, null);
 
                 break;
             case SEND_BALANCE:
+                session.createLogMessage("Updating balance");
                 Card card2 = session.createOrUpdateCard(b);
                 Transaction t = session.createOrUpdateTransaction(b);
                 b = session.fetchSummary(getApplicationContext());
@@ -69,8 +73,14 @@ public class MyIntentService extends IntentService {
 
             case TRANSACTION_DELETE:
                 int id = b.getInt(Contract.Transaction._ID);
+                session.createLogMessage("Deleting transaction "+id);
                 session.deleteTransaction(id);
                 getApplicationContext().getContentResolver().notifyChange(Contract.Transaction.contentUri, null);
+                break;
+
+            case LOG_MESSAGE_SAVE:
+                session.createLogMessage(b);
+                getApplicationContext().getContentResolver().notifyChange(Contract.LogMessage.contentUri, null);
                 break;
 
             default:

@@ -8,10 +8,10 @@ public class Contract {
     public static final String DATABASE_NAME = "MyDatabase";
     public static final int DATABASE_VERSION = 1;
 
-    public static final String AUTHORITY = "se.helmer.rikslunchensaldo";
-
     public static class Transaction implements BaseColumns
     {
+        public static final String AUTHORITY = "se.helmer.rikslunchensaldo.transactionprovider";
+
         public static final String TABLE_NAME = "transactions";
         public static final String CONTENT_URI_PATH = TABLE_NAME;
 
@@ -39,6 +39,7 @@ public class Contract {
 
     public static class Card implements BaseColumns
     {
+        public static final String AUTHORITY = "se.helmer.rikslunchensaldo.cardprovider";
         public static final String TABLE_NAME = "card";
         public static final String CONTENT_URI_PATH = TABLE_NAME;
 
@@ -65,6 +66,8 @@ public class Contract {
 
     public static class LogMessage implements BaseColumns
     {
+        public static final String AUTHORITY = "se.helmer.rikslunchensaldo.logmessageprovider";
+
         public static final String TABLE_NAME = "logmessage";
         public static final String CONTENT_URI_PATH = TABLE_NAME;
 

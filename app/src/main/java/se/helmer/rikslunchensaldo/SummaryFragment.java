@@ -62,6 +62,10 @@ public class SummaryFragment extends ListFragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         fragNum = getArguments() != null ? getArguments().getInt("val") : 1;
+        m_adapter = new TransactionCursorAdapter(this, null);
+        setListAdapter(m_adapter);
+        getActivity().getLoaderManager().initLoader(0, null, this);
+
     }
 
     @Override
@@ -77,9 +81,6 @@ public class SummaryFragment extends ListFragment implements
         super.onActivityCreated(savedInstanceState);
 
         update(null);
-        m_adapter = new TransactionCursorAdapter(this, null);
-        setListAdapter(m_adapter);
-        getActivity().getLoaderManager().initLoader(0, null, this);
 
         mAdView = (AdView) getView().findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
@@ -126,7 +127,7 @@ public class SummaryFragment extends ListFragment implements
 
         CursorLoader cursorLoader = new CursorLoader(getActivity(),
                 Contract.Transaction.contentUri, projection, selectionClause, selectionArgs,
-                null);
+                "_id DESC");
 
         return cursorLoader;
     }
@@ -143,10 +144,12 @@ public class SummaryFragment extends ListFragment implements
     }
 
     public void update(Bundle b) {
+        mView = getView();
         if (mView != null) {
-            mBalanceField = (TextView) getView().findViewById(R.id.tvBalance);
-            mCardIdField = (TextView) getView().findViewById(R.id.card_id);
-            mLasttopupField = (TextView) getView().findViewById(R.id.topupdate);
+
+            mBalanceField = (TextView) mView.findViewById(R.id.tvBalance);
+            mCardIdField = (TextView) mView.findViewById(R.id.card_id);
+            mLasttopupField = (TextView) mView.findViewById(R.id.topupdate);
 
             if (b != null) {
                 String balance = b.getString(RikslunchenDatasource.BALANCE);
