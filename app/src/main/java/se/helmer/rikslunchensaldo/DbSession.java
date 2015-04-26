@@ -8,6 +8,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.table.TableUtils;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -140,6 +141,13 @@ public class DbSession {
         }
     }
 
+    Transaction createOrUpdateTransaction(String descr, String balance) {
+        Bundle bundle = new Bundle();
+        bundle.putString(RikslunchenDatasource.BALANCE, balance);
+        bundle.putString(RikslunchenDatasource.MESSAGE, descr);
+        return createOrUpdateTransaction(bundle);
+    }
+
     Transaction createOrUpdateTransaction(Bundle b) {
         Transaction transaction = getLatestTransaction();
         String amountStr = b.getString(RikslunchenDatasource.BALANCE);
@@ -187,4 +195,11 @@ public class DbSession {
         return createLogMessage(b);
     }
 
+    public void deleteLogMessages() {
+        try {
+            TableUtils.clearTable(connectionSource, LogMessage.class);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -25,6 +25,7 @@ public class MyIntentService extends IntentService {
     public static final int SEND_BALANCE = 2;
     public static final int TRANSACTION_DELETE = 3;
     public static final int LOG_MESSAGE_SAVE = 4;
+    public static final int LOG_MESSAGE_DELETE_ALL = 5;
 
     public static final int RETURN_DATA = 10;
 
@@ -52,7 +53,7 @@ public class MyIntentService extends IntentService {
                     String cardId = prefs.getString(RikslunchenDatasource.CARD_ID, "");
                     if (cardId.length() > 0) { // Upgrade from previous version
                         card = session.createOrUpdateCard(prefs);
-                        session.createLogMessage("Upgrading: Using card id " + cardId +
+                        session.createLogMessage("Upgrading database: Using card id " + cardId +
                                 " listed in shared preferences");
                         Utils.clearPreferences(getApplicationContext()); // Prefer database from now on
                     }
@@ -60,32 +61,34 @@ public class MyIntentService extends IntentService {
                 if (card != null) {
                     b = session.fetchSummary(getApplicationContext());
                 }
-                getApplicationContext().getContentResolver().notifyChange(Contract.Transaction.contentUri, null);
-
                 break;
             case SEND_BALANCE:
-                session.createLogMessage("Updating balance");
+                session.createLogMessage("Got balance=" +
+                        b.getString(RikslunchenDatasource.BALANCE) + " from rikslunchen");
                 Card card2 = session.createOrUpdateCard(b);
                 Transaction t = session.createOrUpdateTransaction(b);
                 b = session.fetchSummary(getApplicationContext());
-                getApplicationContext().getContentResolver().notifyChange(Contract.Transaction.contentUri, null);
                 break;
 
             case TRANSACTION_DELETE:
                 int id = b.getInt(Contract.Transaction._ID);
-                session.createLogMessage("Deleting transaction "+id);
                 session.deleteTransaction(id);
-                getApplicationContext().getContentResolver().notifyChange(Contract.Transaction.contentUri, null);
+                session.createLogMessage("Deleted transaction "+id);
                 break;
 
             case LOG_MESSAGE_SAVE:
                 session.createLogMessage(b);
-                getApplicationContext().getContentResolver().notifyChange(Contract.LogMessage.contentUri, null);
                 break;
 
+            case LOG_MESSAGE_DELETE_ALL:
+                session.deleteLogMessages();
+                break;
             default:
                 break;
         }
+
+        getApplicationContext().getContentResolver().notifyChange(Contract.Transaction.contentUri, null);
+        getApplicationContext().getContentResolver().notifyChange(Contract.LogMessage.contentUri, null);
 
         session.close();
         if (receiver != null) {

@@ -1,7 +1,9 @@
 package se.helmer.rikslunchensaldo;
 
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -44,14 +46,33 @@ public class TransactionCursorAdapter extends ResourceCursorAdapter {
         		String txt = button.getText().toString();
     			int id = (Integer) v.getTag();
 
-                Bundle b = new Bundle();
+                final Bundle b = new Bundle();
                 b.putInt(Contract.Transaction._ID, id);
 
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case DialogInterface.BUTTON_POSITIVE:
 
-                final Intent intent = new Intent(context, MyIntentService.class);
-                intent.putExtra("command", MyIntentService.TRANSACTION_DELETE);
-                intent.putExtra(MyIntentService.PAYLOAD, b);
-                ComponentName cm = context.startService(intent);
+                                final Intent intent = new Intent(context, MyIntentService.class);
+                                intent.putExtra("command", MyIntentService.TRANSACTION_DELETE);
+                                intent.putExtra(MyIntentService.PAYLOAD, b);
+                                ComponentName cm = context.startService(intent);
+
+                                break;
+
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                //No button clicked
+                                break;
+                        }
+                    }
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+                        .setNegativeButton("No", dialogClickListener).show();
+
             }});
 
 		return view;

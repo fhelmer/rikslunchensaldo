@@ -1,7 +1,12 @@
 package se.helmer.rikslunchensaldo;
 
+import android.app.AlertDialog;
 import android.app.LoaderManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -41,7 +46,7 @@ LoaderManager.LoaderCallbacks<Cursor> {
     		Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.fragment_log_message, container, false);
-
+        final Context context = getActivity();
 
         final Button b = (Button) v.findViewById(R.id.button_fragmentlog);
         if (b != null) {
@@ -49,9 +54,29 @@ LoaderManager.LoaderCallbacks<Cursor> {
 
                 @Override
                 public void onClick(View v) {
-                    //CrashLog.deleteAll();
+                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which){
+                                case DialogInterface.BUTTON_POSITIVE:
 
-                    getActivity().getContentResolver().notifyChange(Contract.LogMessage.contentUri, null);
+                                    final Intent intent = new Intent(context, MyIntentService.class);
+                                    intent.putExtra("command",
+                                            MyIntentService.LOG_MESSAGE_DELETE_ALL);
+                                    ComponentName cm = context.startService(intent);
+
+                                    break;
+
+                                case DialogInterface.BUTTON_NEGATIVE:
+                                    //No button clicked
+                                    break;
+                            }
+                        }
+                    };
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+                            .setNegativeButton("No", dialogClickListener).show();
                 }
             });
         }
