@@ -1,25 +1,17 @@
 package se.helmer.rikslunchensaldo;
 
-import android.app.Activity;
-import android.app.Fragment;
 import android.app.LoaderManager;
-import android.appwidget.AppWidgetManager;
 import android.content.CursorLoader;
-import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.ResultReceiver;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.android.gms.ads.AdRequest;
@@ -32,7 +24,7 @@ public class SummaryFragment extends ListFragment implements
     private static String TAG = "SummaryFragment";
     int fragNum;
 
-    private TransactionCursorAdapter m_adapter = null;
+    private BankStatementCursorAdapter m_adapter = null;
 
     TextView mBalanceField;
     TextView mLasttopupField;
@@ -62,7 +54,7 @@ public class SummaryFragment extends ListFragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         fragNum = getArguments() != null ? getArguments().getInt("val") : 1;
-        m_adapter = new TransactionCursorAdapter(this, null);
+        m_adapter = new BankStatementCursorAdapter(this, null);
         setListAdapter(m_adapter);
         getActivity().getLoaderManager().initLoader(0, null, this);
 
@@ -117,16 +109,16 @@ public class SummaryFragment extends ListFragment implements
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-        String[] projection = { Contract.Transaction._ID,
-                Contract.Transaction.AMOUNT,
-                Contract.Transaction.BALANCE, Contract.Transaction.DATE,
-                Contract.Transaction.DESCRIPTION};
+        String[] projection = { Contract.BankStatement._ID,
+                Contract.BankStatement.AMOUNT,
+                Contract.BankStatement.BALANCE, Contract.BankStatement.DATE,
+                Contract.BankStatement.DESCRIPTION};
 
         String selectionClause = null;
         String[] selectionArgs = null;
 
         CursorLoader cursorLoader = new CursorLoader(getActivity(),
-                Contract.Transaction.contentUri, projection, selectionClause, selectionArgs,
+                Contract.BankStatement.contentUri, projection, selectionClause, selectionArgs,
                 "_id DESC");
 
         return cursorLoader;

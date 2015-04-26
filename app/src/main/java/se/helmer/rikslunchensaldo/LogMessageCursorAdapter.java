@@ -27,7 +27,7 @@ public class LogMessageCursorAdapter extends ResourceCursorAdapter {
 	private final ResultReceiver m_result_receiver = null;
 
     public LogMessageCursorAdapter(Fragment fragment, Cursor c) {
-        super(fragment.getActivity(), R.layout.rowbuttonlayout, c);
+        super(fragment.getActivity(), R.layout.rowlayout, c);
 	}
 
 	@Override
@@ -39,10 +39,8 @@ public class LogMessageCursorAdapter extends ResourceCursorAdapter {
 
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
-        // Crash crash = Crash.makeObject(cursor);
-
-        TextView row1 = (TextView) view.findViewById(R.id.row1);
-        TextView row2 = (TextView) view.findViewById(R.id.row2);
+        TextView row1 = (TextView) view.findViewById(R.id.logrow1);
+        TextView row2 = (TextView) view.findViewById(R.id.logrow2);
 
         String dateStr = cursor.getString(cursor.getColumnIndex(Contract.LogMessage.DATE));
         String description = cursor.getString(cursor.getColumnIndex(Contract.LogMessage.DESCRIPTION));
@@ -61,8 +59,5 @@ public class LogMessageCursorAdapter extends ResourceCursorAdapter {
         row1.setText(datestr2);
         row2.setText(description);
 
-        Button actionButton = (Button) view.findViewById(R.id.action_button);
-
-        actionButton.setTag(id);
 	}
 }

@@ -8,11 +8,11 @@ public class Contract {
     public static final String DATABASE_NAME = "MyDatabase";
     public static final int DATABASE_VERSION = 1;
 
-    public static class Transaction implements BaseColumns
+    public static class BankStatement implements BaseColumns
     {
-        public static final String AUTHORITY = "se.helmer.rikslunchensaldo.transactionprovider";
+        public static final String AUTHORITY = "se.helmer.rikslunchensaldo.bankstatementprovider";
 
-        public static final String TABLE_NAME = "transactions";
+        public static final String TABLE_NAME = "bankstatements";
         public static final String CONTENT_URI_PATH = TABLE_NAME;
 
         public static final String MIMETYPE_TYPE = TABLE_NAME;

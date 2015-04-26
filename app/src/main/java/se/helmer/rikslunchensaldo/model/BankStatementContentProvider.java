@@ -1,12 +1,11 @@
 package se.helmer.rikslunchensaldo.model;
 
 
-import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.tojc.ormlite.android.OrmLiteSimpleContentProvider;
 import com.tojc.ormlite.android.framework.MatcherController;
 import com.tojc.ormlite.android.framework.MimeTypeVnd;
 
-public class TransactionContentProvider extends OrmLiteSimpleContentProvider<RikslunchenDatabaseHelper> {
+public class BankStatementContentProvider extends OrmLiteSimpleContentProvider<RikslunchenDatabaseHelper> {
 
     @Override
     protected Class<RikslunchenDatabaseHelper> getHelperClass()
@@ -18,10 +17,10 @@ public class TransactionContentProvider extends OrmLiteSimpleContentProvider<Rik
     public boolean onCreate()
     {
         setMatcherController(new MatcherController()
-                        .add(Transaction.class, MimeTypeVnd.SubType.DIRECTORY, "",
-                                Contract.Transaction.CONTENT_URI_PATTERN_MANY)
-                        .add(Transaction.class, MimeTypeVnd.SubType.ITEM, "#",
-                                Contract.Transaction.CONTENT_URI_PATTERN_ONE)
+                        .add(BankStatement.class, MimeTypeVnd.SubType.DIRECTORY, "",
+                                Contract.BankStatement.CONTENT_URI_PATTERN_MANY)
+                        .add(BankStatement.class, MimeTypeVnd.SubType.ITEM, "#",
+                                Contract.BankStatement.CONTENT_URI_PATTERN_ONE)
         );
         return true;
     }

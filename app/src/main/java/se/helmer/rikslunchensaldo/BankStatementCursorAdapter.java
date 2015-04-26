@@ -16,7 +16,6 @@ import android.widget.Button;
 import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
 
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -24,12 +23,12 @@ import java.util.Locale;
 
 import se.helmer.rikslunchensaldo.model.Contract;
 
-public class TransactionCursorAdapter extends ResourceCursorAdapter {
+public class BankStatementCursorAdapter extends ResourceCursorAdapter {
 
 	private static String TAG = "TransactionCursorAdapter";
 	private final ResultReceiver m_result_receiver = null;
 
-    public TransactionCursorAdapter(Fragment fragment, Cursor c) {
+    public BankStatementCursorAdapter(Fragment fragment, Cursor c) {
         super(fragment.getActivity(), R.layout.rowbuttonlayout, c);
 	}
 
@@ -47,7 +46,7 @@ public class TransactionCursorAdapter extends ResourceCursorAdapter {
     			int id = (Integer) v.getTag();
 
                 final Bundle b = new Bundle();
-                b.putInt(Contract.Transaction._ID, id);
+                b.putInt(Contract.BankStatement._ID, id);
 
                 DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                     @Override
@@ -85,10 +84,10 @@ public class TransactionCursorAdapter extends ResourceCursorAdapter {
         TextView row1 = (TextView) view.findViewById(R.id.row1);
         TextView row2 = (TextView) view.findViewById(R.id.row2);
 
-        String amount = cursor.getString(cursor.getColumnIndex(Contract.Transaction.AMOUNT));
-        String balance = cursor.getString(cursor.getColumnIndex(Contract.Transaction.BALANCE));
+        String amount = cursor.getString(cursor.getColumnIndex(Contract.BankStatement.AMOUNT));
+        String balance = cursor.getString(cursor.getColumnIndex(Contract.BankStatement.BALANCE));
 
-        String datestr = cursor.getString(cursor.getColumnIndex(Contract.Transaction.DATE));
+        String datestr = cursor.getString(cursor.getColumnIndex(Contract.BankStatement.DATE));
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
         Date parsedDate = null;
         try {
@@ -99,7 +98,7 @@ public class TransactionCursorAdapter extends ResourceCursorAdapter {
         }
 
         String datestr2 = Utils.getFormattedTimeString(Utils.GmtToLocal(parsedDate));
-        int id = cursor.getInt(cursor.getColumnIndex(Contract.Transaction._ID));
+        int id = cursor.getInt(cursor.getColumnIndex(Contract.BankStatement._ID));
         row1.setText(datestr2);
         row2.setText(String.format("%-15s %-15s", amount, balance));
 

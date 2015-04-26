@@ -1,11 +1,8 @@
 package se.helmer.rikslunchensaldo;
 
-import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -24,17 +21,7 @@ import android.os.ResultReceiver;
 import android.util.Log;
 import android.widget.RemoteViews;
 
-import com.j256.ormlite.android.AndroidConnectionSource;
-import com.j256.ormlite.android.apptools.OpenHelperManager;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.GenericRawResults;
-import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.support.ConnectionSource;
-
-import se.helmer.rikslunchensaldo.model.Card;
 import se.helmer.rikslunchensaldo.model.Contract;
-import se.helmer.rikslunchensaldo.model.RikslunchenDatabaseHelper;
-import se.helmer.rikslunchensaldo.model.Transaction;
 
 public class Utils {
 

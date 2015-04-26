@@ -59,8 +59,8 @@
 
         <provider
             android:exported="false"
-            android:name=".model.TransactionContentProvider"
-            android:authorities="se.helmer.rikslunchensaldo.transactionprovider" >
+            android:name=".model.BankStatementContentProvider"
+            android:authorities="se.helmer.rikslunchensaldo.bankstatementprovider" >
         </provider>
 
         <provider

@@ -20,8 +20,8 @@ import se.helmer.rikslunchensaldo.Utils;
  */
 public class RikslunchenDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
-    private Dao<Transaction, Integer> transactionDao = null;
-    private RuntimeExceptionDao<Transaction, Integer> transactionRuntimeDao = null;
+    private Dao<BankStatement, Integer> bankStatementDao = null;
+    private RuntimeExceptionDao<BankStatement, Integer> bankStatementRuntimeDao = null;
 
     private Dao<Card, Integer> cardDao = null;
     private RuntimeExceptionDao<Card, Integer> cardRuntimeDao = null;
@@ -47,7 +47,7 @@ public class RikslunchenDatabaseHelper extends OrmLiteSqliteOpenHelper {
     public void onCreate(SQLiteDatabase db, ConnectionSource connectionSource) {
         try {
             Utils.debug(RikslunchenDatabaseHelper.class.getName(), "onCreate");
-            TableUtils.createTableIfNotExists(connectionSource, Transaction.class);
+            TableUtils.createTableIfNotExists(connectionSource, BankStatement.class);
             TableUtils.createTableIfNotExists(connectionSource, EnterButton.class);
             TableUtils.createTableIfNotExists(connectionSource, Card.class);
             TableUtils.createTableIfNotExists(connectionSource, LogMessage.class);
@@ -68,7 +68,7 @@ public class RikslunchenDatabaseHelper extends OrmLiteSqliteOpenHelper {
                           int newVersion) {
         try {
             Utils.log(RikslunchenDatabaseHelper.class.getName(), "onUpgrade");
-            TableUtils.dropTable(connectionSource, Transaction.class, true);
+            TableUtils.dropTable(connectionSource, BankStatement.class, true);
             TableUtils.dropTable(connectionSource, EnterButton.class, true);
             TableUtils.dropTable(connectionSource, Card.class, true);
             TableUtils.dropTable(connectionSource, LogMessage.class, true);
@@ -81,18 +81,18 @@ public class RikslunchenDatabaseHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
-    public Dao<Transaction, Integer> getTransactionDao() throws SQLException {
-        if (transactionDao == null) {
-            transactionDao = getDao(Transaction.class);
+    public Dao<BankStatement, Integer> getBankStatementDao() throws SQLException {
+        if (bankStatementDao == null) {
+            bankStatementDao = getDao(BankStatement.class);
         }
-        return transactionDao;
+        return bankStatementDao;
     }
 
-    public RuntimeExceptionDao<Transaction, Integer> getRuntimeExceptionTransactionDao() {
-        if (transactionRuntimeDao == null) {
-            transactionRuntimeDao = getRuntimeExceptionDao(Transaction.class);
+    public RuntimeExceptionDao<BankStatement, Integer> getRuntimeExceptionTransactionDao() {
+        if (bankStatementRuntimeDao == null) {
+            bankStatementRuntimeDao = getRuntimeExceptionDao(BankStatement.class);
         }
-        return transactionRuntimeDao;
+        return bankStatementRuntimeDao;
     }
 
     public Dao<Card, Integer> getCardDao() throws SQLException {
@@ -126,8 +126,8 @@ public class RikslunchenDatabaseHelper extends OrmLiteSqliteOpenHelper {
     @Override
     public void close() {
         super.close();
-        transactionDao = null;
-        transactionRuntimeDao = null;
+        bankStatementDao = null;
+        bankStatementRuntimeDao = null;
         cardDao = null;
         cardRuntimeDao = null;
         logMessageDao = null;

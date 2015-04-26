@@ -12,14 +12,13 @@ import com.j256.ormlite.table.TableUtils;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.List;
 
+import se.helmer.rikslunchensaldo.model.BankStatement;
 import se.helmer.rikslunchensaldo.model.Card;
 import se.helmer.rikslunchensaldo.model.Contract;
 import se.helmer.rikslunchensaldo.model.LogMessage;
 import se.helmer.rikslunchensaldo.model.RikslunchenDatabaseHelper;
-import se.helmer.rikslunchensaldo.model.Transaction;
 
 /**
  * The purpose is to encapsulate some commanly used database operations here. For db connections,
@@ -42,8 +41,8 @@ public class DbSession {
         return connectionSource;
     }
 
-    public Dao<Transaction, Integer> getTransactionDao() throws SQLException {
-        return rikslunchenDatabaseHelper.getTransactionDao();
+    public Dao<BankStatement, Integer> getBankStatementDao() throws SQLException {
+        return rikslunchenDatabaseHelper.getBankStatementDao();
     }
 
     public Dao<Card, Integer> getCardDao() throws SQLException {
@@ -102,10 +101,10 @@ public class DbSession {
     Bundle fetchSummary(Context context) {
         Card card = getCard();
         Bundle b = new Bundle();
-        Transaction transaction = getLatestTransaction();
-        if (transaction != null) {
-            b.putString(RikslunchenDatasource.BALANCE, transaction.getBalance().toString());
-            b.putString(RikslunchenDatasource.LATEST_UPDATE, transaction.getDate().toString());
+        BankStatement bankStatement = getLatestBankStatement();
+        if (bankStatement != null) {
+            b.putString(RikslunchenDatasource.BALANCE, bankStatement.getBalance().toString());
+            b.putString(RikslunchenDatasource.LATEST_UPDATE, bankStatement.getDate().toString());
         }
         if (card != null) {
             b.putString(RikslunchenDatasource.CARD_ID, card.getCardId());
@@ -115,67 +114,67 @@ public class DbSession {
         return b;
     }
 
-    Transaction getLatestTransaction() {
-        Transaction transaction = null;
+    BankStatement getLatestBankStatement() {
+        BankStatement bankStatement = null;
         try {
-            QueryBuilder<Transaction, Integer> qb = getTransactionDao().queryBuilder();
+            QueryBuilder<BankStatement, Integer> qb = getBankStatementDao().queryBuilder();
             qb.selectRaw("MAX(_id)");
             GenericRawResults<String[]> results =
-                    getTransactionDao().queryRaw(qb.prepareStatementString());
+                    getBankStatementDao().queryRaw(qb.prepareStatementString());
             String[] values = new String[0];
             values = results.getFirstResult();
             if (values.length > 0 && values[0] != null) {
-                transaction = getTransactionDao().queryForId(Integer.valueOf(values[0]));
+                bankStatement = getBankStatementDao().queryForId(Integer.valueOf(values[0]));
             }
         } catch (SQLException e){
             e.printStackTrace();
         }
-        return transaction;
+        return bankStatement;
     }
 
-    void deleteTransaction(int id) {
+    void deleteBankStatement(int id) {
         try {
-            getTransactionDao().deleteById(id);
+            getBankStatementDao().deleteById(id);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    Transaction createOrUpdateTransaction(String descr, String balance) {
+    BankStatement createOrUpdateBankStatement(String descr, String balance) {
         Bundle bundle = new Bundle();
         bundle.putString(RikslunchenDatasource.BALANCE, balance);
         bundle.putString(RikslunchenDatasource.MESSAGE, descr);
-        return createOrUpdateTransaction(bundle);
+        return createOrUpdateBankStatement(bundle);
     }
 
-    Transaction createOrUpdateTransaction(Bundle b) {
-        Transaction transaction = getLatestTransaction();
+    BankStatement createOrUpdateBankStatement(Bundle b) {
+        BankStatement bankStatement = getLatestBankStatement();
         String amountStr = b.getString(RikslunchenDatasource.BALANCE);
         String description = b.getString(RikslunchenDatasource.MESSAGE);
         BigDecimal balance = new BigDecimal(amountStr.replace(',','.'));
         BigDecimal amount = new BigDecimal("0");
         boolean createNew = true;
         try {
-            if (transaction != null) {
-                if (transaction.getBalance().compareTo(balance) == 0) {
-                    transaction.updateTimestamp();
-                    getTransactionDao().update(transaction);
+            if (bankStatement != null) {
+                if (bankStatement.getBalance().compareTo(balance) == 0) {
+                    bankStatement.updateTimestamp();
+                    getBankStatementDao().update(bankStatement);
                     createNew = false;
                 } else {
-                    amount = balance.subtract(transaction.getBalance());
+                    amount = balance.subtract(bankStatement.getBalance());
                 }
             }
 
             if (createNew) {
-                transaction =
-                        new Transaction(description, amount, balance);
-                getTransactionDao().create(transaction);
+                bankStatement =
+                        new BankStatement(description, amount, balance);
+                getBankStatementDao().create(bankStatement);
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            Utils.error("createOrUpdateTransaction",""+e);
+            Utils.error("createOrUpdateBankStatement",""+e);
         }
-        return transaction;
+        return bankStatement;
     }
 
     LogMessage createLogMessage(Bundle b) {

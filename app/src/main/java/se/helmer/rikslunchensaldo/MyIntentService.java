@@ -1,8 +1,5 @@
 package se.helmer.rikslunchensaldo;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +8,6 @@ import android.os.ResultReceiver;
 
 import se.helmer.rikslunchensaldo.model.Card;
 import se.helmer.rikslunchensaldo.model.Contract;
-import se.helmer.rikslunchensaldo.model.Transaction;
 
 public class MyIntentService extends IntentService {
 
@@ -66,14 +62,14 @@ public class MyIntentService extends IntentService {
                 session.createLogMessage("Got balance=" +
                         b.getString(RikslunchenDatasource.BALANCE) + " from rikslunchen");
                 Card card2 = session.createOrUpdateCard(b);
-                Transaction t = session.createOrUpdateTransaction(b);
+                se.helmer.rikslunchensaldo.model.BankStatement t = session.createOrUpdateBankStatement(b);
                 b = session.fetchSummary(getApplicationContext());
                 break;
 
             case TRANSACTION_DELETE:
-                int id = b.getInt(Contract.Transaction._ID);
-                session.deleteTransaction(id);
-                session.createLogMessage("Deleted transaction "+id);
+                int id = b.getInt(Contract.BankStatement._ID);
+                session.deleteBankStatement(id);
+                session.createLogMessage("Deleted transaction " + id);
                 break;
 
             case LOG_MESSAGE_SAVE:
@@ -87,7 +83,7 @@ public class MyIntentService extends IntentService {
                 break;
         }
 
-        getApplicationContext().getContentResolver().notifyChange(Contract.Transaction.contentUri, null);
+        getApplicationContext().getContentResolver().notifyChange(Contract.BankStatement.contentUri, null);
         getApplicationContext().getContentResolver().notifyChange(Contract.LogMessage.contentUri, null);
 
         session.close();
