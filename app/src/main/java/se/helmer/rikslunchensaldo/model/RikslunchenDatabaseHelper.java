@@ -29,6 +29,12 @@ public class RikslunchenDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private Dao<LogMessage, Integer> logMessageDao = null;
     private RuntimeExceptionDao<LogMessage, Integer> logMessageRuntimeDao = null;
 
+    private Dao<EnterButton, Integer> enterButtonDao = null;
+    private RuntimeExceptionDao<EnterButton, Integer> enterButtonRuntimeDao = null;
+
+    private Dao<Contract.Transaction, Integer> transactionDao = null;
+    private RuntimeExceptionDao<LogMessage, Integer> transactionRuntimeDao = null;
+
     public RikslunchenDatabaseHelper(Context context)
     {
         super(context,
@@ -50,6 +56,7 @@ public class RikslunchenDatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTableIfNotExists(connectionSource, BankStatement.class);
             TableUtils.createTableIfNotExists(connectionSource, EnterButton.class);
             TableUtils.createTableIfNotExists(connectionSource, Card.class);
+            TableUtils.createTableIfNotExists(connectionSource, Transaction.class);
             TableUtils.createTableIfNotExists(connectionSource, LogMessage.class);
 
         } catch (SQLException e) {
@@ -72,6 +79,7 @@ public class RikslunchenDatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.dropTable(connectionSource, EnterButton.class, true);
             TableUtils.dropTable(connectionSource, Card.class, true);
             TableUtils.dropTable(connectionSource, LogMessage.class, true);
+            TableUtils.dropTable(connectionSource, Transaction.class, true);
 
             // after we drop the old databases, we create the new ones
             onCreate(db, connectionSource);
@@ -132,7 +140,10 @@ public class RikslunchenDatabaseHelper extends OrmLiteSqliteOpenHelper {
         cardRuntimeDao = null;
         logMessageDao = null;
         logMessageRuntimeDao = null;
-
+        transactionDao = null;
+        transactionRuntimeDao = null;
+        enterButtonDao = null;
+        enterButtonRuntimeDao = null;
     }
 }
 

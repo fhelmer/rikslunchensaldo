@@ -20,6 +20,10 @@
             </intent-filter>
         </activity>
 
+        <activity android:name="se.helmer.rikslunchensaldo.SettingsActivity"
+            android:label="@string/settings">
+        </activity>
+
 
         <service android:exported="false" android:name=".MyIntentService"/>
 

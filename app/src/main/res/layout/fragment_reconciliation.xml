@@ -5,62 +5,30 @@
     android:layout_height="fill_parent"
     android:layout_column="0">
 
-    <TableLayout
-        android:id="@+id/tableLayout1"
+    <LinearLayout
+        android:id="@+id/buttonLayout"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
-
-        <TableRow
-            android:id="@+id/buttonRow"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:padding="5dip" >
-
-            <Button
-                android:id="@+id/button_amount1"
-                android:text="50"
-                android:layout_width="0pt"
-                android:layout_weight="1" />
-            <Button
-                android:id="@+id/button_amount2"
-                android:text="75"
-                android:layout_width="0pt"
-                android:layout_weight="1" />
-            <Button
-                android:id="@+id/button_edit_amounts"
-                android:text="Edit..."
-                android:layout_width="0pt"
-                android:layout_weight="1" />
-
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/tableRow5"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:padding="5dip" >
-
-            <Button
-                android:id="@+id/button_other_amount"
-                android:text="Other amount"
-                android:layout_width="0pt"
-                android:layout_weight="1" />
-
-
-            <Button
-                android:id="@+id/button_reconciliation_reset"
-                android:text="Reset"
-                android:layout_width="0pt"
-                android:layout_weight="1" />
-        </TableRow>
-
-    </TableLayout>
-
+        android:layout_height="wrap_content">
+        
+        <Button
+            android:layout_width="100dp"
+            android:text="Edit buttons"
+            android:layout_height="wrap_content" />
+        <Button
+            android:layout_width="100dp"
+            android:text="Other amount"
+            android:layout_height="wrap_content" />
+        <Button
+            android:layout_width="100dp"
+            android:text="Reset"
+            android:layout_height="wrap_content" />
+        </LinearLayout>
+    
     <ListView
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
         android:id="@+id/android:list"
-        android:layout_below="@id/tableLayout1"
+        android:layout_below="@id/buttonLayout"
         android:layout_above="@+id/adView"/>
 
     <com.google.android.gms.ads.AdView
