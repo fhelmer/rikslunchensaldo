@@ -12,14 +12,17 @@
         
         <Button
             android:layout_width="100dp"
+            android:id="@+id/reconcililation_edit_buttons"
             android:text="Edit buttons"
             android:layout_height="wrap_content" />
         <Button
             android:layout_width="100dp"
+            android:id="@+id/reconcililation_other_amount_button"
             android:text="Other amount"
             android:layout_height="wrap_content" />
         <Button
             android:layout_width="100dp"
+            android:id="@+id/reconcililation_reset"
             android:text="Reset"
             android:layout_height="wrap_content" />
         </LinearLayout>

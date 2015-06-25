@@ -1,20 +1,27 @@
 package se.helmer.rikslunchensaldo;
 
+import android.app.AlertDialog;
 import android.app.LoaderManager;
+import android.content.ComponentName;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
+import se.helmer.rikslunchensaldo.model.Card;
 import se.helmer.rikslunchensaldo.model.Contract;
 
 public class ReconciliationFragment extends ListFragment implements
@@ -25,6 +32,8 @@ public class ReconciliationFragment extends ListFragment implements
     private TransactionCursorAdapter m_adapter = null;
     AdView mAdView;
     View mView;
+    Button mEditEnterButtons;
+    Button mReset;
 
     static ReconciliationFragment init(int val) {
         ReconciliationFragment reconciliationFragment = new ReconciliationFragment();
@@ -63,6 +72,45 @@ public class ReconciliationFragment extends ListFragment implements
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        mEditEnterButtons = (Button) getView().findViewById(R.id.reconcililation_edit_buttons);
+        mEditEnterButtons.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+
+                alert.setTitle("Please enter amounts for the short-cut buttons");
+                alert.setMessage("The amounts should be separated by space");
+
+                final EditText input = new EditText(getActivity());
+                input.setInputType(InputType.TYPE_CLASS_NUMBER);
+                alert.setView(input);
+                alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String value = input.getText().toString().trim();
+
+                        final Intent intent = new Intent(getActivity(), MyIntentService.class);
+                        intent.putExtra(MyIntentService.COMMAND,
+                                MyIntentService.ENTER_BUTTONS_UPDATE);
+                        intent.putExtra(MyIntentService.RECEIVER, MainActivity.getReceiver());
+                        intent.putExtra(Contract.EnterButton.DESCRIPTION,"description");
+                        intent.putExtra(Contract.EnterButton.AMOUNT,"123.12");
+                        ComponentName cm = getActivity().startService(intent);
+                        dialog.dismiss();
+                    }
+                });
+
+                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.dismiss();
+                    }
+                });
+
+                alert.show();
+
+            }
+        });
+
         update(null);
 
         mAdView = (AdView) getView().findViewById(R.id.adView);
@@ -126,6 +174,7 @@ public class ReconciliationFragment extends ListFragment implements
     public void update(Bundle b) {
         mView = getView();
         if (mView != null) {
+
             LinearLayout buttonLayout  = (LinearLayout) mView.findViewById(R.id.buttonLayout);
             Button myButton = new Button(getActivity());
             myButton.setText("Gagag");

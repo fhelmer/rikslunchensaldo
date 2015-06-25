@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 
+import se.helmer.rikslunchensaldo.model.BankStatement;
 import se.helmer.rikslunchensaldo.model.Card;
 import se.helmer.rikslunchensaldo.model.Contract;
 
@@ -22,6 +23,7 @@ public class MyIntentService extends IntentService {
     public static final int TRANSACTION_DELETE = 3;
     public static final int LOG_MESSAGE_SAVE = 4;
     public static final int LOG_MESSAGE_DELETE_ALL = 5;
+    public static final int ENTER_BUTTONS_UPDATE = 6;
 
     public static final int RETURN_DATA = 10;
 
@@ -62,7 +64,7 @@ public class MyIntentService extends IntentService {
                 session.createLogMessage("Got balance=" +
                         b.getString(RikslunchenDatasource.BALANCE) + " from rikslunchen");
                 Card card2 = session.createOrUpdateCard(b);
-                se.helmer.rikslunchensaldo.model.BankStatement t = session.createOrUpdateBankStatement(b);
+                BankStatement t = session.createOrUpdateBankStatement(b);
                 b = session.fetchSummary(getApplicationContext());
                 break;
 
@@ -79,6 +81,10 @@ public class MyIntentService extends IntentService {
             case LOG_MESSAGE_DELETE_ALL:
                 session.deleteLogMessages();
                 break;
+            case ENTER_BUTTONS_UPDATE:
+                // TODO session.createOrUpdateCard(b);
+                session.createLogMessage("Updated enterbuttons " +
+                        b.getString(Contract.EnterButton.DESCRIPTION));
             default:
                 break;
         }

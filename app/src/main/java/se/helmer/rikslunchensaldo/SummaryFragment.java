@@ -34,9 +34,6 @@ public class SummaryFragment extends ListFragment implements
     AdView mAdView;
     View mView;
 
-    private SharedPreferences mSharedPrefs;
-    private SharedPreferences.Editor mPrefsEditor;
-
     public static final String APP_SHARED_PREFS = "se.helmer.riksbankensaldo_prefs";
 
     ResultReceiver mReceiver;
