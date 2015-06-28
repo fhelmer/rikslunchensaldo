@@ -1,18 +1,13 @@
 package se.helmer.rikslunchensaldo;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.ResultReceiver;
-import android.support.v4.app.Fragment;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 import se.helmer.rikslunchensaldo.model.Contract;
 
@@ -21,8 +16,8 @@ public class EnterButtonCursorAdapter extends ResourceCursorAdapter {
 	private static String TAG = "EnterButtonCursorAdapter";
 	private final ResultReceiver m_result_receiver = null;
 
-    public EnterButtonCursorAdapter(Fragment fragment, Cursor c) {
-        super(fragment.getActivity(), R.layout.rowlayout, c);
+    public EnterButtonCursorAdapter(Activity activity, Cursor c) {
+        super(activity, R.layout.rowbuttonlayout, c);
 	}
 
 	@Override

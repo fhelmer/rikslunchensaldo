@@ -73,6 +73,12 @@
             android:authorities="se.helmer.rikslunchensaldo.logmessageprovider" >
         </provider>
 
+        <provider
+            android:exported="false"
+            android:name=".model.EnterButtonContentProvider"
+            android:authorities="se.helmer.rikslunchensaldo.enterbuttonprovider" >
+        </provider>
+
         <activity android:name="com.google.android.gms.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:theme="@android:style/Theme.Translucent" />
