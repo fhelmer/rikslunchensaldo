@@ -33,6 +33,7 @@ public class ReconciliationFragment extends ListFragment implements
     AdView mAdView;
     View mView;
     Button mEditEnterButtons;
+    Button mOtherAmountButton;
     Button mReset;
 
     static ReconciliationFragment init(int val) {
@@ -77,25 +78,28 @@ public class ReconciliationFragment extends ListFragment implements
         mEditEnterButtons.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), EnterButtonActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        mOtherAmountButton =
+                (Button) getView().findViewById(R.id.reconcililation_other_amount_button);
+        mOtherAmountButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
 
-                alert.setTitle("Please enter amounts for the short-cut buttons");
-                alert.setMessage("The amounts should be separated by space");
+                alert.setTitle("Please enter amount");
+                alert.setMessage("Amount: ");
 
                 final EditText input = new EditText(getActivity());
                 input.setInputType(InputType.TYPE_CLASS_NUMBER);
                 alert.setView(input);
+
                 alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         String value = input.getText().toString().trim();
-
-                        final Intent intent = new Intent(getActivity(), MyIntentService.class);
-                        intent.putExtra(MyIntentService.COMMAND,
-                                MyIntentService.ENTER_BUTTONS_UPDATE);
-                        intent.putExtra(MyIntentService.RECEIVER, MainActivity.getReceiver());
-                        intent.putExtra(Contract.EnterButton.DESCRIPTION,"description");
-                        intent.putExtra(Contract.EnterButton.AMOUNT,"123.12");
-                        ComponentName cm = getActivity().startService(intent);
                         dialog.dismiss();
                     }
                 });
@@ -107,7 +111,6 @@ public class ReconciliationFragment extends ListFragment implements
                 });
 
                 alert.show();
-
             }
         });
 
@@ -174,15 +177,16 @@ public class ReconciliationFragment extends ListFragment implements
     public void update(Bundle b) {
         mView = getView();
         if (mView != null) {
-
+            Button a75 = new Button(getActivity());
+            a75.setText("75");
+            Button a50 = new Button(getActivity());
+            a50.setText("50");
             LinearLayout buttonLayout  = (LinearLayout) mView.findViewById(R.id.buttonLayout);
-            Button myButton = new Button(getActivity());
-            myButton.setText("Gagag");
-            myButton.setWidth(50);
             LinearLayout.LayoutParams lp =
                     new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                             LinearLayout.LayoutParams.WRAP_CONTENT);
-            buttonLayout.addView(myButton, lp);
+            buttonLayout.addView(a50, lp);
+            buttonLayout.addView(a75, lp);
         }
 
     }

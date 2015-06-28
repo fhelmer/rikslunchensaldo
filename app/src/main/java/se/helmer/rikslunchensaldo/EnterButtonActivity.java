@@ -34,6 +34,8 @@ LoaderManager.LoaderCallbacks<Cursor> {
     @Override
     public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
         super.onCreate(savedInstanceState, persistentState);
+        setContentView(R.layout.activity_enter_buttons);
+        fillData();
     }
 
    public  void fillData() {
@@ -41,13 +43,6 @@ LoaderManager.LoaderCallbacks<Cursor> {
         setListAdapter(m_adapter);
         getLoaderManager().initLoader(3, null, this);
         Utils.log(TAG, "fillData");
-    }
-
-        @Override
-    public void onDestroy() {
-        // TODO Auto-generated method stub
-        super.onDestroy();
-        Utils.log(TAG,"onDestroy");
     }
 
     @Override
