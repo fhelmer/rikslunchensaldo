@@ -96,7 +96,7 @@ LoaderManager.LoaderCallbacks<Cursor> {
 
         m_adapter = new LogMessageCursorAdapter(this, null);
         setListAdapter(m_adapter);
-        getActivity().getLoaderManager().initLoader(2, null, this);
+        getActivity().getLoaderManager().initLoader(MainActivity.LOG, null, this);
         Utils.log(TAG, "fillData");
     }
 

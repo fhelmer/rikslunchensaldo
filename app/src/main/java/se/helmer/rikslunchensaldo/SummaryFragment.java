@@ -53,7 +53,7 @@ public class SummaryFragment extends ListFragment implements
         fragNum = getArguments() != null ? getArguments().getInt("val") : 1;
         m_adapter = new BankStatementCursorAdapter(this, null);
         setListAdapter(m_adapter);
-        getActivity().getLoaderManager().initLoader(0, null, this);
+        getActivity().getLoaderManager().initLoader(MainActivity.SUMMARY, null, this);
 
     }
 

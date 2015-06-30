@@ -55,7 +55,7 @@ public class ReconciliationFragment extends ListFragment implements
         super.onCreate(savedInstanceState);
         fragNum = getArguments() != null ? getArguments().getInt("val") : 1;
         m_adapter = new TransactionCursorAdapter(this, null);
-        getActivity().getLoaderManager().initLoader(1, null, this);
+        getActivity().getLoaderManager().initLoader(MainActivity.RECONCILIATION, null, this);
     }
 
     /**
@@ -181,7 +181,8 @@ public class ReconciliationFragment extends ListFragment implements
             a75.setText("75");
             Button a50 = new Button(getActivity());
             a50.setText("50");
-            LinearLayout buttonLayout  = (LinearLayout) mView.findViewById(R.id.buttonLayout);
+            LinearLayout buttonLayout  = (LinearLayout) mView.findViewById(R.id.dynamicButtonLayout);
+            buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
             LinearLayout.LayoutParams lp =
                     new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                             LinearLayout.LayoutParams.WRAP_CONTENT);

@@ -26,22 +26,22 @@ import se.helmer.rikslunchensaldo.model.Contract;
 public class EnterButtonActivity extends ListActivity implements
 LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static String TAG = "EnterButtonFragment";
+    private static String TAG = "EnterButtonActivityt";
 
     private EnterButtonCursorAdapter m_adapter = null;
 
 
     @Override
-    public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enter_buttons);
         fillData();
     }
 
-   public  void fillData() {
+    public  void fillData() {
         m_adapter = new EnterButtonCursorAdapter(this, null);
         setListAdapter(m_adapter);
-        getLoaderManager().initLoader(3, null, this);
+        getLoaderManager().initLoader(MainActivity.ENTER_BUTTON, null, this);
         Utils.log(TAG, "fillData");
     }
 

@@ -17,9 +17,9 @@ public class EnterButtonContentProvider extends OrmLiteSimpleContentProvider<Rik
     public boolean onCreate()
     {
         setMatcherController(new MatcherController()
-                        .add(LogMessage.class, MimeTypeVnd.SubType.DIRECTORY, "",
+                        .add(EnterButton.class, MimeTypeVnd.SubType.DIRECTORY, "",
                                 Contract.EnterButton.CONTENT_URI_PATTERN_MANY)
-                        .add(LogMessage.class, MimeTypeVnd.SubType.ITEM, "#",
+                        .add(EnterButton.class, MimeTypeVnd.SubType.ITEM, "#",
                                 Contract.EnterButton.CONTENT_URI_PATTERN_ONE)
         );
         return true;

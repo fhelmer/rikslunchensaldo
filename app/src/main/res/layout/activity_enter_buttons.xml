@@ -25,6 +25,7 @@
 
             <EditText  android:id="@+id/enter_button_description"
                 android:textAppearance="?android:attr/textAppearanceMedium"
+                android:inputType="text"
                 android:layout_width="0dp"
                 android:layout_weight="1"/>
 
@@ -45,6 +46,7 @@
 
             <EditText  android:id="@+id/enter_button_amount"
                 android:textAppearance="?android:attr/textAppearanceMedium"
+                android:inputType="numberDecimal"
                 android:layout_width="0dp"
                 android:layout_weight="1"/>
 

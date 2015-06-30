@@ -30,9 +30,11 @@ public class MainActivity extends FragmentActivity
     ViewPager mPager;
     private static MyResultReceiver mReceiver;
 
+    // List of cursor loaders.
     public static final int SUMMARY = 0;
     public static final int RECONCILIATION = 1;
     public static final int LOG = 2;
+    public static final int ENTER_BUTTON = 3;
 
     public static ResultReceiver getReceiver() {
         return mReceiver;

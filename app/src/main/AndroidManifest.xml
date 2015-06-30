@@ -24,6 +24,9 @@
             android:label="@string/settings">
         </activity>
 
+        <activity android:name=".EnterButtonActivity"
+            android:label="@string/enter_button_activity_name">
+        </activity>
 
         <service android:exported="false" android:name=".MyIntentService"/>
 

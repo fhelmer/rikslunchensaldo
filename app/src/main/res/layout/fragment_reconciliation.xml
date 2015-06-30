@@ -7,31 +7,44 @@
 
     <LinearLayout
         android:id="@+id/buttonLayout"
+        android:orientation="horizontal"
+        android:weightSum="3"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
         
         <Button
-            android:layout_width="100dp"
             android:id="@+id/reconcililation_edit_buttons"
             android:text="Edit buttons"
-            android:layout_height="wrap_content" />
+            android:layout_weight="1"
+            android:layout_height="fill_parent"
+            android:layout_width="match_parent" />
         <Button
-            android:layout_width="100dp"
             android:id="@+id/reconcililation_other_amount_button"
             android:text="Other amount"
-            android:layout_height="wrap_content" />
+            android:layout_weight="1"
+            android:layout_height="fill_parent"
+            android:layout_width="match_parent" />
         <Button
-            android:layout_width="100dp"
             android:id="@+id/reconcililation_reset"
+            android:layout_weight="1"
             android:text="Reset"
-            android:layout_height="wrap_content" />
+            android:layout_height="fill_parent"
+            android:layout_width="match_parent" />
         </LinearLayout>
-    
+
+    <LinearLayout
+        android:id="@+id/dynamicButtonLayout"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/buttonLayout">
+    </LinearLayout>
+
     <ListView
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
         android:id="@+id/android:list"
-        android:layout_below="@id/buttonLayout"
+        android:layout_below="@id/dynamicButtonLayout"
         android:layout_above="@+id/adView"/>
 
     <com.google.android.gms.ads.AdView
