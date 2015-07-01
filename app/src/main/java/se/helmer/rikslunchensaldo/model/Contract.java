@@ -109,6 +109,7 @@ public class Contract {
         public static final String AMOUNT = "amount";
 
         public static final String BUTTONAMOUNTS = "buttonamounts";
+        public static final String BUTTONDESCRIPTIONS = "buttondescriptions";
 
         // content uri pattern code
         public static final int CONTENT_URI_PATTERN_MANY = 1;

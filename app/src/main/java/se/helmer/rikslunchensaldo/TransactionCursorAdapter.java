@@ -18,7 +18,7 @@ import se.helmer.rikslunchensaldo.model.Contract;
 
 public class TransactionCursorAdapter extends ResourceCursorAdapter {
 
-	private static String TAG = "LogMessageCursorAdapter";
+	private static String TAG = "TransactionMessageCursorAdapter";
 	private final ResultReceiver m_result_receiver = null;
 
     public TransactionCursorAdapter(Fragment fragment, Cursor c) {

@@ -32,8 +32,8 @@ public class RikslunchenDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private Dao<EnterButton, Integer> enterButtonDao = null;
     private RuntimeExceptionDao<EnterButton, Integer> enterButtonRuntimeDao = null;
 
-    private Dao<Contract.Transaction, Integer> transactionDao = null;
-    private RuntimeExceptionDao<LogMessage, Integer> transactionRuntimeDao = null;
+    private Dao<Transaction, Integer> transactionDao = null;
+    private RuntimeExceptionDao<Transaction, Integer> transactionRuntimeDao = null;
 
     public RikslunchenDatabaseHelper(Context context)
     {
@@ -96,11 +96,25 @@ public class RikslunchenDatabaseHelper extends OrmLiteSqliteOpenHelper {
         return bankStatementDao;
     }
 
-    public RuntimeExceptionDao<BankStatement, Integer> getRuntimeExceptionTransactionDao() {
+    public RuntimeExceptionDao<BankStatement, Integer> getRuntimeExceptionBankStatementDao() {
         if (bankStatementRuntimeDao == null) {
             bankStatementRuntimeDao = getRuntimeExceptionDao(BankStatement.class);
         }
         return bankStatementRuntimeDao;
+    }
+
+    public Dao<Transaction, Integer> getTransactionDao() throws SQLException {
+        if (transactionDao == null) {
+            transactionDao = getDao(Transaction.class);
+        }
+        return transactionDao;
+    }
+
+    public RuntimeExceptionDao<Transaction, Integer> getRuntimeExceptionTransactionDao() {
+        if (transactionRuntimeDao == null) {
+            transactionRuntimeDao = getRuntimeExceptionDao(Transaction.class);
+        }
+        return transactionRuntimeDao;
     }
 
     public Dao<Card, Integer> getCardDao() throws SQLException {

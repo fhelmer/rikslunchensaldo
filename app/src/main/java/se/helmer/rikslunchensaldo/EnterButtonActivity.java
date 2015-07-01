@@ -63,8 +63,14 @@ LoaderManager.LoaderCallbacks<Cursor> {
                 intent.putExtra(MyIntentService.PAYLOAD, b);
 
                 ComponentName cm = startService(intent);
+            }
+        });
 
-
+        Button okButton = (Button) findViewById(R.id.enter_button_done);
+        okButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EnterButtonActivity.this.finish();
             }
         });
 

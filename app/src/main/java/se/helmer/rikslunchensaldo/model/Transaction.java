@@ -31,12 +31,12 @@ public class Transaction {
     public Transaction() {
 
     }
-    public Transaction(String description, BigDecimal amount, BigDecimal balance) {
+    public Transaction(String description, BigDecimal amount) {
         this.description = description;
         Date now = new Date();
         this.date = Utils.LocalToGmt(now);
         this.amount = amount;
-        this.balance = balance;
+
     }
 
     public BigDecimal getBalance() {

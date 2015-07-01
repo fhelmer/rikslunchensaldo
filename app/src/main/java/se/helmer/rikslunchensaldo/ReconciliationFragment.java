@@ -17,11 +17,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TableLayout;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import se.helmer.rikslunchensaldo.model.Card;
 import se.helmer.rikslunchensaldo.model.Contract;
@@ -89,19 +91,27 @@ public class ReconciliationFragment extends ListFragment implements
                 (Button) getView().findViewById(R.id.reconcililation_other_amount_button);
         mOtherAmountButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(final View v) {
                 AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
 
-                alert.setTitle("Please enter amount");
-                alert.setMessage("Amount: ");
+                alert.setTitle("Enter transaction");
 
-                final EditText input = new EditText(getActivity());
-                input.setInputType(InputType.TYPE_CLASS_NUMBER);
-                alert.setView(input);
+                LayoutInflater li = LayoutInflater.from(getActivity());
+                final View dialogView = li.inflate(R.layout.enter_button_dialog, null);
+                alert.setView(dialogView);
 
                 alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        String value = input.getText().toString().trim();
+                        EditText editDescription = (EditText) dialogView.findViewById(R.id.enter_button_dialog_description);
+                        String inputDescription = editDescription.getText().toString();
+
+                        EditText editAmount = (EditText) dialogView.findViewById(R.id.enter_button_dialog_amount);
+                        String inputAmount = editAmount.getText().toString();
+
+                        List<String> transactionInfo = new ArrayList<String>();
+                        transactionInfo.add(inputDescription.trim());
+                        transactionInfo.add(inputAmount.trim());
+                        makeTransaction(transactionInfo);
                         dialog.dismiss();
                     }
                 });
@@ -140,6 +150,8 @@ public class ReconciliationFragment extends ListFragment implements
     public void onResume() {
         super.onResume();
         mAdView.resume();
+
+
         Utils.debug(TAG, "onResume");
     }
 
@@ -176,27 +188,51 @@ public class ReconciliationFragment extends ListFragment implements
         m_adapter.swapCursor(null);
     }
 
+    private void makeTransaction(List<String> tagData) {
+        Bundle b = new Bundle();
+
+        b.putString(Contract.EnterButton.DESCRIPTION, tagData.get(0));
+        b.putString(Contract.EnterButton.AMOUNT, tagData.get(1));
+
+        final Intent intent = new Intent(getActivity(), MyIntentService.class);
+        intent.putExtra(MyIntentService.COMMAND, MyIntentService.TRANSACTION_CREATE);
+        intent.putExtra(MyIntentService.RECEIVER, MainActivity.getReceiver());
+        intent.putExtra(MyIntentService.PAYLOAD, b);
+        ComponentName cm = getActivity().startService(intent);
+    }
+
     public void update(Bundle b) {
         mView = getView();
         if (mView != null) {
             if (b != null) {
                 LinearLayout buttonLayout  = (LinearLayout) mView.findViewById(R.id.dynamicButtonLayout);
-                buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
+                buttonLayout.removeAllViewsInLayout();
+                buttonLayout.setOrientation(LinearLayout.VERTICAL);
                 LinearLayout.LayoutParams lp =
                         new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                                 LinearLayout.LayoutParams.WRAP_CONTENT);
 
                 ArrayList<String> buttonAmounts = b.getStringArrayList(Contract.EnterButton.BUTTONAMOUNTS);
+                ArrayList<String> buttonDescriptions = b.getStringArrayList(Contract.EnterButton.BUTTONDESCRIPTIONS);
                 if (buttonAmounts != null) {
-                    for (String s : buttonAmounts) {
+                    int idx = 0;
+                    for (String amountStr : buttonAmounts) {
                         Button button = new Button(getActivity());
-                        button.setText(s);
+                        String description = buttonDescriptions.get(idx);
+                        idx += 1;
+                        button.setText(amountStr + " " + description);
+                        List<String> tag = new ArrayList<String>();
+                        tag.add(description);
+                        tag.add(amountStr);
+                        button.setTag(tag);
+
                         buttonLayout.addView(button, lp);
                         button.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 Button b1 = (Button) view;
-                                // Send intent to subtract amount + create transaction
+                                List<String> tagData = (List<String>) b1.getTag();
+                                makeTransaction(tagData);
                             }
                         });
                     }

@@ -55,7 +55,7 @@ public class BankStatementCursorAdapter extends ResourceCursorAdapter {
                             case DialogInterface.BUTTON_POSITIVE:
 
                                 final Intent intent = new Intent(context, MyIntentService.class);
-                                intent.putExtra("command", MyIntentService.TRANSACTION_DELETE);
+                                intent.putExtra("command", MyIntentService.BANKSTATEMENT_DELETE);
                                 intent.putExtra(MyIntentService.PAYLOAD, b);
                                 ComponentName cm = context.startService(intent);
 

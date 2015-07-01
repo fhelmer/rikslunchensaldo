@@ -24,11 +24,12 @@ public class MyIntentService extends IntentService {
 
     public static final int CHECK_DATABASE = 1;
     public static final int SEND_BALANCE = 2;
-    public static final int TRANSACTION_DELETE = 3;
+    public static final int BANKSTATEMENT_DELETE = 3;
     public static final int LOG_MESSAGE_SAVE = 4;
     public static final int LOG_MESSAGE_DELETE_ALL = 5;
     public static final int ENTER_BUTTONS_ADD = 6;
     public static final int ENTER_BUTTONS_DELETE = 7;
+    public static final int TRANSACTION_CREATE = 8;
 
     public static final int RETURN_ENTER_BUTTONS_UPDATE = 50;
 
@@ -66,6 +67,7 @@ public class MyIntentService extends IntentService {
                 if (card != null) {
                     b = session.fetchSummary(getApplicationContext());
                 }
+                updateEnterButtons(session, receiver);
                 break;
             case SEND_BALANCE:
                 session.createLogMessage("Got balance=" +
@@ -75,7 +77,7 @@ public class MyIntentService extends IntentService {
                 b = session.fetchSummary(getApplicationContext());
                 break;
 
-            case TRANSACTION_DELETE:
+            case BANKSTATEMENT_DELETE:
                 int id = b.getInt(Contract.BankStatement._ID);
                 session.deleteBankStatement(id);
                 session.createLogMessage("Deleted transaction " + id);
@@ -102,6 +104,10 @@ public class MyIntentService extends IntentService {
                 getApplicationContext().getContentResolver().notifyChange(Contract.EnterButton.contentUri, null);
                 updateEnterButtons(session, receiver);
                 break;
+
+            case TRANSACTION_CREATE:
+                session.createTransaction(b);
+                getApplicationContext().getContentResolver().notifyChange(Contract.Transaction.contentUri, null);
             default:
                 break;
         }
@@ -121,11 +127,14 @@ public class MyIntentService extends IntentService {
         Bundle b = new Bundle();
         List<EnterButton> buttons = session.getEnterButtons();
         ArrayList<String> buttonAmounts = new ArrayList<String>();
+        ArrayList<String> buttonDescriptions = new ArrayList<String>();
         for (EnterButton eb : buttons) {
             buttonAmounts.add(eb.getAmount());
+            buttonDescriptions.add(eb.getDescription());
         }
 
         b.putStringArrayList(Contract.EnterButton.BUTTONAMOUNTS, buttonAmounts);
+        b.putStringArrayList(Contract.EnterButton.BUTTONDESCRIPTIONS, buttonDescriptions);
         if (receiver != null) {
             receiver.send(RETURN_ENTER_BUTTONS_UPDATE,b);
         }

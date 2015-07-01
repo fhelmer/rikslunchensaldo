@@ -66,7 +66,20 @@
             <Button
                 android:layout_width="fill_parent"
                 android:id="@+id/enter_button_add"
-                android:text="Add"
+                android:text="@string/add"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+
+        </TableRow>
+        <TableRow
+            android:id="@+id/tableRow5"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dip" >
+            <Button
+                android:layout_width="fill_parent"
+                android:id="@+id/enter_button_done"
+                android:text="@string/done"
                 android:layout_weight="1"
                 android:layout_height="wrap_content" />
 
@@ -77,7 +90,6 @@
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
         android:id="@+id/android:list"
-        android:layout_below="@id/enterButtonTableLayout"
-        android:layout_above="@+id/adView"/>
+        android:layout_below="@id/enterButtonTableLayout"/>
 
 </RelativeLayout>

@@ -21,6 +21,7 @@ import se.helmer.rikslunchensaldo.model.Contract;
 import se.helmer.rikslunchensaldo.model.EnterButton;
 import se.helmer.rikslunchensaldo.model.LogMessage;
 import se.helmer.rikslunchensaldo.model.RikslunchenDatabaseHelper;
+import se.helmer.rikslunchensaldo.model.Transaction;
 
 /**
  * The purpose is to encapsulate some commanly used database operations here. For db connections,
@@ -45,6 +46,10 @@ public class DbSession {
 
     public Dao<BankStatement, Integer> getBankStatementDao() throws SQLException {
         return rikslunchenDatabaseHelper.getBankStatementDao();
+    }
+
+    public Dao<Transaction, Integer> getTransactionDao() throws SQLException {
+        return rikslunchenDatabaseHelper.getTransactionDao();
     }
 
     public Dao<Card, Integer> getCardDao() throws SQLException {
@@ -181,6 +186,20 @@ public class DbSession {
             Utils.error("createOrUpdateBankStatement",""+e);
         }
         return bankStatement;
+    }
+
+    // Transactoins
+
+    public void createTransaction(Bundle b) {
+        String description = b.getString(Contract.EnterButton.DESCRIPTION);
+        BigDecimal amount = new BigDecimal(b.getString(Contract.EnterButton.AMOUNT));
+        Transaction transaction = new Transaction(description, amount);
+        try {
+            getTransactionDao().create(transaction);
+        } catch (SQLException e) {
+            e.printStackTrace();;
+            Utils.error("createLogMessage","Error saving log message " + e);
+        }
     }
 
     // LogMessage
