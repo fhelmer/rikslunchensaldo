@@ -10,7 +10,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/edit_button"
         android:orientation="vertical" >
 
         <TextView
@@ -33,7 +32,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/action_button"
+        android:id="@+id/delete_row_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"

@@ -6,9 +6,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import se.helmer.rikslunchensaldo.model.BankStatement;
 import se.helmer.rikslunchensaldo.model.Card;
 import se.helmer.rikslunchensaldo.model.Contract;
+import se.helmer.rikslunchensaldo.model.EnterButton;
 
 public class MyIntentService extends IntentService {
 
@@ -23,9 +27,12 @@ public class MyIntentService extends IntentService {
     public static final int TRANSACTION_DELETE = 3;
     public static final int LOG_MESSAGE_SAVE = 4;
     public static final int LOG_MESSAGE_DELETE_ALL = 5;
-    public static final int ENTER_BUTTONS_UPDATE = 6;
+    public static final int ENTER_BUTTONS_ADD = 6;
+    public static final int ENTER_BUTTONS_DELETE = 7;
 
-    public static final int RETURN_DATA = 10;
+    public static final int RETURN_ENTER_BUTTONS_UPDATE = 50;
+
+    public static final int RETURN_DATA = 100;
 
     public MyIntentService() {
         super("MyIntentService");
@@ -81,10 +88,20 @@ public class MyIntentService extends IntentService {
             case LOG_MESSAGE_DELETE_ALL:
                 session.deleteLogMessages();
                 break;
-            case ENTER_BUTTONS_UPDATE:
-                // TODO session.createOrUpdateCard(b);
+            case ENTER_BUTTONS_ADD:
+                session.createOrAddEnterButton(b);
                 session.createLogMessage("Updated enterbuttons " +
                         b.getString(Contract.EnterButton.DESCRIPTION));
+                getApplicationContext().getContentResolver().notifyChange(Contract.EnterButton.contentUri, null);
+                updateEnterButtons(session, receiver);
+                break;
+            case ENTER_BUTTONS_DELETE:
+                session.deleteEnterButton(b);
+                session.createLogMessage("Deleted enterbutton " +
+                        Integer.toString(b.getInt(Contract.EnterButton._ID)));
+                getApplicationContext().getContentResolver().notifyChange(Contract.EnterButton.contentUri, null);
+                updateEnterButtons(session, receiver);
+                break;
             default:
                 break;
         }
@@ -98,6 +115,20 @@ public class MyIntentService extends IntentService {
         }
 
 
+    }
+
+    private void updateEnterButtons(DbSession session, ResultReceiver receiver) {
+        Bundle b = new Bundle();
+        List<EnterButton> buttons = session.getEnterButtons();
+        ArrayList<String> buttonAmounts = new ArrayList<String>();
+        for (EnterButton eb : buttons) {
+            buttonAmounts.add(eb.getAmount());
+        }
+
+        b.putStringArrayList(Contract.EnterButton.BUTTONAMOUNTS, buttonAmounts);
+        if (receiver != null) {
+            receiver.send(RETURN_ENTER_BUTTONS_UPDATE,b);
+        }
     }
 
     @Override

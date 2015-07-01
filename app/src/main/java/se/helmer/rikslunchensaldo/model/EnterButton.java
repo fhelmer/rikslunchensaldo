@@ -21,6 +21,10 @@ public class EnterButton {
     @DatabaseField
     private BigDecimal amount;
 
+    public String getAmount() {
+        return amount.toString();
+    }
+
     public EnterButton() {
     }
 

@@ -57,11 +57,17 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:padding="5dip" >
+            <TextView
+                android:id="@+id/textViewAdd"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <Button
                 android:layout_width="fill_parent"
                 android:id="@+id/enter_button_add"
                 android:text="Add"
+                android:layout_weight="1"
                 android:layout_height="wrap_content" />
 
         </TableRow>

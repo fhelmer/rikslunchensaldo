@@ -36,7 +36,7 @@ public class BankStatementCursorAdapter extends ResourceCursorAdapter {
 	public View newView(final Context context, Cursor cursor, ViewGroup parent) {
         final View view = super.newView(context,cursor,parent);
 
-        final Button b = (Button) view.findViewById(R.id.action_button);
+        final Button b = (Button) view.findViewById(R.id.delete_row_button);
         b.setOnClickListener(new OnClickListener() {
 
         	@Override
@@ -102,7 +102,7 @@ public class BankStatementCursorAdapter extends ResourceCursorAdapter {
         row1.setText(datestr2);
         row2.setText(String.format("%-15s %-15s", amount, balance));
 
-        Button actionButton = (Button) view.findViewById(R.id.action_button);
+        Button actionButton = (Button) view.findViewById(R.id.delete_row_button);
 
         actionButton.setTag(id);
 	}

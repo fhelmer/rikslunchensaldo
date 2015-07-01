@@ -208,7 +208,13 @@ public class MainActivity extends FragmentActivity
         SummaryFragment summaryFragment = (SummaryFragment) mAdapter.getItem(SUMMARY);
         summaryFragment.update(resultData);
 
-        
+        switch (resultCode) {
+            case MyIntentService.RETURN_ENTER_BUTTONS_UPDATE:
+            ReconciliationFragment reconciliationFragment = (ReconciliationFragment)
+                    mAdapter.getItem(RECONCILIATION);
+            reconciliationFragment.update(resultData);
+        }
+
     }
 
     @Override

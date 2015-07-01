@@ -12,11 +12,13 @@ import com.j256.ormlite.table.TableUtils;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import se.helmer.rikslunchensaldo.model.BankStatement;
 import se.helmer.rikslunchensaldo.model.Card;
 import se.helmer.rikslunchensaldo.model.Contract;
+import se.helmer.rikslunchensaldo.model.EnterButton;
 import se.helmer.rikslunchensaldo.model.LogMessage;
 import se.helmer.rikslunchensaldo.model.RikslunchenDatabaseHelper;
 
@@ -51,6 +53,10 @@ public class DbSession {
 
     public Dao<LogMessage, Integer> getLogMessageDao() throws SQLException {
         return rikslunchenDatabaseHelper.getLogMessageDao();
+    }
+
+    public Dao<EnterButton, Integer> getEnterButtonDao() throws SQLException {
+        return rikslunchenDatabaseHelper.getEnterButtonDao();
     }
 
     public void close() {
@@ -177,13 +183,14 @@ public class DbSession {
         return bankStatement;
     }
 
+    // LogMessage
     LogMessage createLogMessage(Bundle b) {
         LogMessage logMessage = new LogMessage(b.getString(Contract.LogMessage.DESCRIPTION));
         try {
             getLogMessageDao().create(logMessage);
         } catch (SQLException e) {
             e.printStackTrace();;
-            Utils.error("createLogMessage","Error saving log message");
+            Utils.error("createLogMessage","Error saving log message " + e);
         }
         return logMessage;
     }
@@ -199,6 +206,40 @@ public class DbSession {
             TableUtils.clearTable(connectionSource, LogMessage.class);
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    public EnterButton createOrAddEnterButton(Bundle b) {
+        String description = b.getString(Contract.EnterButton.DESCRIPTION);
+        String amountStr = b.getString(Contract.EnterButton.AMOUNT);
+        BigDecimal amount = new BigDecimal(amountStr.replace(',','.'));
+        EnterButton enterButton = new EnterButton(description, amount);
+        try {
+            getEnterButtonDao().createOrUpdate(enterButton);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Utils.error("createEnterButton", "SQL Exception " + e);
+        }
+        return enterButton;
+    }
+
+    public List<EnterButton> getEnterButtons() {
+        try {
+            return getEnterButtonDao().queryForAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Utils.error("createEnterButton", "SQL Exception " + e);
+        }
+        return null;
+    }
+
+    public void deleteEnterButton(Bundle b) {
+        int id = b.getInt(Contract.EnterButton._ID);
+        try {
+            getEnterButtonDao().deleteById(id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Utils.error("createEnterButton", "SQL Exception " + e);
         }
     }
 }

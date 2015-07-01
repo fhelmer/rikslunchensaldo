@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 
 import se.helmer.rikslunchensaldo.model.Contract;
 
@@ -29,6 +30,8 @@ LoaderManager.LoaderCallbacks<Cursor> {
     private static String TAG = "EnterButtonActivityt";
 
     private EnterButtonCursorAdapter m_adapter = null;
+    private EditText mDescription;
+    private EditText mAmount;
 
 
     @Override
@@ -43,6 +46,28 @@ LoaderManager.LoaderCallbacks<Cursor> {
         setListAdapter(m_adapter);
         getLoaderManager().initLoader(MainActivity.ENTER_BUTTON, null, this);
         Utils.log(TAG, "fillData");
+
+        mDescription = (EditText) findViewById(R.id.enter_button_description);
+        mAmount = (EditText) findViewById(R.id.enter_button_amount);
+        Button addButton = (Button) findViewById(R.id.enter_button_add);
+        addButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle b = new Bundle();
+                b.putString(Contract.EnterButton.DESCRIPTION, mDescription.getText().toString());
+                b.putString(Contract.EnterButton.AMOUNT, mAmount.getText().toString());
+
+                final Intent intent = new Intent(EnterButtonActivity.this, MyIntentService.class);
+                intent.putExtra(MyIntentService.COMMAND, MyIntentService.ENTER_BUTTONS_ADD);
+                intent.putExtra(MyIntentService.RECEIVER, MainActivity.getReceiver());
+                intent.putExtra(MyIntentService.PAYLOAD, b);
+
+                ComponentName cm = startService(intent);
+
+
+            }
+        });
+
     }
 
     @Override

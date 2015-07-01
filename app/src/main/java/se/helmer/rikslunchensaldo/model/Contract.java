@@ -108,6 +108,8 @@ public class Contract {
         public static final String DESCRIPTION = "description";
         public static final String AMOUNT = "amount";
 
+        public static final String BUTTONAMOUNTS = "buttonamounts";
+
         // content uri pattern code
         public static final int CONTENT_URI_PATTERN_MANY = 1;
         public static final int CONTENT_URI_PATTERN_ONE = 2;

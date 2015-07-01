@@ -130,6 +130,20 @@ public class RikslunchenDatabaseHelper extends OrmLiteSqliteOpenHelper {
         return logMessageRuntimeDao;
     }
 
+    public Dao<EnterButton, Integer> getEnterButtonDao() throws SQLException {
+        if (enterButtonDao == null) {
+            enterButtonDao = getDao(EnterButton.class);
+        }
+        return enterButtonDao;
+    }
+
+    public RuntimeExceptionDao<EnterButton, Integer> getRuntimeExceptionEnterButtonDao() {
+        if (enterButtonRuntimeDao == null) {
+            enterButtonRuntimeDao = getRuntimeExceptionDao(EnterButton.class);
+        }
+        return enterButtonRuntimeDao;
+    }
+
 
     @Override
     public void close() {

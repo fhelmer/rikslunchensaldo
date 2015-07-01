@@ -21,6 +21,8 @@ import android.widget.LinearLayout;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
+import java.util.ArrayList;
+
 import se.helmer.rikslunchensaldo.model.Card;
 import se.helmer.rikslunchensaldo.model.Contract;
 
@@ -177,17 +179,30 @@ public class ReconciliationFragment extends ListFragment implements
     public void update(Bundle b) {
         mView = getView();
         if (mView != null) {
-            Button a75 = new Button(getActivity());
-            a75.setText("75");
-            Button a50 = new Button(getActivity());
-            a50.setText("50");
-            LinearLayout buttonLayout  = (LinearLayout) mView.findViewById(R.id.dynamicButtonLayout);
-            buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
-            LinearLayout.LayoutParams lp =
-                    new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                            LinearLayout.LayoutParams.WRAP_CONTENT);
-            buttonLayout.addView(a50, lp);
-            buttonLayout.addView(a75, lp);
+            if (b != null) {
+                LinearLayout buttonLayout  = (LinearLayout) mView.findViewById(R.id.dynamicButtonLayout);
+                buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
+                LinearLayout.LayoutParams lp =
+                        new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                ArrayList<String> buttonAmounts = b.getStringArrayList(Contract.EnterButton.BUTTONAMOUNTS);
+                if (buttonAmounts != null) {
+                    for (String s : buttonAmounts) {
+                        Button button = new Button(getActivity());
+                        button.setText(s);
+                        buttonLayout.addView(button, lp);
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Button b1 = (Button) view;
+                                // Send intent to subtract amount + create transaction
+                            }
+                        });
+                    }
+                }
+
+            }
         }
 
     }
