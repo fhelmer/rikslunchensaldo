@@ -24,7 +24,7 @@ public class Transaction {
     @DatabaseField
     private BigDecimal amount;
     @DatabaseField
-    private BigDecimal estimantedbalance;
+    private BigDecimal estimatedbalance;
     @DatabaseField
     private BigDecimal balance;
 

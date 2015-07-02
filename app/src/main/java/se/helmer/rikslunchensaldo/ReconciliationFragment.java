@@ -160,7 +160,8 @@ public class ReconciliationFragment extends ListFragment implements
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-        String[] projection = { 
+        String[] projection = {
+                Contract.Transaction._ID,
                 Contract.Transaction.AMOUNT,
                 Contract.Transaction.BALANCE, 
                 Contract.Transaction.ESTIMATEDBALANCE, 
