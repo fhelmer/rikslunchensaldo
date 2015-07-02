@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TableLayout
+        android:id="@+id/enterButtonDialogTableLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+    <TableRow
+        android:id="@+id/tableRow1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dip" >
+
+        <TextView
+            android:id="@+id/tvEnterButtonDescription"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text= "Description:" />
+
+        <EditText  android:id="@+id/enter_button_dialog_description"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:inputType="text"
+            android:layout_width="0dp"
+            android:layout_weight="1"/>
+
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/tableRow5"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dip" >
+
+        <TextView
+            android:id="@+id/textView13"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="Amount:"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <EditText  android:id="@+id/enter_button_dialog_amount"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:inputType="numberDecimal"
+            android:layout_width="0dp"
+            android:layout_weight="1"/>
+
+    </TableRow>
+    </TableLayout>
+</LinearLayout>
