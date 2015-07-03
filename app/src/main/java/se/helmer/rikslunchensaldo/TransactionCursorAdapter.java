@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.support.v4.app.Fragment;
@@ -108,6 +109,12 @@ public class TransactionCursorAdapter extends ResourceCursorAdapter {
         tvEstimatedBalance.setText("Est:"+estimatedBalance);
         tvAmount.setText(amount);
         tvBankStatementBalance.setText("Real:"+bankstatementBalance);
+
+        if (estimatedBalance.contentEquals(bankstatementBalance)) {
+            view.setBackgroundColor(Color.GREEN);
+        } else {
+            view.setBackgroundColor(Color.RED);
+        }
 
         int id = cursor.getInt(cursor.getColumnIndex(Contract.BankStatement._ID));
         Button deleteButton = (Button) view.findViewById(R.id.delete_row_button);
