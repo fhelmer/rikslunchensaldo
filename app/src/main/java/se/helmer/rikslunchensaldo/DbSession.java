@@ -181,6 +181,13 @@ public class DbSession {
                         new BankStatement(description, amount, balance);
                 getBankStatementDao().create(bankStatement);
             }
+            // If there is a transaction, we update the bankstatement field
+            Transaction transaction = getLatestTransaction();
+            if (transaction != null) {
+                transaction.setBankstatementBalance(balance);
+                getTransactionDao().update(transaction);
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
             Utils.error("createOrUpdateBankStatement",""+e);
@@ -188,17 +195,78 @@ public class DbSession {
         return bankStatement;
     }
 
-    // Transactoins
+    // Transactions
+
+    void resetTransaction(Bundle b) {
+        try {
+            TableUtils.clearTable(connectionSource, Transaction.class);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Utils.error("resetTransactions:", "" + e);
+        }
+
+        BigDecimal initialAmount = new BigDecimal(b.getString(Contract.Transaction.ESTIMATEDBALANCE));
+        Transaction initTransaction = new Transaction("Reset of balance", new BigDecimal("0"),
+                initialAmount);
+        try {
+            getTransactionDao().create(initTransaction);
+        } catch (SQLException e) {
+            e.printStackTrace();;
+            Utils.error("resetTransaction","Error creating initial transaction" + e);
+        }
+    }
+
+
+    Transaction getLatestTransaction() {
+        Transaction transaction = null;
+        try {
+            QueryBuilder<Transaction, Integer> qb = getTransactionDao().queryBuilder();
+            qb.selectRaw("MAX(_id)");
+            GenericRawResults<String[]> results =
+                    getTransactionDao().queryRaw(qb.prepareStatementString());
+            String[] values = new String[0];
+            values = results.getFirstResult();
+            if (values.length > 0 && values[0] != null) {
+                transaction = getTransactionDao().queryForId(Integer.valueOf(values[0]));
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        return transaction;
+    }
+
 
     public void createTransaction(Bundle b) {
         String description = b.getString(Contract.EnterButton.DESCRIPTION);
-        BigDecimal amount = new BigDecimal(b.getString(Contract.EnterButton.AMOUNT));
-        Transaction transaction = new Transaction(description, amount);
         try {
+            BigDecimal amount = new BigDecimal(b.getString(Contract.EnterButton.AMOUNT));
+
+            BigDecimal previousAmount = new BigDecimal("0");
+            BigDecimal previousBankStatement = new BigDecimal("0");
+            Transaction latest = getLatestTransaction();
+            if (latest != null) {
+                previousAmount = latest.getEstimatedBalance();
+                previousBankStatement = latest.getBankStatementBalance();
+            }
+
+            Transaction transaction = new Transaction(description, amount, previousAmount);
+            transaction.setBankstatementBalance(previousBankStatement);
+
             getTransactionDao().create(transaction);
+        } catch (RuntimeException e) {
+            Utils.error("createTransaction","Runtime exception:  " + e);
         } catch (SQLException e) {
             e.printStackTrace();;
-            Utils.error("createLogMessage","Error saving log message " + e);
+            Utils.error("createTransaction","Error saving log message " + e);
+        }
+    }
+
+    void deleteTransaction(Bundle b) {
+        int id = b.getInt(Contract.Transaction._ID);
+        try {
+            getTransactionDao().deleteById(id);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -228,6 +296,7 @@ public class DbSession {
         }
     }
 
+    // Enterbuttons
     public EnterButton createOrAddEnterButton(Bundle b) {
         String description = b.getString(Contract.EnterButton.DESCRIPTION);
         String amountStr = b.getString(Contract.EnterButton.AMOUNT);

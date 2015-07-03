@@ -30,6 +30,9 @@ public class MyIntentService extends IntentService {
     public static final int ENTER_BUTTONS_ADD = 6;
     public static final int ENTER_BUTTONS_DELETE = 7;
     public static final int TRANSACTION_CREATE = 8;
+    public static final int CARD_UPDATE = 9;
+    public static final int TRANSACTION_DELETE = 10;
+    public static final int TRANSACTION_RESET = 11;
 
     public static final int RETURN_ENTER_BUTTONS_UPDATE = 50;
 
@@ -69,12 +72,19 @@ public class MyIntentService extends IntentService {
                 }
                 updateEnterButtons(session, receiver);
                 break;
+            case CARD_UPDATE:
+                session.createLogMessage("Saving card id=" +
+                        b.getString(Contract.Card.CARD_ID));
+                Card card2 = session.createOrUpdateCard(b);
+                b = session.fetchSummary(getApplicationContext());
+                break;
             case SEND_BALANCE:
                 session.createLogMessage("Got balance=" +
                         b.getString(RikslunchenDatasource.BALANCE) + " from rikslunchen");
-                Card card2 = session.createOrUpdateCard(b);
+                Card card3 = session.createOrUpdateCard(b);
                 BankStatement t = session.createOrUpdateBankStatement(b);
                 b = session.fetchSummary(getApplicationContext());
+                getApplicationContext().getContentResolver().notifyChange(Contract.Transaction.contentUri, null);
                 break;
 
             case BANKSTATEMENT_DELETE:
@@ -108,6 +118,15 @@ public class MyIntentService extends IntentService {
             case TRANSACTION_CREATE:
                 session.createTransaction(b);
                 getApplicationContext().getContentResolver().notifyChange(Contract.Transaction.contentUri, null);
+                break;
+            case TRANSACTION_RESET:
+                session.resetTransaction(b);
+                getApplicationContext().getContentResolver().notifyChange(Contract.Transaction.contentUri, null);
+                break;
+            case TRANSACTION_DELETE:
+                session.deleteTransaction(b);
+                getApplicationContext().getContentResolver().notifyChange(Contract.Transaction.contentUri, null);
+                break;
             default:
                 break;
         }

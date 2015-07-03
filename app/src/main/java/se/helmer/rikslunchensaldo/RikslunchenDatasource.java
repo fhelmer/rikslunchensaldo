@@ -24,7 +24,7 @@ public class RikslunchenDatasource {
     public static String MESSAGE = "message";
 
     public void query(Context c, final String card_id) {
-        Log.d(TAG,"Querying "+card_id);
+        Utils.info(c, TAG, "Querying "+card_id);
         this.cardId = card_id;
         if (card_id.length() == 0) {
             return;

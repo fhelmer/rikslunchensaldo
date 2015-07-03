@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.widget.EditText;
 
 import se.helmer.rikslunchensaldo.model.Card;
+import se.helmer.rikslunchensaldo.model.Contract;
 
 public class MainActivity extends FragmentActivity
         implements MyResultReceiver.Receiver, ActionBar.TabListener   {
@@ -162,6 +163,16 @@ public class MainActivity extends FragmentActivity
                 alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         String value = input.getText().toString().trim();
+
+                        Bundle b = new Bundle();
+                        b.putString(Contract.Card.CARD_ID, value);
+
+                        final Intent intent = new Intent(MainActivity.this, MyIntentService.class);
+                        intent.putExtra(MyIntentService.COMMAND, MyIntentService.CARD_UPDATE);
+                        intent.putExtra(MyIntentService.RECEIVER, MainActivity.getReceiver());
+                        intent.putExtra(MyIntentService.PAYLOAD, b);
+                        ComponentName cm = startService(intent);
+
                         showMessage("Querying ...");
                         RikslunchenDatasource rd = new RikslunchenDatasource();
                         rd.query(getApplicationContext(), value); // 32271843

@@ -26,21 +26,27 @@ public class Transaction {
     @DatabaseField
     private BigDecimal estimatedbalance;
     @DatabaseField
-    private BigDecimal balance;
+    private BigDecimal bankstatementbalance;  // Copied from bankstatement table
+
 
     public Transaction() {
 
     }
-    public Transaction(String description, BigDecimal amount) {
+    public Transaction(String description, BigDecimal amount, BigDecimal previousBalance) {
         this.description = description;
         Date now = new Date();
         this.date = Utils.LocalToGmt(now);
         this.amount = amount;
-
+        this.estimatedbalance = previousBalance.subtract(amount);
+        this.bankstatementbalance = new BigDecimal("0");
     }
 
-    public BigDecimal getBalance() {
-        return balance;
+    public BigDecimal getEstimatedBalance() {
+        return estimatedbalance;
+    }
+
+    public BigDecimal getBankStatementBalance() {
+        return bankstatementbalance;
     }
 
     public BigDecimal getAmount() {
@@ -51,6 +57,10 @@ public class Transaction {
 
     public int getId() {
         return _id;
+    }
+
+    public void setBankstatementBalance(BigDecimal bankstatementBalance) {
+        this.bankstatementbalance = bankstatementBalance;
     }
 
     public void updateTimestamp() {

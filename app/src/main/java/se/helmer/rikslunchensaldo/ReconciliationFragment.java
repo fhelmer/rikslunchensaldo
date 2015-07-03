@@ -38,7 +38,7 @@ public class ReconciliationFragment extends ListFragment implements
     View mView;
     Button mEditEnterButtons;
     Button mOtherAmountButton;
-    Button mReset;
+    Button mResetButton;
 
     static ReconciliationFragment init(int val) {
         ReconciliationFragment reconciliationFragment = new ReconciliationFragment();
@@ -59,6 +59,7 @@ public class ReconciliationFragment extends ListFragment implements
         super.onCreate(savedInstanceState);
         fragNum = getArguments() != null ? getArguments().getInt("val") : 1;
         m_adapter = new TransactionCursorAdapter(this, null);
+        setListAdapter(m_adapter);
         getActivity().getLoaderManager().initLoader(MainActivity.RECONCILIATION, null, this);
     }
 
@@ -126,6 +127,48 @@ public class ReconciliationFragment extends ListFragment implements
             }
         });
 
+        mResetButton = (Button) getView().findViewById(R.id.reconcililation_reset_button);
+        mResetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+
+                alert.setTitle("Reset transactions (new estimated balance)");
+
+                LayoutInflater li = LayoutInflater.from(getActivity());
+                final View dialogView = li.inflate(R.layout.reconciliation_reset_dialog, null);
+                alert.setView(dialogView);
+
+                alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        EditText editAmount =
+                                (EditText) dialogView.findViewById(R.id.reset_estimated_amount);
+                        String inputAmount = editAmount.getText().toString();
+
+                        Bundle b = new Bundle();
+                        b.putString(Contract.Transaction.ESTIMATEDBALANCE, inputAmount);
+
+                        final Intent intent = new Intent(getActivity(), MyIntentService.class);
+                        intent.putExtra(MyIntentService.COMMAND, MyIntentService.TRANSACTION_RESET);
+                        intent.putExtra(MyIntentService.RECEIVER, MainActivity.getReceiver());
+                        intent.putExtra(MyIntentService.PAYLOAD, b);
+                        ComponentName cm = getActivity().startService(intent);
+
+                        dialog.dismiss();
+                    }
+                });
+
+                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.dismiss();
+                    }
+                });
+
+                alert.show();
+
+            }
+        });
+
         update(null);
 
         mAdView = (AdView) getView().findViewById(R.id.adView);
@@ -163,7 +206,7 @@ public class ReconciliationFragment extends ListFragment implements
         String[] projection = {
                 Contract.Transaction._ID,
                 Contract.Transaction.AMOUNT,
-                Contract.Transaction.BALANCE, 
+                Contract.Transaction.BANKSTATEMENTBALANCE,
                 Contract.Transaction.ESTIMATEDBALANCE, 
                 Contract.Transaction.DATE,
                 Contract.Transaction.DESCRIPTION};
