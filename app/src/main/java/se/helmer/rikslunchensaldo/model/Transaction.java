@@ -24,10 +24,9 @@ public class Transaction {
     @DatabaseField
     private BigDecimal amount;
     @DatabaseField
-    private BigDecimal estimatedbalance;
-    @DatabaseField
-    private BigDecimal bankstatementbalance;  // Copied from bankstatement table
-
+    private BigDecimal estimantedbalance;
+    @DatabaseField(foreign = true)
+    private BankStatement matchedBankStatement;
 
     public Transaction() {
 
@@ -37,20 +36,14 @@ public class Transaction {
         Date now = new Date();
         this.date = Utils.LocalToGmt(now);
         this.amount = amount;
-        this.estimatedbalance = previousBalance.subtract(amount);
-        this.bankstatementbalance = new BigDecimal("0");
-    }
-
-    public BigDecimal getEstimatedBalance() {
-        return estimatedbalance;
-    }
-
-    public BigDecimal getBankStatementBalance() {
-        return bankstatementbalance;
     }
 
     public BigDecimal getAmount() {
         return amount;
+    }
+
+    public void setBankStatement(BankStatement bankStatement) {
+        this.matchedBankStatement = bankStatement;
     }
 
     public Date getDate() { return date; }
