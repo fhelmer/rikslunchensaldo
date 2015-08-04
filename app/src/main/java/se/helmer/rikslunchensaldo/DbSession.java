@@ -12,16 +12,13 @@ import com.j256.ormlite.table.TableUtils;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import se.helmer.rikslunchensaldo.model.BankStatement;
 import se.helmer.rikslunchensaldo.model.Card;
 import se.helmer.rikslunchensaldo.model.Contract;
-import se.helmer.rikslunchensaldo.model.EnterButton;
 import se.helmer.rikslunchensaldo.model.LogMessage;
 import se.helmer.rikslunchensaldo.model.RikslunchenDatabaseHelper;
-import se.helmer.rikslunchensaldo.model.Transaction;
 
 /**
  * The purpose is to encapsulate some commanly used database operations here. For db connections,
@@ -48,20 +45,12 @@ public class DbSession {
         return rikslunchenDatabaseHelper.getBankStatementDao();
     }
 
-    public Dao<Transaction, Integer> getTransactionDao() throws SQLException {
-        return rikslunchenDatabaseHelper.getTransactionDao();
-    }
-
     public Dao<Card, Integer> getCardDao() throws SQLException {
         return rikslunchenDatabaseHelper.getCardDao();
     }
 
     public Dao<LogMessage, Integer> getLogMessageDao() throws SQLException {
         return rikslunchenDatabaseHelper.getLogMessageDao();
-    }
-
-    public Dao<EnterButton, Integer> getEnterButtonDao() throws SQLException {
-        return rikslunchenDatabaseHelper.getEnterButtonDao();
     }
 
     public void close() {
@@ -181,14 +170,6 @@ public class DbSession {
                         new BankStatement(description, amount, balance);
                 getBankStatementDao().create(bankStatement);
             }
-            // If there is a transaction, we update the bankstatement field
-            Transaction transaction = getLatestTransaction();
-            if (transaction != null) {
-                transaction.setBankStatement(bankStatement);
-                transaction.setBankStatementBalance(bankStatement.getBalance());
-                getTransactionDao().update(transaction);
-            }
-
         } catch (SQLException e) {
             e.printStackTrace();
             Utils.error("createOrUpdateBankStatement",""+e);
@@ -196,80 +177,6 @@ public class DbSession {
         return bankStatement;
     }
 
-    // Transactions
-
-    void resetTransaction(Bundle b) {
-        try {
-            TableUtils.clearTable(connectionSource, Transaction.class);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            Utils.error("resetTransactions:", "" + e);
-        }
-
-        BigDecimal initialAmount = new BigDecimal(b.getString(Contract.Transaction.ESTIMATEDBALANCE));
-        Transaction initTransaction = new Transaction("Reset of balance", new BigDecimal("0"),
-                initialAmount);
-        try {
-            getTransactionDao().create(initTransaction);
-        } catch (SQLException e) {
-            e.printStackTrace();;
-            Utils.error("resetTransaction","Error creating initial transaction" + e);
-        }
-    }
-
-
-    Transaction getLatestTransaction() {
-        Transaction transaction = null;
-        try {
-            QueryBuilder<Transaction, Integer> qb = getTransactionDao().queryBuilder();
-            qb.selectRaw("MAX(_id)");
-            GenericRawResults<String[]> results =
-                    getTransactionDao().queryRaw(qb.prepareStatementString());
-            String[] values = new String[0];
-            values = results.getFirstResult();
-            if (values.length > 0 && values[0] != null) {
-                transaction = getTransactionDao().queryForId(Integer.valueOf(values[0]));
-            }
-        } catch (SQLException e){
-            e.printStackTrace();
-        }
-        return transaction;
-    }
-
-
-    public void createTransaction(Bundle b) {
-        String description = b.getString(Contract.EnterButton.DESCRIPTION);
-        try {
-            BigDecimal amount = new BigDecimal(b.getString(Contract.EnterButton.AMOUNT));
-
-            BigDecimal previousAmount = new BigDecimal("0");
-            BigDecimal previousBankStatement = new BigDecimal("0");
-            Transaction latest = getLatestTransaction();
-            if (latest != null) {
-            //    previousAmount = latest.getEstimatedBalance();
-              //  previousBankStatement = latest.getBankStatementBalance();
-            }
-
-            Transaction transaction = new Transaction(description, amount, previousAmount);
-            //transaction.setBankstatementBalance(previousBankStatement);
-
-            getTransactionDao().create(transaction);
-        } catch (RuntimeException e) {
-            Utils.error("createTransaction","Runtime exception:  " + e);
-        } catch (SQLException e) {
-            e.printStackTrace();;
-            Utils.error("createTransaction","Error saving log message " + e);
-        }
-    }
-
-    void deleteTransaction(Bundle b) {
-        int id = b.getInt(Contract.Transaction._ID);
-        try {
-            getTransactionDao().deleteById(id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 
     // LogMessage
     LogMessage createLogMessage(Bundle b) {
@@ -294,41 +201,6 @@ public class DbSession {
             TableUtils.clearTable(connectionSource, LogMessage.class);
         } catch (SQLException e) {
             e.printStackTrace();
-        }
-    }
-
-    // Enterbuttons
-    public EnterButton createOrAddEnterButton(Bundle b) {
-        String description = b.getString(Contract.EnterButton.DESCRIPTION);
-        String amountStr = b.getString(Contract.EnterButton.AMOUNT);
-        BigDecimal amount = new BigDecimal(amountStr.replace(',','.'));
-        EnterButton enterButton = new EnterButton(description, amount);
-        try {
-            getEnterButtonDao().createOrUpdate(enterButton);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            Utils.error("createEnterButton", "SQL Exception " + e);
-        }
-        return enterButton;
-    }
-
-    public List<EnterButton> getEnterButtons() {
-        try {
-            return getEnterButtonDao().queryForAll();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            Utils.error("createEnterButton", "SQL Exception " + e);
-        }
-        return null;
-    }
-
-    public void deleteEnterButton(Bundle b) {
-        int id = b.getInt(Contract.EnterButton._ID);
-        try {
-            getEnterButtonDao().deleteById(id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            Utils.error("createEnterButton", "SQL Exception " + e);
         }
     }
 }

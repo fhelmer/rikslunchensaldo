@@ -33,9 +33,7 @@ public class MainActivity extends FragmentActivity
 
     // List of cursor loaders.
     public static final int SUMMARY = 0;
-    public static final int RECONCILIATION = 1;
-    public static final int LOG = 2;
-    public static final int ENTER_BUTTON = 3;
+    public static final int LOG = 1;
 
     public static ResultReceiver getReceiver() {
         return mReceiver;
@@ -78,7 +76,7 @@ public class MainActivity extends FragmentActivity
 
     public static class MyAdapter extends FragmentPagerAdapter {
 
-        private final String[] pageTitles = new String[] { "Summary", "Reconciliation","Log" };
+        private final String[] pageTitles = new String[] { "Summary", "Log" };
 
         private final FragmentManager mFm;
         private final ViewPager mViewPager;
@@ -105,9 +103,6 @@ public class MainActivity extends FragmentActivity
                     switch (i) {
                     case SUMMARY:
                         this.fragments[i] = SummaryFragment.init(i);
-                        break;
-                    case RECONCILIATION:
-                        this.fragments[i] = ReconciliationFragment.init(i);
                         break;
                     case LOG:
                         this.fragments[i] = LogMessageFragment.init(i);
@@ -218,13 +213,6 @@ public class MainActivity extends FragmentActivity
     public void onReceiveResult(int resultCode, Bundle resultData) {
         SummaryFragment summaryFragment = (SummaryFragment) mAdapter.getItem(SUMMARY);
         summaryFragment.update(resultData);
-
-        switch (resultCode) {
-            case MyIntentService.RETURN_ENTER_BUTTONS_UPDATE:
-            ReconciliationFragment reconciliationFragment = (ReconciliationFragment)
-                    mAdapter.getItem(RECONCILIATION);
-            reconciliationFragment.update(resultData);
-        }
 
     }
 
