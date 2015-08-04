@@ -206,8 +206,7 @@ public class ReconciliationFragment extends ListFragment implements
         String[] projection = {
                 Contract.Transaction._ID,
                 Contract.Transaction.AMOUNT,
-                Contract.Transaction.BANKSTATEMENTBALANCE,
-                Contract.Transaction.ESTIMATEDBALANCE, 
+                Contract.Transaction.ESTIMATEDBALANCE,
                 Contract.Transaction.DATE,
                 Contract.Transaction.DESCRIPTION};
 

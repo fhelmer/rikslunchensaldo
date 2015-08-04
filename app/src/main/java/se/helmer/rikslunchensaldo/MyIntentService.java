@@ -50,8 +50,8 @@ public class MyIntentService extends IntentService {
         int msgCommand = intent.getIntExtra(COMMAND, 0);
         Bundle b = intent.getBundleExtra(PAYLOAD);
         final ResultReceiver receiver = intent.getParcelableExtra(RECEIVER);
-        DbSession session = new DbSession(getApplicationContext());
         Context context = getApplicationContext();
+        DbSession session = new DbSession(context);
 
         switch (msgCommand) {
             case CHECK_DATABASE:
@@ -84,7 +84,6 @@ public class MyIntentService extends IntentService {
                 Card card3 = session.createOrUpdateCard(b);
                 BankStatement t = session.createOrUpdateBankStatement(b);
                 b = session.fetchSummary(getApplicationContext());
-                getApplicationContext().getContentResolver().notifyChange(Contract.Transaction.contentUri, null);
                 break;
 
             case BANKSTATEMENT_DELETE:

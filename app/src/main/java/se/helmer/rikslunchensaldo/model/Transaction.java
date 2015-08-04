@@ -24,9 +24,11 @@ public class Transaction {
     @DatabaseField
     private BigDecimal amount;
     @DatabaseField
-    private BigDecimal estimantedbalance;
+    private BigDecimal estimatedbalance;
     @DatabaseField(foreign = true)
-    private BankStatement matchedBankStatement;
+    private BankStatement bankstatement;
+    @DatabaseField
+    private BigDecimal bankstatementbalance;
 
     public Transaction() {
 
@@ -43,17 +45,16 @@ public class Transaction {
     }
 
     public void setBankStatement(BankStatement bankStatement) {
-        this.matchedBankStatement = bankStatement;
+        this.bankstatement = bankStatement;
     }
 
+    public void setBankStatement(BigDecimal bankstatementbalance) {
+        this.bankstatementbalance = bankstatementbalance;
+    }
     public Date getDate() { return date; }
 
     public int getId() {
         return _id;
-    }
-
-    public void setBankstatementBalance(BigDecimal bankstatementBalance) {
-        this.bankstatementbalance = bankstatementBalance;
     }
 
     public void updateTimestamp() {

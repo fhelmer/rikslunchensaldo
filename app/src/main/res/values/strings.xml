@@ -23,6 +23,8 @@
     <string name="action_ask_for_card_id">Enter card ID</string>
     <string name="auto_update">Auto update</string>
     <string name="auto_update_summary">Auto update summary</string>
+    <string name="notifications">Notifications</string>
+    <string name="notifications_summary">Notifcations summary</string>
     <string name="enter_button_activity_name">Edit button labels</string>
 
     <string name="add">Add</string>

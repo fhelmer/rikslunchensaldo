@@ -184,7 +184,8 @@ public class DbSession {
             // If there is a transaction, we update the bankstatement field
             Transaction transaction = getLatestTransaction();
             if (transaction != null) {
-                transaction.setBankstatementBalance(balance);
+                transaction.setBankStatement(bankStatement);
+                transaction.setBankStatementBalance(bankStatement.getBalance());
                 getTransactionDao().update(transaction);
             }
 
@@ -245,12 +246,12 @@ public class DbSession {
             BigDecimal previousBankStatement = new BigDecimal("0");
             Transaction latest = getLatestTransaction();
             if (latest != null) {
-                previousAmount = latest.getEstimatedBalance();
-                previousBankStatement = latest.getBankStatementBalance();
+            //    previousAmount = latest.getEstimatedBalance();
+              //  previousBankStatement = latest.getBankStatementBalance();
             }
 
             Transaction transaction = new Transaction(description, amount, previousAmount);
-            transaction.setBankstatementBalance(previousBankStatement);
+            //transaction.setBankstatementBalance(previousBankStatement);
 
             getTransactionDao().create(transaction);
         } catch (RuntimeException e) {

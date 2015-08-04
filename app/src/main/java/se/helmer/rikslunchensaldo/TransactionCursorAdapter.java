@@ -90,8 +90,9 @@ public class TransactionCursorAdapter extends ResourceCursorAdapter {
         String amount = cursor.getString(cursor.getColumnIndex(Contract.Transaction.AMOUNT));
         String estimatedBalance =
                 cursor.getString(cursor.getColumnIndex(Contract.Transaction.ESTIMATEDBALANCE));
-        String bankstatementBalance =
-                cursor.getString(cursor.getColumnIndex(Contract.Transaction.BANKSTATEMENTBALANCE));
+
+        String bankstatementBalance = "FIXME Bankstatemantbalance";
+                // cursor.getString(cursor.getColumnIndex(Contract.Transaction.BANKSTATEMENTBALANCE));
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
         Date parsedDate = null;
@@ -120,6 +121,5 @@ public class TransactionCursorAdapter extends ResourceCursorAdapter {
         Button deleteButton = (Button) view.findViewById(R.id.delete_row_button);
         deleteButton.setTag(id);
 
-        // TODO: If estimatedBalance ==
 	}
 }

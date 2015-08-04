@@ -50,10 +50,10 @@ public class Contract {
         // field info
         public static final String _ID = "_id";
         public static final String DESCRIPTION = "description";
-        public static final String BANKSTATEMENTBALANCE = "bankstatementbalance";
         public static final String DATE = "date";
         public static final String ESTIMATEDBALANCE = "estimatedbalance";
         public static final String AMOUNT = "amount";
+        public static final String BANKSTATEMENTBALANCE = "bankstatementbalance";
 
         // content uri pattern code
         public static final int CONTENT_URI_PATTERN_MANY = 1;

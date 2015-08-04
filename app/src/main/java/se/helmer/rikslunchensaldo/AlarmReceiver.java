@@ -9,6 +9,8 @@ import android.os.Handler;
 import android.os.ResultReceiver;
 import android.util.Log;
 
+import se.helmer.rikslunchensaldo.model.Card;
+
 public class AlarmReceiver extends BroadcastReceiver {
 
     public static String TAG = "Rikslunchensaldo.AlarmReceiver";
@@ -20,16 +22,14 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         String action = intent.getAction();
         if(FETCH.equals(action)) {
-            SharedPreferences sharedPrefs =
-                    context.getSharedPreferences(SummaryFragment.APP_SHARED_PREFS, Activity.MODE_PRIVATE);
-            String cardId = sharedPrefs.getString(RikslunchenDatasource.CARD_ID, "");
             boolean autoupdate = false; // sharedPrefs.getBoolean(RikslunchenDatasource.AUTO_UPDATE, false);
 
-            Log.d(TAG,"Fetching balance from server using "+cardId+" "+Utils.getCurrentLocalTimeString());
-
+            DbSession session = new DbSession(context);
+            Card card = session.getCard();
+            String cardId = card.getCardId();
             RikslunchenDatasource rd = new RikslunchenDatasource();
             ResultReceiver receiver = new AlarmResultReceiver(new Handler(),context);
-            Log.d(TAG,"About to fetch using "+cardId+" autoupdate="+autoupdate);
+            Utils.log(TAG, "About to fetch using " + cardId + " autoupdate=" + autoupdate);
             if (cardId.length() > 0 && autoupdate) {
                 rd.query(context,cardId);
             }
