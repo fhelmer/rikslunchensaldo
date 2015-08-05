@@ -26,37 +26,38 @@ import se.helmer.rikslunchensaldo.model.RikslunchenDatabaseHelper;
  */
 public class DbSession {
 
-    private RikslunchenDatabaseHelper rikslunchenDatabaseHelper;
-    ConnectionSource connectionSource;
+    private RikslunchenDatabaseHelper mRikslunchenDatabaseHelper;
+    ConnectionSource mConnectionSource;
+    private Context mContext;
 
     public DbSession(Context context) {
-        rikslunchenDatabaseHelper = OpenHelperManager.getHelper(context,
+        mRikslunchenDatabaseHelper = OpenHelperManager.getHelper(context,
                 RikslunchenDatabaseHelper.class);
 
-        connectionSource = rikslunchenDatabaseHelper.getConnectionSource();
-
+        mConnectionSource = mRikslunchenDatabaseHelper.getConnectionSource();
+        mContext = context;
     }
 
     public ConnectionSource getConnectionSource() {
-        return connectionSource;
+        return mConnectionSource;
     }
 
     public Dao<BankStatement, Integer> getBankStatementDao() throws SQLException {
-        return rikslunchenDatabaseHelper.getBankStatementDao();
+        return mRikslunchenDatabaseHelper.getBankStatementDao();
     }
 
     public Dao<Card, Integer> getCardDao() throws SQLException {
-        return rikslunchenDatabaseHelper.getCardDao();
+        return mRikslunchenDatabaseHelper.getCardDao();
     }
 
     public Dao<LogMessage, Integer> getLogMessageDao() throws SQLException {
-        return rikslunchenDatabaseHelper.getLogMessageDao();
+        return mRikslunchenDatabaseHelper.getLogMessageDao();
     }
 
     public void close() {
 
         try {
-            connectionSource.close();
+            mConnectionSource.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -169,6 +170,8 @@ public class DbSession {
                 bankStatement =
                         new BankStatement(description, amount, balance);
                 getBankStatementDao().create(bankStatement);
+                // TODO: If notificaitons are activiated in settings
+                Utils.sendNotification(mContext, bankStatement.toString());
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -198,7 +201,7 @@ public class DbSession {
 
     public void deleteLogMessages() {
         try {
-            TableUtils.clearTable(connectionSource, LogMessage.class);
+            TableUtils.clearTable(mConnectionSource, LogMessage.class);
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -1,0 +1,92 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="se.helmer.rikslunchensaldo.BankStatementEditActivity">
+
+
+        <TableLayout
+            android:id="@+id/enterButtonTableLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <TableRow
+                android:id="@+id/tableRow1"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dip" >
+
+                <TextView
+                    android:id="@+id/tvEnterButtonDescription"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text= "Description:" />
+
+                <EditText  android:id="@+id/bank_statement_edit_description"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:inputType="text"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"/>
+
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow2"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dip" >
+
+                <TextView
+                    android:id="@+id/textView13"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/amount"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <EditText  android:id="@+id/bank_statement_edit_amount"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:inputType="numberDecimal"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"/>
+
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow4"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dip" >
+                <TextView
+                    android:id="@+id/textViewAdd"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <Button
+                    android:layout_width="fill_parent"
+                    android:id="@+id/bank_statement_delete_button"
+                    android:text="@string/delete"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content" />
+
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow5"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dip" >
+                <Button
+                    android:layout_width="fill_parent"
+                    android:id="@+id/bank_statement_done_button"
+                    android:text="@string/done"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content" />
+
+            </TableRow>
+        </TableLayout>
+
+</RelativeLayout>

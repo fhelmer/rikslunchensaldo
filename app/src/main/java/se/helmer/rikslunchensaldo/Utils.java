@@ -7,6 +7,8 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
@@ -18,6 +20,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.RemoteViews;
 
@@ -154,11 +157,33 @@ public class Utils {
         Log.d(TAG,"updateWidgets done");
     }
 
+
+    public static void sendNotification(Context context, String message) {
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(context)
+                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setContentTitle("Notifications Example")
+                        .setContentText("This is a test notification");
+
+        Intent notificationIntent = new Intent(context, MainActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(contentIntent);
+
+        // Add as notification
+        NotificationManager manager = (NotificationManager)
+                context.getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.notify(1, builder.build());
+    }
+
+
+
     public static long getThreadId()
     {
         Thread t = Thread.currentThread();
         return t.getId();
     }
+
     public static String getThreadSignature()
     {
         Thread t = Thread.currentThread();

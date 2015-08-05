@@ -54,4 +54,8 @@ public class BankStatement {
     public void updateTimestamp() {
         this.date = Utils.LocalToGmt(new Date());
     }
+
+    public String toString() {
+        return description + balance + date + amount;
+    }
 }
