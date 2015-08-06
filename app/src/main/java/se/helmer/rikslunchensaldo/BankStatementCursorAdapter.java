@@ -25,7 +25,7 @@ import se.helmer.rikslunchensaldo.model.Contract;
 
 public class BankStatementCursorAdapter extends ResourceCursorAdapter {
 
-	private static String TAG = "TransactionCursorAdapter";
+	private static String TAG = "BankStatementCursorAdapter";
 	private final ResultReceiver m_result_receiver = null;
 
     public BankStatementCursorAdapter(Fragment fragment, Cursor c) {
@@ -33,45 +33,33 @@ public class BankStatementCursorAdapter extends ResourceCursorAdapter {
 	}
 
 	@Override
-	public View newView(final Context context, Cursor cursor, ViewGroup parent) {
+	public View newView(final Context context, final Cursor cursor, ViewGroup parent) {
         final View view = super.newView(context,cursor,parent);
 
-        final Button b = (Button) view.findViewById(R.id.delete_row_button);
+        final Button b = (Button) view.findViewById(R.id.edit_row_button);
         b.setOnClickListener(new OnClickListener() {
 
         	@Override
         	public void onClick(View v) {
         		Button button = (Button) v;
+
+
         		String txt = button.getText().toString();
     			int id = (Integer) v.getTag();
 
-                final Bundle b = new Bundle();
+                Intent intent = new Intent(context, BankStatementEditActivity.class);
+                Bundle b = new Bundle();
+
+                String amount = cursor.getString(cursor.getColumnIndex(Contract.BankStatement.AMOUNT));
+                String description = cursor.getString(cursor.getColumnIndex(Contract.BankStatement.DESCRIPTION));
+
+                b.putString(Contract.BankStatement.AMOUNT, amount);
+                b.putString(Contract.BankStatement.DESCRIPTION, description);
                 b.putInt(Contract.BankStatement._ID, id);
 
-                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which){
-                            case DialogInterface.BUTTON_POSITIVE:
+                intent.putExtra("payload", b);
 
-                                final Intent intent = new Intent(context, MyIntentService.class);
-                                intent.putExtra("command", MyIntentService.BANKSTATEMENT_DELETE);
-                                intent.putExtra(MyIntentService.PAYLOAD, b);
-                                ComponentName cm = context.startService(intent);
-
-                                break;
-
-                            case DialogInterface.BUTTON_NEGATIVE:
-                                //No button clicked
-                                break;
-                        }
-                    }
-                };
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
-                        .setNegativeButton("No", dialogClickListener).show();
-
+                context.startActivity(intent);
             }});
 
 		return view;
@@ -79,8 +67,6 @@ public class BankStatementCursorAdapter extends ResourceCursorAdapter {
 
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
-        // Crash crash = Crash.makeObject(cursor);
-
         TextView row1 = (TextView) view.findViewById(R.id.row1);
         TextView row2 = (TextView) view.findViewById(R.id.row2);
 
@@ -102,7 +88,7 @@ public class BankStatementCursorAdapter extends ResourceCursorAdapter {
         row1.setText(datestr2);
         row2.setText(String.format("%-15s %-15s", amount, balance));
 
-        Button actionButton = (Button) view.findViewById(R.id.delete_row_button);
+        Button actionButton = (Button) view.findViewById(R.id.edit_row_button);
 
         actionButton.setTag(id);
 	}

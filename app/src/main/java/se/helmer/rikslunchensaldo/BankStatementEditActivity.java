@@ -1,7 +1,9 @@
 package se.helmer.rikslunchensaldo;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -16,10 +18,16 @@ public class BankStatementEditActivity extends Activity {
 
     private EditText mDescription;
     private EditText mAmount;
+    private int _id;
+    private Bundle mBundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Get the message from the intent
+        Intent intent = getIntent();
+
         setContentView(R.layout.activity_edit_bank_statement);
         fillData();
     }
@@ -29,28 +37,39 @@ public class BankStatementEditActivity extends Activity {
         mDescription = (EditText) findViewById(R.id.bank_statement_edit_description);
         mAmount = (EditText) findViewById(R.id.bank_statement_edit_amount);
 
-        Button doneButton = (Button) findViewById(R.id.bank_statement_done_button);
-        doneButton.setOnClickListener(new View.OnClickListener() {
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Bundle b = new Bundle();
-                b.putString(Contract.BankStatement.DESCRIPTION, mDescription.getText().toString());
-                b.putString(Contract.BankStatement.AMOUNT, mAmount.getText().toString());
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which){
+                    case DialogInterface.BUTTON_POSITIVE:
+                        Bundle b = new Bundle();
 
-                final Intent intent = new Intent(BankStatementEditActivity.this, MyIntentService.class);
-                // intent.putExtra(MyIntentService.COMMAND, MyIntentService.ENTER_BUTTONS_ADD);
-                intent.putExtra(MyIntentService.RECEIVER, MainActivity.getReceiver());
-                intent.putExtra(MyIntentService.PAYLOAD, b);
+                        final Intent intent = new Intent(BankStatementEditActivity.this, MyIntentService.class);
+                        intent.putExtra("command", MyIntentService.BANKSTATEMENT_DELETE);
+                        intent.putExtra(MyIntentService.PAYLOAD, b);
+                        ComponentName cm = startService(intent);
+                        BankStatementEditActivity.this.finish();
+                        break;
 
-                ComponentName cm = startService(intent);
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        //No button clicked
+                        break;
+                }
             }
-        });
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+                .setNegativeButton("No", dialogClickListener).show();
+
+
 
         Button okButton = (Button) findViewById(R.id.bank_statement_done_button);
         okButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
+                // TODO Save new description etc
                 BankStatementEditActivity.this.finish();
             }
         });

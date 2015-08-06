@@ -56,6 +56,6 @@ public class BankStatement {
     }
 
     public String toString() {
-        return date + ":" + amount + ":" + description;
+        return "Amount:" + amount + ", Balance:" +  balance;
     }
 }
