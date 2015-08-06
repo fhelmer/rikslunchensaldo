@@ -59,7 +59,6 @@ LoaderManager.LoaderCallbacks<Cursor> {
                         public void onClick(DialogInterface dialog, int which) {
                             switch (which){
                                 case DialogInterface.BUTTON_POSITIVE:
-
                                     final Intent intent = new Intent(context, MyIntentService.class);
                                     intent.putExtra("command",
                                             MyIntentService.LOG_MESSAGE_DELETE_ALL);

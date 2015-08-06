@@ -161,9 +161,9 @@ public class Utils {
     public static void sendNotification(Context context, String message) {
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(context)
-                        .setSmallIcon(R.drawable.ic_launcher)
-                        .setContentTitle("Notifications Example")
-                        .setContentText("This is a test notification");
+                        .setSmallIcon(R.drawable.lunch48)
+                        .setContentTitle("LunchSaldo update")
+                        .setContentText(message);
 
         Intent notificationIntent = new Intent(context, MainActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent,

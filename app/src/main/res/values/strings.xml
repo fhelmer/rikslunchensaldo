@@ -12,27 +12,30 @@
     <string name="edit_card">Edit card</string>
     <string name="edit">Edit</string>
     <string name="balance">Balance: </string>
-    <string name="found_on_card">(This number can be found on the card)</string>
+    <string name="found_on_card">(This 8 digit number is usually found in the lower left corner the card)</string>
     <string name="lasttopupdate">Last top up date: </string>
     <string name="latestupdate">Updated: </string>
-    <string name="push_to_update">Push balance button to query server</string>
     <string name="widget_header">Lunchsaldo</string>
     <string name="largewidgetlabel">Lunchsaldo - Large</string>
     <string name="smallwidgetlabel">Lunchsaldo - Small</string>
-    <string name="dailyautomaticupdate">Daily automatic update</string>
+
     <string name="banner_ad_unit_id">a151a90e906e286</string>
     <string name="title_activity_main">Lunchsaldo</string>
     <string name="action_ask_for_card_id">Enter card ID</string>
+
     <string name="auto_update">Auto update</string>
-    <string name="auto_update_summary">Auto update summary</string>
+    <string name="auto_update_summary">Automatically fetch balance on a regular basis</string>
+
     <string name="notifications">Notifications</string>
-    <string name="notifications_summary">Notifcations summary</string>
+    <string name="notifications_summary">Display notifications</string>
+
     <string name="enter_button_activity_name">Edit button labels</string>
 
     <string name="add">Add</string>
     <string name="done">Done</string>
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
+
     <string name="title_activity_edit_bank_statement">EditBankStatementActivity</string>
 
 </resources>

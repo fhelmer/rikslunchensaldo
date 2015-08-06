@@ -3,13 +3,13 @@
 
     <string-array name="fetchIntervalNames">
         <item>Every hour</item>
-        <item>Every 6th hour</item>
+        <item>Every 12th hour</item>
         <item>Every day</item>
     </string-array>
 
     <string-array name="fetchIntervalValues">
         <item>1</item>
-        <item>6</item>
+        <item>12</item>
         <item>24</item>
     </string-array>
 </resources>

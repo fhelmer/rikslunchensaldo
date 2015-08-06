@@ -1,7 +1,9 @@
 package se.helmer.rikslunchensaldo;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
@@ -171,7 +173,11 @@ public class DbSession {
                         new BankStatement(description, amount, balance);
                 getBankStatementDao().create(bankStatement);
                 // TODO: If notificaitons are activiated in settings
-                Utils.sendNotification(mContext, bankStatement.toString());
+                SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(mContext);
+                boolean showNotifications = SP.getBoolean("show_notifications_update", false);
+                if (showNotifications) {
+                    Utils.sendNotification(mContext, bankStatement.toString());
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
