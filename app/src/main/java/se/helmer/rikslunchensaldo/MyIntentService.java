@@ -23,10 +23,11 @@ public class MyIntentService extends IntentService {
 
     public static final int CHECK_DATABASE = 1;
     public static final int SEND_BALANCE = 2;
-    public static final int BANKSTATEMENT_DELETE = 3;
-    public static final int LOG_MESSAGE_SAVE = 4;
-    public static final int LOG_MESSAGE_DELETE_ALL = 5;
-    public static final int CARD_UPDATE = 6;
+    public static final int BANKSTATEMENT_UPDATE = 3;
+    public static final int BANKSTATEMENT_DELETE = 4;
+    public static final int LOG_MESSAGE_SAVE = 5;
+    public static final int LOG_MESSAGE_DELETE_ALL = 6;
+    public static final int CARD_UPDATE = 7;
 
     public static final int RETURN_DATA = 100;
 
@@ -75,6 +76,12 @@ public class MyIntentService extends IntentService {
                 Card card3 = session.createOrUpdateCard(b);
                 BankStatement t = session.createOrUpdateBankStatement(b);
                 b = session.fetchSummary(getApplicationContext());
+                break;
+
+            case BANKSTATEMENT_UPDATE:
+                session.createLogMessage("Updating bankstatement " +
+                        b.getString(Contract.BankStatement._ID));
+                session.updateBankStatement(b);
                 break;
 
             case BANKSTATEMENT_DELETE:

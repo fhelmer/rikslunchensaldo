@@ -5,7 +5,7 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 public class Contract {
-    public static final String DATABASE_NAME = "rikslunchendatabase";
+    public static final String DATABASE_NAME = "rikslunchendatabase.db";
     public static final int DATABASE_VERSION = 1;
 
     public static class BankStatement implements BaseColumns
@@ -21,6 +21,7 @@ public class Contract {
         // field info
         public static final String _ID = "_id";
         public static final String DESCRIPTION = "description";
+        public static final String MESSAGE = "message";
         public static final String BALANCE = "balance";
         public static final String DATE = "date";
         public static final String AMOUNT = "amount";

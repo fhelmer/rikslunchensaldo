@@ -20,10 +20,10 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
+        DbSession session = new DbSession(context);
         if (FETCH.equals(action)) {
             SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(context);
-            boolean auto_update = SP.getBoolean("auto_update", false);
-            DbSession session = new DbSession(context);
+            boolean auto_update = SP.getBoolean(SettingsActivity.AUTO_UPDATE, false);
             Card card = session.getCard();
             if (auto_update && (card != null)) {
                 String cardId = card.getCardId();
@@ -35,6 +35,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                     rd.query(context, cardId);
             }
         }
+        session.close();
     }
 }
 

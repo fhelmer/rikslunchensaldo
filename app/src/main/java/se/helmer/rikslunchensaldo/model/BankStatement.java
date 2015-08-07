@@ -1,5 +1,7 @@
 package se.helmer.rikslunchensaldo.model;
 
+import android.os.Bundle;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -18,7 +20,9 @@ public class BankStatement {
     @DatabaseField(generatedId = true)
     private int _id;
     @DatabaseField
-    private String description;
+    private String description;  // Notes made by user
+    @DatabaseField
+    private String message;     // Info from Rikslunchen
     @DatabaseField
     private BigDecimal balance;
     @DatabaseField
@@ -29,8 +33,8 @@ public class BankStatement {
     public BankStatement() {
 
     }
-    public BankStatement(String description, BigDecimal amount, BigDecimal balance) {
-        this.description = description;
+    public BankStatement(String message, BigDecimal amount, BigDecimal balance) {
+        this.message = message;
         Date now = new Date();
         this.date = Utils.LocalToGmt(now);
         this.amount = amount;
@@ -53,6 +57,23 @@ public class BankStatement {
 
     public void updateTimestamp() {
         this.date = Utils.LocalToGmt(new Date());
+    }
+
+    public void setValues(Bundle b) {
+        String bDescription = b.getString(Contract.BankStatement.DESCRIPTION);
+        if (bDescription != null) {
+            description = bDescription;
+        }
+
+        String bAmount = b.getString(Contract.BankStatement.AMOUNT);
+        if (bAmount != null) {
+            amount = new BigDecimal(bAmount);
+        }
+
+        String bBalance = b.getString(Contract.BankStatement.BALANCE);
+        if (bBalance != null) {
+            balance = new BigDecimal(bBalance);
+        }
     }
 
     public String toString() {

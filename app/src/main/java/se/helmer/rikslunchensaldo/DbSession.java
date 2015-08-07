@@ -150,11 +150,25 @@ public class DbSession {
         return createOrUpdateBankStatement(bundle);
     }
 
+    BankStatement updateBankStatement(Bundle b) {
+        int id = b.getInt(Contract.BankStatement._ID);
+        BankStatement bankStatement = null;
+
+        try {
+            bankStatement = getBankStatementDao().queryForId(id);
+            bankStatement.setValues(b);
+            getBankStatementDao().update(bankStatement);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return bankStatement;
+    }
+
     BankStatement createOrUpdateBankStatement(Bundle b) {
         BankStatement bankStatement = getLatestBankStatement();
-        String amountStr = b.getString(RikslunchenDatasource.BALANCE);
-        String description = b.getString(RikslunchenDatasource.MESSAGE);
-        BigDecimal balance = new BigDecimal(amountStr.replace(',','.'));
+        String balanceStr = b.getString(RikslunchenDatasource.BALANCE);
+        String message = b.getString(RikslunchenDatasource.MESSAGE);
+        BigDecimal balance = new BigDecimal(balanceStr.replace(',','.'));
         BigDecimal amount = new BigDecimal("0");
         boolean createNew = true;
         try {
@@ -170,11 +184,11 @@ public class DbSession {
 
             if (createNew) {
                 bankStatement =
-                        new BankStatement(description, amount, balance);
+                        new BankStatement(message, amount, balance);
                 getBankStatementDao().create(bankStatement);
-                // TODO: If notificaitons are activiated in settings
+
                 SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(mContext);
-                boolean showNotifications = SP.getBoolean("show_notifications_update", false);
+                boolean showNotifications = SP.getBoolean(SettingsActivity.SHOW_NOTIFICATIONS, false);
                 if (showNotifications) {
                     Utils.sendNotification(mContext, bankStatement.toString());
                 }

@@ -28,6 +28,13 @@ public class BankStatementCursorAdapter extends ResourceCursorAdapter {
 	private static String TAG = "BankStatementCursorAdapter";
 	private final ResultReceiver m_result_receiver = null;
 
+    static class ViewHolder {
+        public String description;
+        public String amount;
+        public int id;
+    }
+
+
     public BankStatementCursorAdapter(Fragment fragment, Cursor c) {
         super(fragment.getActivity(), R.layout.rowbuttonlayout, c);
 	}
@@ -42,20 +49,13 @@ public class BankStatementCursorAdapter extends ResourceCursorAdapter {
         	@Override
         	public void onClick(View v) {
         		Button button = (Button) v;
-
-
-        		String txt = button.getText().toString();
-    			int id = (Integer) v.getTag();
+    			ViewHolder viewHolder =  (ViewHolder) v.getTag();
 
                 Intent intent = new Intent(context, BankStatementEditActivity.class);
                 Bundle b = new Bundle();
-
-                String amount = cursor.getString(cursor.getColumnIndex(Contract.BankStatement.AMOUNT));
-                String description = cursor.getString(cursor.getColumnIndex(Contract.BankStatement.DESCRIPTION));
-
-                b.putString(Contract.BankStatement.AMOUNT, amount);
-                b.putString(Contract.BankStatement.DESCRIPTION, description);
-                b.putInt(Contract.BankStatement._ID, id);
+                b.putInt(Contract.BankStatement._ID, viewHolder.id);
+                b.putString(Contract.BankStatement.DESCRIPTION, viewHolder.description);
+                b.putString(Contract.BankStatement.AMOUNT, viewHolder.amount);
 
                 intent.putExtra("payload", b);
 
@@ -72,24 +72,32 @@ public class BankStatementCursorAdapter extends ResourceCursorAdapter {
 
         String amount = cursor.getString(cursor.getColumnIndex(Contract.BankStatement.AMOUNT));
         String balance = cursor.getString(cursor.getColumnIndex(Contract.BankStatement.BALANCE));
+        String description = cursor.getString(cursor.getColumnIndex(Contract.BankStatement.DESCRIPTION));
 
         String datestr = cursor.getString(cursor.getColumnIndex(Contract.BankStatement.DATE));
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
         Date parsedDate = null;
         try {
             parsedDate = dateFormat.parse(datestr);
-
         } catch (ParseException pe) {
             Utils.error(TAG, "Parse exception "+pe);
         }
 
         String datestr2 = Utils.getFormattedTimeString(Utils.GmtToLocal(parsedDate));
         int id = cursor.getInt(cursor.getColumnIndex(Contract.BankStatement._ID));
-        row1.setText(datestr2);
+        if (description == null) {
+            description = "";
+        }
+        row1.setText(String.format("%s %-20s", datestr2, description));
         row2.setText(String.format("%-15s %-15s", amount, balance));
 
         Button actionButton = (Button) view.findViewById(R.id.edit_row_button);
 
-        actionButton.setTag(id);
+        ViewHolder viewHolder = new ViewHolder();
+        viewHolder.description = description;
+        viewHolder.amount = amount;
+        viewHolder.id = id;
+
+        actionButton.setTag(viewHolder);
 	}
 }

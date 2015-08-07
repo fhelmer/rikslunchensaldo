@@ -25,9 +25,8 @@ public class BankStatementEditActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Get the message from the intent
         Intent intent = getIntent();
-
+        mBundle = intent.getBundleExtra("payload");
         setContentView(R.layout.activity_edit_bank_statement);
         fillData();
     }
@@ -37,7 +36,10 @@ public class BankStatementEditActivity extends Activity {
         mDescription = (EditText) findViewById(R.id.bank_statement_edit_description);
         mAmount = (EditText) findViewById(R.id.bank_statement_edit_amount);
 
-        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+        mDescription.setText(mBundle.getString(Contract.BankStatement.DESCRIPTION));
+        mAmount.setText(mBundle.getString(Contract.BankStatement.AMOUNT));
+
+        final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 switch (which){
@@ -58,18 +60,30 @@ public class BankStatementEditActivity extends Activity {
             }
         };
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
-                .setNegativeButton("No", dialogClickListener).show();
+        Button deleteButton = (Button) findViewById(R.id.bank_statement_delete_button);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(BankStatementEditActivity.this);
+                builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+                        .setNegativeButton("No", dialogClickListener).show();
 
-
+            }
+        });
 
         Button okButton = (Button) findViewById(R.id.bank_statement_done_button);
         okButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
-                // TODO Save new description etc
+                mBundle.putString(Contract.BankStatement.AMOUNT, mAmount.getEditableText().toString());
+                mBundle.putString(Contract.BankStatement.DESCRIPTION, mDescription.getEditableText().toString());
+
+                final Intent intent = new Intent(BankStatementEditActivity.this, MyIntentService.class);
+                intent.putExtra("command", MyIntentService.BANKSTATEMENT_UPDATE);
+                intent.putExtra(MyIntentService.PAYLOAD, mBundle);
+                ComponentName cm = startService(intent);
+
                 BankStatementEditActivity.this.finish();
             }
         });
