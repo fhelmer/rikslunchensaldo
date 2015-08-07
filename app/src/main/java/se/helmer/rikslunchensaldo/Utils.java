@@ -161,7 +161,7 @@ public class Utils {
     public static void sendNotification(Context context, String message) {
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(context)
-                        .setSmallIcon(R.drawable.lunch48)
+                        .setSmallIcon(R.drawable.icon)
                         .setContentTitle("LunchSaldo update")
                         .setContentText(message);
 

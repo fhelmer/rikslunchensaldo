@@ -29,6 +29,10 @@ public class RikslunchenDatasource {
         if (card_id.length() == 0) {
             return;
         }
+
+        // Check if we have network access, otherwise do nothing
+
+
         WebView webView = new WebView(c);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(new MyAccessor(c), "accessor");

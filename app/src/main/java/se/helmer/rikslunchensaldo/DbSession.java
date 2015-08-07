@@ -188,7 +188,7 @@ public class DbSession {
                 getBankStatementDao().create(bankStatement);
 
                 SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(mContext);
-                boolean showNotifications = SP.getBoolean(SettingsActivity.SHOW_NOTIFICATIONS, false);
+                boolean showNotifications = SP.getBoolean(Preferences.SHOW_NOTIFICATIONS, false);
                 if (showNotifications) {
                     Utils.sendNotification(mContext, bankStatement.toString());
                 }

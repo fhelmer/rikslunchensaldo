@@ -18,7 +18,7 @@ public class BankStatementEditActivity extends Activity {
 
     private EditText mDescription;
     private EditText mAmount;
-    private int _id;
+    private int mId;
     private Bundle mBundle;
 
     @Override
@@ -26,7 +26,7 @@ public class BankStatementEditActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         Intent intent = getIntent();
-        mBundle = intent.getBundleExtra("payload");
+        mBundle = intent.getBundleExtra(MyIntentService.PAYLOAD);
         setContentView(R.layout.activity_edit_bank_statement);
         fillData();
     }
@@ -38,17 +38,16 @@ public class BankStatementEditActivity extends Activity {
 
         mDescription.setText(mBundle.getString(Contract.BankStatement.DESCRIPTION));
         mAmount.setText(mBundle.getString(Contract.BankStatement.AMOUNT));
+        mId = mBundle.getShort(Contract.BankStatement._ID);
 
         final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 switch (which){
                     case DialogInterface.BUTTON_POSITIVE:
-                        Bundle b = new Bundle();
-
                         final Intent intent = new Intent(BankStatementEditActivity.this, MyIntentService.class);
-                        intent.putExtra("command", MyIntentService.BANKSTATEMENT_DELETE);
-                        intent.putExtra(MyIntentService.PAYLOAD, b);
+                        intent.putExtra(MyIntentService.COMMAND, MyIntentService.BANKSTATEMENT_DELETE);
+                        intent.putExtra(MyIntentService.PAYLOAD, mBundle);
                         ComponentName cm = startService(intent);
                         BankStatementEditActivity.this.finish();
                         break;

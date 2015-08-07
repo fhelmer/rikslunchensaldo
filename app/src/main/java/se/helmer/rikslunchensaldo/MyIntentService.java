@@ -80,7 +80,7 @@ public class MyIntentService extends IntentService {
 
             case BANKSTATEMENT_UPDATE:
                 session.createLogMessage("Updating bankstatement " +
-                        b.getString(Contract.BankStatement._ID));
+                        b.getInt(Contract.BankStatement._ID));
                 session.updateBankStatement(b);
                 break;
 

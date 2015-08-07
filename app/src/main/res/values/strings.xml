@@ -36,6 +36,9 @@
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
 
-    <string name="title_activity_edit_bank_statement">EditBankStatementActivity</string>
+    <string name="title_activity_edit_bank_statement">Edit bank statement</string>
 
+    <string name="about">About</string>
+    <string name="about_message">This is an experimental app trying to fetch account balances from
+    Rikslunchen without using a password.</string>
 </resources>

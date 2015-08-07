@@ -6,21 +6,10 @@
         android:summary="@string/notifications_summary"
         android:defaultValue="false" />
 
-    <CheckBoxPreference
-        android:key="auto_update"
-        android:title="@string/auto_update"
-        android:summary="@string/auto_update_summary"
-        android:defaultValue="true" />
-
-    <EditTextPreference android:title="Start time for autoupdate (HH:MM)"
-        android:key="start_time"
-        android:summary="Please enter a time for recurring queries"/>
-
     <ListPreference android:title="Update frequency"
-        android:summary="Select rikslunchen update frequency (hours)"
-        android:key="fetchInterval"
-        android:defaultValue="1"
-        android:entries="@array/fetchIntervalNames"
-        android:entryValues="@array/fetchIntervalValues" />
+        android:summary="Please select update frequency "
+        android:key="update_frequency_list"
+        android:entries="@array/frequency_list_preference"
+        android:entryValues="@array/frequencyvalues_list_preference" />
 
 </PreferenceScreen>

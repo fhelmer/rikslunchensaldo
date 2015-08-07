@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string-array name="fetchIntervalNames">
+    <string-array name="frequency_list_preference">
+        <item>Never (Manual check only)</item>
         <item>Every hour</item>
         <item>Every 12th hour</item>
         <item>Every day</item>
     </string-array>
 
-    <string-array name="fetchIntervalValues">
-        <item>1</item>
-        <item>12</item>
-        <item>24</item>
+    <string-array name="frequencyvalues_list_preference">
+        <item>never</item>
+        <item>hour</item>
+        <item>halfday</item>
+        <item>day</item>
     </string-array>
 </resources>

@@ -7,6 +7,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
@@ -204,6 +205,22 @@ public class MainActivity extends FragmentActivity
                 Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
                 return true;
+
+            case R.id.about:
+                final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+                alertDialog.setTitle(R.string.app_name);
+                alertDialog.setMessage(getString(R.string.about_message));
+                alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        alertDialog.cancel();
+                    }
+                });
+                // Set the Icon for the Dialog
+                alertDialog.setIcon(R.drawable.icon);
+                alertDialog.show();
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -254,6 +271,9 @@ public class MainActivity extends FragmentActivity
     @Override
     protected void onResume() {
         super.onResume();
+
+        // SharedPreferences settings = getSharedPreferences("AlarmSettings", 0);
+
         mReceiver.setReceiver(this);
 
         final Intent intent = new Intent(this, MyIntentService.class);
