@@ -38,7 +38,6 @@ public class BankStatementEditActivity extends Activity {
 
         mDescription.setText(mBundle.getString(Contract.BankStatement.DESCRIPTION));
         mAmount.setText(mBundle.getString(Contract.BankStatement.AMOUNT));
-        mId = mBundle.getShort(Contract.BankStatement._ID);
 
         final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override

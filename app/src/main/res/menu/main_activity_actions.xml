@@ -4,9 +4,9 @@
     <item
         android:id="@+id/action_refresh"
         android:orderInCategory="100"
-        android:showAsAction="always"
+        android:showAsAction="ifRoom"
         android:icon="@drawable/ic_action_refresh"
-        android:title="Refresh"/>
+        android:title="@string/refresh"/>
 
     <item android:id="@+id/action_ask_for_card_id" android:title="@string/action_ask_for_card_id"
         android:orderInCategory="100" android:showAsAction="never" />
@@ -17,5 +17,5 @@
     <item
         android:id="@+id/about"
         android:orderInCategory="200"
-        android:title="About"/>
+        android:title="@string/about"/>
 </menu>

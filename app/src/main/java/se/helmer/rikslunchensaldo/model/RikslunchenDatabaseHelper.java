@@ -65,18 +65,7 @@ public class RikslunchenDatabaseHelper extends OrmLiteSqliteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource, int oldVersion,
                           int newVersion) {
-        try {
-            Utils.log(RikslunchenDatabaseHelper.class.getName(), "onUpgrade");
-            TableUtils.dropTable(connectionSource, BankStatement.class, true);
-            TableUtils.dropTable(connectionSource, Card.class, true);
-            TableUtils.dropTable(connectionSource, LogMessage.class, true);
-
-            // after we drop the old databases, we create the new ones
-            onCreate(db, connectionSource);
-        } catch (SQLException e) {
-            Utils.error(RikslunchenDatabaseHelper.class.getName(), "Can't drop databases: "+e);
-            throw new RuntimeException(e);
-        }
+        onCreate(db, connectionSource);
     }
 
     public Dao<BankStatement, Integer> getBankStatementDao() throws SQLException {

@@ -19,7 +19,6 @@ public class Contract {
         public static final String MIMETYPE_NAME = AUTHORITY + ".provider";
 
         // field info
-        public static final String _ID = "_id";
         public static final String DESCRIPTION = "description";
         public static final String MESSAGE = "message";
         public static final String BALANCE = "balance";
@@ -47,8 +46,7 @@ public class Contract {
         public static final String MIMETYPE_TYPE = TABLE_NAME;
         public static final String MIMETYPE_NAME = AUTHORITY + ".provider";
 
-        // field info
-        public static final String _ID = "_id";
+        // field info (_ID is in BaseColumns)
         public static final String DESCRIPTION = "description";
         public static final String CARD_ID = "card_id";
         public static final String LAST_TOPUP_DATE = "last_top_update";
@@ -76,7 +74,6 @@ public class Contract {
         public static final String MIMETYPE_NAME = AUTHORITY + ".provider";
 
         // field info
-        public static final String _ID = "_id";
         public static final String DATE = "date";
         public static final String DESCRIPTION = "description";
 

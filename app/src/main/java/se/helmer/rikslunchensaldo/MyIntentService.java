@@ -87,7 +87,7 @@ public class MyIntentService extends IntentService {
             case BANKSTATEMENT_DELETE:
                 int id = b.getInt(Contract.BankStatement._ID);
                 session.deleteBankStatement(id);
-                session.createLogMessage("Deleted transaction " + id);
+                session.createLogMessage("Deleted bankstatent " + id);
                 break;
 
             case LOG_MESSAGE_SAVE:

@@ -88,7 +88,6 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         Utils.clearPreferences(getContext());
         Bundle prefs = Utils.getSharedPreferences(getContext());
         prefs.putString(RikslunchenDatasource.BALANCE, "123.12");
-        Utils.saveSharedPreferences(getContext(), prefs);
 
         Card card = null;
         Bundle prefs2 = Utils.getSharedPreferences(getContext());

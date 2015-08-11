@@ -73,11 +73,13 @@ public class OnBootReceiver extends BroadcastReceiver {
 
         SharedPreferences.Editor editor = prefs.edit();
 
+        DbSession session = new DbSession(ctxt);
         if (freq == 0) {
             cancelAlarm(ctxt);
             editor.putString(Preferences.START_TIME, "");
             editor.putString(Preferences.UPDATE_FREQUENCY, entryValues[0]);
             Log.d(TAG, "Cancelling alarm");
+            session.createLogMessage("Cancelling alarm");
         } else {
             mgr.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(),
                     freq, getPendingIntent(ctxt));
@@ -85,6 +87,7 @@ public class OnBootReceiver extends BroadcastReceiver {
             editor.putString(Preferences.START_TIME, timeStr);
             editor.putString(Preferences.UPDATE_FREQUENCY, frequency);
             Log.d(TAG, "setRepeating alarm=" + cal + " " + frequency);
+            session.createLogMessage("Set repeating alarm to start " + timeStr + " then " + frequency);
         }
         editor.apply();
     }

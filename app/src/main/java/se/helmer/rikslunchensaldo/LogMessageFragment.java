@@ -91,7 +91,6 @@ LoaderManager.LoaderCallbacks<Cursor> {
 
     public  void fillData() {
         Bundle b = getArguments();
-        // mMode = b.getInt("num");
 
         m_adapter = new LogMessageCursorAdapter(this, null);
         setListAdapter(m_adapter);

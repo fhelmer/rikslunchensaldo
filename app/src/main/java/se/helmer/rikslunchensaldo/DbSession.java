@@ -156,6 +156,12 @@ public class DbSession {
 
         try {
             bankStatement = getBankStatementDao().queryForId(id);
+            BigDecimal previousBalance = bankStatement.getBalance();
+            BigDecimal previousAmount = bankStatement.getAmount();
+            BigDecimal amountDiff =
+                    previousAmount.subtract(new BigDecimal(b.getString(Contract.BankStatement.AMOUNT)));
+            BigDecimal newBalance = previousBalance.subtract(amountDiff);
+            b.putString(Contract.BankStatement.BALANCE, newBalance.toString());
             bankStatement.setValues(b);
             getBankStatementDao().update(bankStatement);
         } catch (SQLException e) {
