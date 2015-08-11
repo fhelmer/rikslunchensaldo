@@ -71,8 +71,8 @@ public class MyIntentService extends IntentService {
                 b = session.fetchSummary(getApplicationContext());
                 break;
             case SEND_BALANCE:
-                session.createLogMessage("Got balance=" +
-                        b.getString(RikslunchenDatasource.BALANCE) + " from rikslunchen");
+                session.createLogMessage("Rikslunchen balance=" +
+                        b.getString(RikslunchenDatasource.BALANCE));
                 Card card3 = session.createOrUpdateCard(b);
                 BankStatement t = session.createOrUpdateBankStatement(b);
                 b = session.fetchSummary(getApplicationContext());

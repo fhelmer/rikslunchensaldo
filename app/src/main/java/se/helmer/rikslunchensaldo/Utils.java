@@ -97,22 +97,6 @@ public class Utils {
         prefsEditor.commit();
     }
 
-    static void saveSharedPreferences(Context context, Bundle b) {
-        info(context, TAG,"Saving shared preferences");
-        SharedPreferences sharedPrefs =
-                context.getSharedPreferences(SummaryFragment.APP_SHARED_PREFS, Activity.MODE_PRIVATE);
-
-        Editor prefsEditor = sharedPrefs.edit();
-
-        prefsEditor.putString(RikslunchenDatasource.BALANCE,b.getString(RikslunchenDatasource.BALANCE));
-        prefsEditor.putString(RikslunchenDatasource.LAST_TOPUP_DATE,b.getString(RikslunchenDatasource.LAST_TOPUP_DATE));
-        prefsEditor.putString(RikslunchenDatasource.LATEST_UPDATE,b.getString(RikslunchenDatasource.LATEST_UPDATE));
-        prefsEditor.putString(RikslunchenDatasource.CARD_ID, b.getString(RikslunchenDatasource.CARD_ID, ""));
-
-        prefsEditor.commit();
-
-    }
-
     static void updateWidgets(Context context, int layout, AppWidgetManager appWidgetManager, int[] appWidgetIds, Class<?> cls) {
 
         SharedPreferences sharedPrefs =

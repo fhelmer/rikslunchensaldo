@@ -7,16 +7,19 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 
+import java.security.Permission;
+import java.util.HashMap;
+
 public class Preferences extends PreferenceFragment implements
         SharedPreferences.OnSharedPreferenceChangeListener
 {
 
     static String TAG = "Preferences";
-    // Some settings related constants
 
-    public static final String SHOW_NOTIFICATIONS = "show_notifications_update";
+    // Some settings related constants. Check preferences.xml
+    public static final String SHOW_NOTIFICATIONS = "show_notifications";
     public static final String UPDATE_FREQUENCY = "update_frequency_list";
-
+    public static final String START_TIME = "start_time";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -30,10 +33,25 @@ public class Preferences extends PreferenceFragment implements
         SharedPreferences prefs = getPreferenceScreen().getSharedPreferences();
 
         Preference pref = findPreference(Preferences.UPDATE_FREQUENCY);
+
         String frequency = prefs
                 .getString(Preferences.UPDATE_FREQUENCY, "never");
-        pref.setSummary(frequency);
 
+        String[] entries = getActivity().getResources().getStringArray(
+                R.array.frequency_list_preference);
+        String[] entryValues = getActivity().getResources().getStringArray(
+                R.array.frequencyvalues_list_preference);
+
+        HashMap<String, String> entryValuesMap = new HashMap<String, String>();
+        for (int i = 0; i < entryValues.length; i++) {
+            entryValuesMap.put(entryValues[i], entries[i]);
+        }
+        pref.setSummary(entryValuesMap.get(frequency));
+
+        Preference startTimePref = findPreference(Preferences.START_TIME);
+        String startTime = prefs
+                .getString(Preferences.START_TIME, "");
+        startTimePref.setSummary(startTime);
     }
 
     @Override
@@ -55,5 +73,6 @@ public class Preferences extends PreferenceFragment implements
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         OnBootReceiver.setAlarm(getActivity());
+        updateSummary();
    }
 }

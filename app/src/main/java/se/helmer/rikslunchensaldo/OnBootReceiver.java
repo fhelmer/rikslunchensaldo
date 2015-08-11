@@ -1,26 +1,20 @@
 package se.helmer.rikslunchensaldo;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Handler;
-import android.os.ResultReceiver;
-import android.preference.Preference;
 import android.preference.PreferenceManager;
-import android.preference.PreferenceScreen;
 import android.util.Log;
-
-import se.helmer.rikslunchensaldo.model.Card;
 
 
 public class OnBootReceiver extends BroadcastReceiver {
@@ -31,50 +25,65 @@ public class OnBootReceiver extends BroadcastReceiver {
         AlarmManager mgr = (AlarmManager) ctxt
                 .getSystemService(Context.ALARM_SERVICE);
 
-        // Get current time
-
-        Calendar cal = Calendar.getInstance();
+        String[] entryValues = ctxt.getResources().getStringArray(
+                R.array.frequencyvalues_list_preference);
 
         String[] entries = ctxt.getResources().getStringArray(
-                R.array.frequencyvalues_list_preference);
-        long[] values = { 0, AlarmManager.INTERVAL_HOUR,
-                AlarmManager.INTERVAL_HALF_DAY, AlarmManager.INTERVAL_DAY };
-        HashMap<String, Long> hm = new HashMap<String, Long>();
-        for (int i = 0; i < entries.length; i++) {
-            hm.put(entries[i], values[i]);
+                R.array.frequency_list_preference);
+
+        long[] values = { 0,
+                AlarmManager.INTERVAL_HOUR,
+                AlarmManager.INTERVAL_HALF_DAY,
+                AlarmManager.INTERVAL_DAY };
+
+        HashMap<String, Long> entryValueIntervals = new HashMap<String, Long>();
+        HashMap<String, String> entryValuesMap = new HashMap<String, String>();
+        for (int i = 0; i < entryValues.length; i++) {
+            entryValueIntervals.put(entryValues[i], values[i]);
+            entryValuesMap.put(entryValues[i], entries[i]);
         }
 
         SharedPreferences prefs = PreferenceManager
                 .getDefaultSharedPreferences(ctxt);
 
-        String frequency = prefs.getString(Preferences.UPDATE_FREQUENCY,
-                entries[0]);
-
         // never, hour, halfday, daily
+        String frequency = prefs.getString(Preferences.UPDATE_FREQUENCY,
+                entryValues[0]);
 
-        Log.d(TAG, frequency);
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.US);
+        String startTime = prefs.getString(Preferences.START_TIME, "");
+        Calendar cal = Calendar.getInstance();
+        String timeStr = startTime;
 
-        if (cal.getTimeInMillis() < System.currentTimeMillis()) {
+        if (startTime.isEmpty()) {
+            // Lets update within one minute if there is no time set
             cal.add(Calendar.MINUTE, 1);
+            timeStr = formatter.format(cal.getTime());
+        } else {
+            try {
+                Date date = formatter.parse(startTime);
+                cal.setTime(date);
+
+            } catch (ParseException pe) {
+                timeStr = "Error parsing " + startTime;
+            }
         }
 
-        long freq = hm.get(frequency);
+        long freq = entryValueIntervals.get(frequency);
 
         SharedPreferences.Editor editor = prefs.edit();
 
         if (freq == 0) {
             cancelAlarm(ctxt);
+            editor.putString(Preferences.START_TIME, "");
+            editor.putString(Preferences.UPDATE_FREQUENCY, entryValues[0]);
             Log.d(TAG, "Cancelling alarm");
-            editor.putString(Preferences.UPDATE_FREQUENCY,
-                    "No automatic check (Select an update frequency to start)");
         } else {
             mgr.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(),
                     freq, getPendingIntent(ctxt));
 
-            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss", Locale.US);
-            String t = formatter.format(cal.getTime());
-            editor.putString(Preferences.UPDATE_FREQUENCY, String.format(
-                    "Balance check frequency: %s (starting %s)", frequency, t));
+            editor.putString(Preferences.START_TIME, timeStr);
+            editor.putString(Preferences.UPDATE_FREQUENCY, frequency);
             Log.d(TAG, "setRepeating alarm=" + cal + " " + frequency);
         }
         editor.apply();
@@ -89,6 +98,7 @@ public class OnBootReceiver extends BroadcastReceiver {
 
     private static PendingIntent getPendingIntent(Context ctxt) {
         Intent i = new Intent(ctxt, AlarmReceiver.class);
+        i.setAction(AlarmReceiver.FETCH);
 
         return (PendingIntent.getBroadcast(ctxt, 0, i, 0));
     }

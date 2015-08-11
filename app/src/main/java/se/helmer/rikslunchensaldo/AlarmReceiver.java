@@ -19,19 +19,15 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
         DbSession session = new DbSession(context);
-        session.createLogMessage("Processing alarm");
         if (FETCH.equals(action)) {
-            SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(context);
-            int updateFrequency = SP.getInt(Preferences.UPDATE_FREQUENCY, 0);
             Card card = session.getCard();
-            if (updateFrequency > 0 && (card != null)) {
-                String cardId = card.getCardId();
-                RikslunchenDatasource rd = new RikslunchenDatasource();
-                ResultReceiver receiver = new AlarmResultReceiver(new Handler(), context);
-                session.createLogMessage(TAG + "About to fetch using " + cardId +
-                        " autoupdate=" + updateFrequency);
-                if (cardId.length() > 0)
-                    rd.query(context, cardId);
+            String cardId = card.getCardId();
+            RikslunchenDatasource rd = new RikslunchenDatasource();
+            if (cardId.isEmpty()) {
+                session.createLogMessage("No card Id specified. Check menu -> Enter Card ID");
+            } else {
+                session.createLogMessage("Automatic query of card " + cardId);
+                rd.query(context, cardId);
             }
         }
         session.close();
