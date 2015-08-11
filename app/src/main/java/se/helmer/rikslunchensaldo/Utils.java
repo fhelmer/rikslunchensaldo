@@ -24,6 +24,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.RemoteViews;
 
+import se.helmer.rikslunchensaldo.model.Card;
 import se.helmer.rikslunchensaldo.model.Contract;
 
 public class Utils {
@@ -94,14 +95,14 @@ public class Utils {
 
         Editor prefsEditor = sharedPrefs.edit();
         b.putString(RikslunchenDatasource.CARD_ID,"");
-        prefsEditor.commit();
+        prefsEditor.apply();
     }
 
     static void updateWidgets(Context context, int layout, AppWidgetManager appWidgetManager, int[] appWidgetIds, Class<?> cls) {
 
-        SharedPreferences sharedPrefs =
-                context.getSharedPreferences(SummaryFragment.APP_SHARED_PREFS, Activity.MODE_PRIVATE);
-        String cardId = sharedPrefs.getString(RikslunchenDatasource.CARD_ID, "");
+        DbSession session = new DbSession(context);
+        Card card  = session.getCard();
+        String cardId = card.getCardId();
 
         // Get all ids for this class
         ComponentName thisWidget = new ComponentName(context,cls);
@@ -116,14 +117,10 @@ public class Utils {
           ResultReceiver receiver = new MyWidgetResultReceiver(new Handler(),
                   context, remoteViews, appWidgetManager,widgetId,cardId);
 
-          String latestupdatestr = sharedPrefs.getString(RikslunchenDatasource.LATEST_UPDATE, "");
-          Log.d(TAG,"updateWidgets: latestupdatestr=" + latestupdatestr + " cardId="+cardId);
+          String latestupdatestr = card.getLastTopupDate();
 
           // Get contents from shared preferences and send to widget(s)
-          Bundle b = new Bundle();
-          b.putString(RikslunchenDatasource.BALANCE, sharedPrefs.getString(RikslunchenDatasource.BALANCE, ""));
-          b.putString(RikslunchenDatasource.LAST_TOPUP_DATE, sharedPrefs.getString(RikslunchenDatasource.LAST_TOPUP_DATE, ""));
-          b.putString(RikslunchenDatasource.LATEST_UPDATE, latestupdatestr);
+            Bundle b = session.fetchSummary();
           receiver.send(0,b);
 
           // Register an onClickListener
@@ -140,7 +137,6 @@ public class Utils {
         }
         Log.d(TAG,"updateWidgets done");
     }
-
 
     public static void sendNotification(Context context, String message) {
         NotificationCompat.Builder builder =

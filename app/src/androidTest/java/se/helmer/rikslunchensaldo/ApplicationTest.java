@@ -98,7 +98,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         }
         assertNotNull(card);
         if (card != null) {
-            Bundle b = session.fetchSummary(getContext());
+            Bundle b = session.fetchSummary();
             String balance = b.getString(RikslunchenDatasource.BALANCE);
             assertEquals(balance, "123.12");
         }

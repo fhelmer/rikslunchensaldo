@@ -101,7 +101,7 @@ public class DbSession {
         return card;
     }
 
-    Bundle fetchSummary(Context context) {
+    Bundle fetchSummary() {
         Card card = getCard();
         Bundle b = new Bundle();
         BankStatement bankStatement = getLatestBankStatement();

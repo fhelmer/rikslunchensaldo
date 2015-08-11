@@ -61,21 +61,21 @@ public class MyIntentService extends IntentService {
                     }
                 }
                 if (card != null) {
-                    b = session.fetchSummary(getApplicationContext());
+                    b = session.fetchSummary();
                 }
                 break;
             case CARD_UPDATE:
                 session.createLogMessage("Saving card id=" +
                         b.getString(Contract.Card.CARD_ID));
                 Card card2 = session.createOrUpdateCard(b);
-                b = session.fetchSummary(getApplicationContext());
+                b = session.fetchSummary();
                 break;
             case SEND_BALANCE:
                 session.createLogMessage("Rikslunchen balance=" +
                         b.getString(RikslunchenDatasource.BALANCE));
                 Card card3 = session.createOrUpdateCard(b);
                 BankStatement t = session.createOrUpdateBankStatement(b);
-                b = session.fetchSummary(getApplicationContext());
+                b = session.fetchSummary();
                 break;
 
             case BANKSTATEMENT_UPDATE:
