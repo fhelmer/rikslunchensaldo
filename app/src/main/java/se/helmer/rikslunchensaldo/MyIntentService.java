@@ -15,7 +15,7 @@ import se.helmer.rikslunchensaldo.model.Contract;
 
 public class MyIntentService extends IntentService {
 
-    private static String TAG = "MyIntentService";
+    private final static String TAG = "MyIntentService";
 
     public static final String COMMAND = "command";
     public static final String PAYLOAD = "payload";

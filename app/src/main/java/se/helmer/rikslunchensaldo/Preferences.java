@@ -28,7 +28,7 @@ public class Preferences extends PreferenceFragment implements
         updateSummary();
     }
 
-    public void updateSummary()
+    private void updateSummary()
     {
         SharedPreferences prefs = getPreferenceScreen().getSharedPreferences();
 

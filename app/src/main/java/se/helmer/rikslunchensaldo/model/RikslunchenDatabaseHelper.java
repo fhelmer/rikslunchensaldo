@@ -65,6 +65,8 @@ public class RikslunchenDatabaseHelper extends OrmLiteSqliteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource, int oldVersion,
                           int newVersion) {
+        Utils.error(RikslunchenDatabaseHelper.class.getName(),
+                "onUpgrade:oldVersion="+oldVersion+" newVersion="+newVersion);
         onCreate(db, connectionSource);
     }
 

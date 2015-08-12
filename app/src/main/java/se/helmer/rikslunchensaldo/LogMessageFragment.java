@@ -23,7 +23,7 @@ import se.helmer.rikslunchensaldo.model.Contract;
 public class LogMessageFragment extends ListFragment implements
 LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static String TAG = "LogMessageFragment";
+    private final static String TAG = "LogMessageFragment";
 
     private LogMessageCursorAdapter m_adapter = null;
 

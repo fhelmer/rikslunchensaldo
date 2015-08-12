@@ -23,7 +23,7 @@ import se.helmer.rikslunchensaldo.model.Contract;
 
 public class LogMessageCursorAdapter extends ResourceCursorAdapter {
 
-	private static String TAG = "LogMessageCursorAdapter";
+	private final static String TAG = "LogMessageCursorAdapter";
 	private final ResultReceiver m_result_receiver = null;
 
     public LogMessageCursorAdapter(Fragment fragment, Cursor c) {
@@ -32,9 +32,7 @@ public class LogMessageCursorAdapter extends ResourceCursorAdapter {
 
 	@Override
 	public View newView(final Context context, Cursor cursor, ViewGroup parent) {
-        final View view = super.newView(context,cursor,parent);
-
-		return view;
+        return super.newView(context,cursor,parent);
 	}
 
 	@Override

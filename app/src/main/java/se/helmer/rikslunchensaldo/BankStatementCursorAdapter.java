@@ -25,7 +25,7 @@ import se.helmer.rikslunchensaldo.model.Contract;
 
 public class BankStatementCursorAdapter extends ResourceCursorAdapter {
 
-	private static String TAG = "BankStatementCursorAdapter";
+	private final static String TAG = "BankStatementCursorAdapter";
 	private final ResultReceiver m_result_receiver = null;
 
     static class ViewHolder {

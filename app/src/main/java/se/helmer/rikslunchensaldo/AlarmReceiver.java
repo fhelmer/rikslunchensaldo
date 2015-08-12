@@ -12,8 +12,8 @@ import se.helmer.rikslunchensaldo.model.Card;
 
 public class AlarmReceiver extends BroadcastReceiver {
 
-    public static String TAG = "Rikslunchensaldo.AlarmReceiver";
-    public static String FETCH = "se.helmer.rikslunchensaldo.FETCH";
+    public final static String TAG = "Rikslunchensaldo.AlarmReceiver";
+    public final static String FETCH = "se.helmer.rikslunchensaldo.FETCH";
 
     @Override
     public void onReceive(Context context, Intent intent) {

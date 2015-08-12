@@ -22,17 +22,17 @@ import se.helmer.rikslunchensaldo.model.Contract;
 public class SummaryFragment extends ListFragment implements
         LoaderManager.LoaderCallbacks<Cursor> {
     private static String TAG = "SummaryFragment";
-    int fragNum;
+    private int fragNum;
 
     private BankStatementCursorAdapter m_adapter = null;
 
-    TextView mBalanceField;
-    TextView mLasttopupField;
-    TextView mCardIdField;
+    private TextView mBalanceField;
+    private TextView mLasttopupField;
+    private TextView mCardIdField;
     TextView mLatestUpdate;
     CheckBox mAutoUpdate;
-    AdView mAdView;
-    View mView;
+    private AdView mAdView;
+    private View mView;
 
     public static final String APP_SHARED_PREFS = "se.helmer.riksbankensaldo_prefs";
 
