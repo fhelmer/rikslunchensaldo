@@ -65,7 +65,7 @@ public class OnBootReceiver extends BroadcastReceiver {
                 cal.setTime(date);
 
             } catch (ParseException pe) {
-                timeStr = "Error parsing " + startTime;
+                timeStr = "";
             }
         }
 
@@ -87,7 +87,8 @@ public class OnBootReceiver extends BroadcastReceiver {
             editor.putString(Preferences.START_TIME, timeStr);
             editor.putString(Preferences.UPDATE_FREQUENCY, frequency);
             Log.d(TAG, "setRepeating alarm=" + cal + " " + frequency);
-            session.createLogMessage("Set repeating alarm to start " + timeStr + " then " + frequency);
+            session.createLogMessage("Set repeating alarm to start " + timeStr +
+                    " then " + entryValuesMap.get(frequency));
         }
         editor.apply();
     }

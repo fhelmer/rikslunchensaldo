@@ -213,7 +213,7 @@ public class DbSession {
         try {
             getLogMessageDao().create(logMessage);
         } catch (SQLException e) {
-            e.printStackTrace();;
+            e.printStackTrace();
             Utils.error("createLogMessage","Error saving log message " + e);
         }
         return logMessage;
