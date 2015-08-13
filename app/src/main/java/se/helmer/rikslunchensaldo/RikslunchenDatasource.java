@@ -23,15 +23,12 @@ public class RikslunchenDatasource {
 	public static String CARD_ID = "card_id";
     public static String MESSAGE = "message";
 
-    public void query(Context c, final String card_id) {
+    public void query(final Context c, final String card_id) {
         Utils.info(c, TAG, "Querying "+card_id);
         this.cardId = card_id;
         if (card_id.length() == 0) {
             return;
         }
-
-        // Check if we have network access, otherwise do nothing
-
 
         WebView webView = new WebView(c);
         webView.getSettings().setJavaScriptEnabled(true);

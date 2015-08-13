@@ -27,7 +27,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 session.createLogMessage("No card Id specified. Check menu -> Enter Card ID");
             } else {
                 session.createLogMessage("Automatic query of card " + cardId);
-                rd.query(context, cardId);
+                rd.query(context.getApplicationContext(), cardId);
             }
         }
         session.close();

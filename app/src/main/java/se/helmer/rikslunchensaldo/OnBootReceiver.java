@@ -52,20 +52,21 @@ public class OnBootReceiver extends BroadcastReceiver {
 
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.US);
         String startTime = prefs.getString(Preferences.START_TIME, "");
+        Date date = new Date();
         Calendar cal = Calendar.getInstance();
-        String timeStr = startTime;
-
+        cal.setTime(date);
         if (startTime.isEmpty()) {
             // Lets update within one minute if there is no time set
             cal.add(Calendar.MINUTE, 1);
-            timeStr = formatter.format(cal.getTime());
+            startTime = formatter.format(cal.getTime());
         } else {
             try {
-                Date date = formatter.parse(startTime);
-                cal.setTime(date);
-
+                Calendar timeCalendar = Calendar.getInstance();
+                timeCalendar.setTime(formatter.parse(startTime));
+                cal.set(Calendar.HOUR, timeCalendar.get(Calendar.HOUR));
+                cal.set(Calendar.MINUTE, timeCalendar.get(Calendar.MINUTE));
             } catch (ParseException pe) {
-                timeStr = "";
+                startTime = formatter.format(cal.getTime());
             }
         }
 
@@ -84,10 +85,10 @@ public class OnBootReceiver extends BroadcastReceiver {
             mgr.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(),
                     freq, getPendingIntent(ctxt));
 
-            editor.putString(Preferences.START_TIME, timeStr);
+            editor.putString(Preferences.START_TIME, startTime);
             editor.putString(Preferences.UPDATE_FREQUENCY, frequency);
             Log.d(TAG, "setRepeating alarm=" + cal + " " + frequency);
-            session.createLogMessage("Set repeating alarm to start " + timeStr +
+            session.createLogMessage("Set repeating alarm to start " + startTime +
                     " then " + entryValuesMap.get(frequency));
         }
         editor.apply();
