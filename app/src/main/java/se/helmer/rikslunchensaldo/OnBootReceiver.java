@@ -52,22 +52,15 @@ public class OnBootReceiver extends BroadcastReceiver {
 
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.US);
         String startTime = prefs.getString(Preferences.START_TIME, "");
-        Date date = new Date();
         Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        if (startTime.isEmpty()) {
-            // Lets update within one minute if there is no time set
-            cal.add(Calendar.MINUTE, 1);
+        cal.setTimeInMillis(System.currentTimeMillis());
+        try {
+            Calendar timeCalendar = Calendar.getInstance();
+            timeCalendar.setTime(formatter.parse(startTime));
+            cal.set(Calendar.HOUR_OF_DAY, timeCalendar.get(Calendar.HOUR_OF_DAY));
+            cal.set(Calendar.MINUTE, timeCalendar.get(Calendar.MINUTE));
+        } catch (ParseException pe) {
             startTime = formatter.format(cal.getTime());
-        } else {
-            try {
-                Calendar timeCalendar = Calendar.getInstance();
-                timeCalendar.setTime(formatter.parse(startTime));
-                cal.set(Calendar.HOUR, timeCalendar.get(Calendar.HOUR));
-                cal.set(Calendar.MINUTE, timeCalendar.get(Calendar.MINUTE));
-            } catch (ParseException pe) {
-                startTime = formatter.format(cal.getTime());
-            }
         }
 
         long freq = entryValueIntervals.get(frequency);
@@ -82,13 +75,13 @@ public class OnBootReceiver extends BroadcastReceiver {
             Log.d(TAG, "Cancelling alarm");
             session.createLogMessage("Cancelling alarm");
         } else {
-            mgr.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(),
+            mgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(),
                     freq, getPendingIntent(ctxt));
 
             editor.putString(Preferences.START_TIME, startTime);
             editor.putString(Preferences.UPDATE_FREQUENCY, frequency);
             Log.d(TAG, "setRepeating alarm=" + cal + " " + frequency);
-            session.createLogMessage("Set repeating alarm to start " + startTime +
+            session.createLogMessage("Set repeating alarm to start " + cal.getTime() +
                     " then " + entryValuesMap.get(frequency));
         }
         editor.apply();
