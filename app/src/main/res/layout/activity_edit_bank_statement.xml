@@ -48,7 +48,7 @@
 
                 <EditText  android:id="@+id/bank_statement_edit_amount"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:inputType="numberDecimal"
+                    android:inputType="numberSigned|numberDecimal"
                     android:layout_width="0dp"
                     android:layout_weight="1"/>
 

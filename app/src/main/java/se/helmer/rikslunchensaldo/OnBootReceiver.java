@@ -59,6 +59,7 @@ public class OnBootReceiver extends BroadcastReceiver {
             timeCalendar.setTime(formatter.parse(startTime));
             cal.set(Calendar.HOUR_OF_DAY, timeCalendar.get(Calendar.HOUR_OF_DAY));
             cal.set(Calendar.MINUTE, timeCalendar.get(Calendar.MINUTE));
+            cal.set(Calendar.SECOND, 0);
         } catch (ParseException pe) {
             startTime = formatter.format(cal.getTime());
         }

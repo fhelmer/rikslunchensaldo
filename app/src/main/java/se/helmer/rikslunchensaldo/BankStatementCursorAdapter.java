@@ -88,6 +88,9 @@ public class BankStatementCursorAdapter extends ResourceCursorAdapter {
         if (description == null) {
             description = "";
         }
+        if (amount.contentEquals("0")) {
+            amount = "";
+        }
         row1.setText(String.format("%s %-20s", datestr2, description));
         row2.setText(String.format("%-15s %-15s", amount, balance));
 
