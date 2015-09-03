@@ -102,6 +102,9 @@ public class Utils {
 
         DbSession session = new DbSession(context);
         Card card  = session.getCard();
+        if (card == null) {
+            return;
+        }
         String cardId = card.getCardId();
 
         // Get all ids for this class

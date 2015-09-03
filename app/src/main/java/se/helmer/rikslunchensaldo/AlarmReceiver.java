@@ -21,13 +21,15 @@ public class AlarmReceiver extends BroadcastReceiver {
         DbSession session = new DbSession(context);
         if (FETCH.equals(action)) {
             Card card = session.getCard();
-            String cardId = card.getCardId();
-            RikslunchenDatasource rd = new RikslunchenDatasource();
-            if (cardId.isEmpty()) {
-                session.createLogMessage("No card Id specified. Check menu -> Enter Card ID");
-            } else {
-                session.createLogMessage("Automatic query of card " + cardId);
-                rd.query(context.getApplicationContext(), cardId);
+            if (card != null) {
+                String cardId = card.getCardId();
+                RikslunchenDatasource rd = new RikslunchenDatasource();
+                if (cardId.isEmpty()) {
+                    session.createLogMessage("No card Id specified. Check menu -> Enter Card ID");
+                } else {
+                    session.createLogMessage("Automatic query of card " + cardId);
+                    rd.query(context.getApplicationContext(), cardId);
+                }
             }
         }
         session.close();
