@@ -158,13 +158,16 @@ public class DbSession {
             bankStatement = getBankStatementDao().queryForId(id);
             BigDecimal previousBalance = bankStatement.getBalance();
             BigDecimal previousAmount = bankStatement.getAmount();
+            String amount = b.getString(Contract.BankStatement.AMOUNT);
             BigDecimal amountDiff =
-                    previousAmount.subtract(new BigDecimal(b.getString(Contract.BankStatement.AMOUNT)));
+                    previousAmount.subtract(new BigDecimal(amount));
             BigDecimal newBalance = previousBalance.subtract(amountDiff);
             b.putString(Contract.BankStatement.BALANCE, newBalance.toString());
             bankStatement.setValues(b);
             getBankStatementDao().update(bankStatement);
         } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (NumberFormatException e) {
             e.printStackTrace();
         }
         return bankStatement;
@@ -174,6 +177,9 @@ public class DbSession {
         BankStatement bankStatement = getLatestBankStatement();
         String balanceStr = b.getString(RikslunchenDatasource.BALANCE);
         String message = b.getString(RikslunchenDatasource.MESSAGE);
+        if (balanceStr == null) {
+            balanceStr = "0";
+        }
         BigDecimal balance = new BigDecimal(balanceStr.replace(',','.'));
         BigDecimal amount = new BigDecimal("0");
         boolean createNew = true;
