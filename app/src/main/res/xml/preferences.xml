@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <CheckBoxPreference
+        android:key="show_notifications"
+        android:title="@string/notifications"
+        android:summary="@string/notifications_summary"
+        android:defaultValue="false" />
+
+    <ListPreference android:title="Update frequency"
+        android:summary="Automatic update interval frequency"
+        android:key="update_frequency_list"
+        android:entries="@array/frequency_list_preference"
+        android:entryValues="@array/frequencyvalues_list_preference" />
+
+    <EditTextPreference android:title="Start time for updates (HH:MM)"
+        android:summary="Start time"
+        android:key="start_time"/>
+
+</PreferenceScreen>

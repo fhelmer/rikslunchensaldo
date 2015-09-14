@@ -1,0 +1,34 @@
+package se.helmer.rikslunchensaldo.model;
+
+import android.provider.BaseColumns;
+
+import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+import com.tojc.ormlite.android.annotation.AdditionalAnnotation;
+
+import java.util.Date;
+
+import se.helmer.rikslunchensaldo.Utils;
+
+@DatabaseTable(tableName=Contract.LogMessage.TABLE_NAME)
+@AdditionalAnnotation.DefaultContentUri(authority=Contract.LogMessage.AUTHORITY, path=Contract.LogMessage.CONTENT_URI_PATH)
+@AdditionalAnnotation.DefaultContentMimeTypeVnd(name=Contract.LogMessage.MIMETYPE_NAME, type=Contract.LogMessage.MIMETYPE_TYPE)
+public class LogMessage {
+    @DatabaseField(generatedId = true)
+    private int _id;
+    @DatabaseField
+    private Date date;  // Dates should be stored in UTC
+    @DatabaseField
+    private String description;
+
+    public LogMessage() {
+
+    }
+
+    public LogMessage(String description) {
+        this.description = description;
+        Date now = new Date();
+        this.date = Utils.LocalToGmt(now);
+    }
+}
