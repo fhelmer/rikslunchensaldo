@@ -141,6 +141,21 @@ public class Utils {
         Log.d(TAG,"updateWidgets done");
     }
 
+    static public void refreshWidgets(Context context) {
+        Intent updateWidgetIntent = new Intent(context, RikslunchenWidgetProvider.class);
+        updateWidgetIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        int[] ids = {R.xml.widget_info};
+        updateWidgetIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+        context.sendBroadcast(updateWidgetIntent);
+
+        Intent updateSmallWidgetIntent = new Intent(context, RikslunchenWidgetProviderSmall.class);
+        updateSmallWidgetIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        int[] idsmall = {R.xml.small_widget_info};
+        updateSmallWidgetIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, idsmall);
+        context.sendBroadcast(updateSmallWidgetIntent);
+    }
+
+
     public static void sendNotification(Context context, String message) {
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(context)

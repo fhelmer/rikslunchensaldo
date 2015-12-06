@@ -105,6 +105,9 @@ public class MyIntentService extends IntentService {
         getApplicationContext().getContentResolver().notifyChange(Contract.LogMessage.contentUri, null);
 
         session.close();
+
+        Utils.refreshWidgets(this);
+
         if (receiver != null) {
             receiver.send(RETURN_DATA,b);
         }
