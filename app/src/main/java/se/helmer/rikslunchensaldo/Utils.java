@@ -42,6 +42,17 @@ public class Utils {
         return dateFormat.format(date);
     }
 
+    public static void queryRikslunchen(Context context, String cardId) {
+        Bundle b = new Bundle();
+        b.putString(Contract.Card.CARD_ID, cardId);
+
+        final Intent intent = new Intent(context, MyIntentService.class);
+        intent.putExtra(MyIntentService.COMMAND, MyIntentService.QUERY_RIKSLUNCHEN_THEN_UPDATE);
+        intent.putExtra(MyIntentService.RECEIVER, MainActivity.getReceiver());
+        intent.putExtra(MyIntentService.PAYLOAD, b);
+        ComponentName cm = context.startService(intent);
+    }
+
     public static Date LocalToGmt(Date localDate) {
         Utils.log(TAG,"localDateToGmt"+localDate);
         SimpleDateFormat dateFormatGmt = new SimpleDateFormat(mDateFormat, Locale.US);
@@ -77,10 +88,10 @@ public class Utils {
                 context.getSharedPreferences(SummaryFragment.APP_SHARED_PREFS,
                         Activity.MODE_PRIVATE);
 
-        b.putString(RikslunchenDatasource.BALANCE, sharedPrefs.getString(RikslunchenDatasource.BALANCE, ""));
-        b.putString(RikslunchenDatasource.LAST_TOPUP_DATE, sharedPrefs.getString(RikslunchenDatasource.LAST_TOPUP_DATE, ""));
-        b.putString(RikslunchenDatasource.LATEST_UPDATE, sharedPrefs.getString(RikslunchenDatasource.LATEST_UPDATE, ""));
-        b.putString(RikslunchenDatasource.CARD_ID, sharedPrefs.getString(RikslunchenDatasource.CARD_ID, ""));
+        b.putString(Contract.BankStatement.BALANCE, sharedPrefs.getString(Contract.BankStatement.BALANCE, ""));
+        b.putString(Contract.Card.LAST_TOPUP_DATE, sharedPrefs.getString(Contract.Card.LAST_TOPUP_DATE, ""));
+        b.putString(Contract.BankStatement.DATE, sharedPrefs.getString("latestupdate", ""));
+        b.putString(Contract.Card.CARD_ID, sharedPrefs.getString(Contract.Card.CARD_ID, ""));
 
         return b;
     }
@@ -94,7 +105,7 @@ public class Utils {
                 context.getSharedPreferences(SummaryFragment.APP_SHARED_PREFS, Activity.MODE_PRIVATE);
 
         Editor prefsEditor = sharedPrefs.edit();
-        b.putString(RikslunchenDatasource.CARD_ID,"");
+        b.putString(Contract.Card.CARD_ID,"");
         prefsEditor.apply();
     }
 

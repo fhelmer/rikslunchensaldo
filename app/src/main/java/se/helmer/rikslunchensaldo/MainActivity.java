@@ -138,7 +138,7 @@ public class MainActivity extends FragmentActivity
     private void showMessage(String msg) {
         SummaryFragment summaryFragment = (SummaryFragment) mAdapter.getItem(SUMMARY);
         Bundle b = new Bundle();
-        b.putString(RikslunchenDatasource.BALANCE, msg);
+        b.putString(Contract.BankStatement.BALANCE, msg);
         summaryFragment.update(b);
     }
 
@@ -170,8 +170,7 @@ public class MainActivity extends FragmentActivity
                         ComponentName cm = startService(intent);
 
                         showMessage("Querying ...");
-                        RikslunchenDatasource rd = new RikslunchenDatasource();
-                        rd.query(getApplicationContext(), value); // 32271843
+                        Utils.queryRikslunchen(getApplicationContext(), value); // 32271843
                         dialog.dismiss();
                     }
                 });
@@ -194,9 +193,8 @@ public class MainActivity extends FragmentActivity
                     noCardAlert.setPositiveButton("OK", null);
                     noCardAlert.show();
                 } else {
-                    RikslunchenDatasource rd = new RikslunchenDatasource();
                     showMessage("Querying ...");
-                    rd.query(this, card.getCardId()); // 32271843
+                    Utils.queryRikslunchen(getApplicationContext(), card.getCardId());
                 }
                 session.close();
                 return true;

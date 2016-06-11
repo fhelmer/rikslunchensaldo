@@ -23,12 +23,11 @@ public class AlarmReceiver extends BroadcastReceiver {
             Card card = session.getCard();
             if (card != null) {
                 String cardId = card.getCardId();
-                RikslunchenDatasource rd = new RikslunchenDatasource();
                 if (cardId.isEmpty()) {
                     session.createLogMessage("No card Id specified. Check menu -> Enter Card ID");
                 } else {
                     session.createLogMessage("Automatic query of card " + cardId);
-                    rd.query(context.getApplicationContext(), cardId);
+                    Utils.queryRikslunchen(context.getApplicationContext(), cardId);
                 }
             }
         }

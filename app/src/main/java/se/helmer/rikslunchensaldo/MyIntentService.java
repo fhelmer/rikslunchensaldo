@@ -5,9 +5,45 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
+import android.util.Log;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.MalformedInputException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import se.helmer.rikslunchensaldo.model.BankStatement;
 import se.helmer.rikslunchensaldo.model.Card;
@@ -22,7 +58,7 @@ public class MyIntentService extends IntentService {
     public static final String RECEIVER = "receiver";
 
     public static final int CHECK_DATABASE = 1;
-    public static final int SEND_BALANCE = 2;
+    public static final int QUERY_RIKSLUNCHEN_THEN_UPDATE = 2;
     public static final int BANKSTATEMENT_UPDATE = 3;
     public static final int BANKSTATEMENT_DELETE = 4;
     public static final int LOG_MESSAGE_SAVE = 5;
@@ -52,7 +88,7 @@ public class MyIntentService extends IntentService {
                 Card card = session.getCard();
                 if (card == null) {
                     Bundle prefs = Utils.getSharedPreferences(getApplicationContext());
-                    String cardId = prefs.getString(RikslunchenDatasource.CARD_ID, "");
+                    String cardId = prefs.getString(Contract.Card.CARD_ID, "");
                     if (cardId.length() > 0) { // Upgrade from previous version
                         card = session.createOrUpdateCard(prefs);
                         session.createLogMessage("Upgrading database: Using card id " + cardId +
@@ -70,11 +106,15 @@ public class MyIntentService extends IntentService {
                 Card card2 = session.createOrUpdateCard(b);
                 b = session.fetchSummary();
                 break;
-            case SEND_BALANCE:
+            case QUERY_RIKSLUNCHEN_THEN_UPDATE:
+                String result = makePostRequest(session, b.getString(Contract.Card.CARD_ID));
+
+                Bundle resultBundle = getData(session, result);
+
                 session.createLogMessage("Rikslunchen balance=" +
-                        b.getString(RikslunchenDatasource.BALANCE));
-                Card card3 = session.createOrUpdateCard(b);
-                BankStatement t = session.createOrUpdateBankStatement(b);
+                        resultBundle.getString(Contract.BankStatement.BALANCE));
+                Card card3 = session.createOrUpdateCard(resultBundle);
+                BankStatement t = session.createOrUpdateBankStatement(resultBundle);
                 b = session.fetchSummary();
                 break;
 
@@ -113,6 +153,94 @@ public class MyIntentService extends IntentService {
         }
 
 
+    }
+
+    private String makePostRequest(DbSession session, final String card_id) {
+        String response = "";
+        try {
+            URL url = new URL("https://www.rikslunchen.se/card/balance");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(15000);
+            conn.setConnectTimeout(15000);
+            conn.setRequestMethod("POST");
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+
+            HashMap<String, String> postDataParams = new HashMap<>();
+            postDataParams.put("card_id", card_id);
+
+            OutputStream os = conn.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(os, "UTF-8"));
+            writer.write(getPostDataString(postDataParams));
+
+            writer.flush();
+            writer.close();
+            os.close();
+            int responseCode=conn.getResponseCode();
+
+            if (responseCode == HttpsURLConnection.HTTP_OK) {
+                String line;
+                BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                while ((line=br.readLine()) != null) {
+                    response+=line;
+                }
+            }
+            else {
+                response="";
+
+            }
+        } catch (Exception e) {
+            session.createLogMessage(e.getMessage());
+        }
+
+        return response;
+    }
+
+    private String getPostDataString(HashMap<String, String> params) throws UnsupportedEncodingException{
+        StringBuilder result = new StringBuilder();
+        boolean first = true;
+        for(Map.Entry<String, String> entry : params.entrySet()){
+            if (first)
+                first = false;
+            else
+                result.append("&");
+
+            result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
+            result.append("=");
+            result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+        }
+
+        return result.toString();
+    }
+
+    Bundle getData(DbSession session, String input) {
+        String balance = "";
+        String lasttopupdate = "";
+        String cardId = "";
+
+        try {
+            DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            InputSource is = new InputSource();
+            is.setCharacterStream(new StringReader("<root>"+input+"</root>"));
+            Document doc = db.parse(is);
+           NodeList nodes = doc.getElementsByTagName("span");
+            if (nodes.getLength() == 4) {
+                cardId = nodes.item(1).getTextContent();
+                balance = nodes.item(2).getTextContent().toLowerCase();
+                balance = balance.replace(" kr","");
+                lasttopupdate = nodes.item(3).getTextContent();
+            }
+
+        } catch (Exception e) {
+            session.createLogMessage(e.getMessage());
+        }
+
+        Bundle b = new Bundle();
+        b.putString(Contract.BankStatement.BALANCE, balance);
+        b.putString(Contract.Card.LAST_TOPUP_DATE, lasttopupdate);
+        b.putString(Contract.Card.CARD_ID, cardId);
+        return b;
     }
 
     @Override

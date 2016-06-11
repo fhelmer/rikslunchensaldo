@@ -54,14 +54,14 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
 
     public void testCard() {
         Bundle b = new Bundle();
-        b.putString(RikslunchenDatasource.CARD_ID,"12345");
-        b.putString(RikslunchenDatasource.LAST_TOPUP_DATE,"2015-01-01");
+        b.putString(Contract.Card.CARD_ID,"12345");
+        b.putString(Contract.Card.LAST_TOPUP_DATE,"2015-01-01");
         Card c = session.createOrUpdateCard(b);
 
         Card c1 = session.getCard();
         assertEquals(c1.getCardId(), "12345");
 
-        b.putString(RikslunchenDatasource.LAST_TOPUP_DATE,"2015-02-02");
+        b.putString(Contract.Card.LAST_TOPUP_DATE,"2015-02-02");
         Card c2 = session.createOrUpdateCard(b);
 
         assertEquals(c2.getLastTopupDate(),"2015-02-02");
@@ -87,11 +87,11 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
     public void upgradeFromPreviousVersion() {
         Utils.clearPreferences(getContext());
         Bundle prefs = Utils.getSharedPreferences(getContext());
-        prefs.putString(RikslunchenDatasource.BALANCE, "123.12");
+        prefs.putString(Contract.BankStatement.BALANCE, "123.12");
 
         Card card = null;
         Bundle prefs2 = Utils.getSharedPreferences(getContext());
-        String cardId = prefs2.getString(RikslunchenDatasource.CARD_ID, "");
+        String cardId = prefs2.getString(Contract.Card.CARD_ID, "");
         if (cardId.length() > 0) { // Upgrade from previous version
             card = session.createOrUpdateCard(prefs2);
             Utils.clearPreferences(getContext()); // Prefer database from now on
@@ -99,7 +99,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         assertNotNull(card);
         if (card != null) {
             Bundle b = session.fetchSummary();
-            String balance = b.getString(RikslunchenDatasource.BALANCE);
+            String balance = b.getString(Contract.BankStatement.BALANCE);
             assertEquals(balance, "123.12");
         }
 

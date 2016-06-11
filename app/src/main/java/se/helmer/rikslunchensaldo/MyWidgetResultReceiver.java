@@ -8,6 +8,8 @@ import android.os.ResultReceiver;
 import android.util.Log;
 import android.widget.RemoteViews;
 
+import se.helmer.rikslunchensaldo.model.Contract;
+
 class MyWidgetResultReceiver extends ResultReceiver {
     RemoteViews rv;
     AppWidgetManager awm;
@@ -33,9 +35,9 @@ class MyWidgetResultReceiver extends ResultReceiver {
 
     @Override
     protected void onReceiveResult(int resultCode, Bundle b) {
-        String balance = b.getString(RikslunchenDatasource.BALANCE);
-        String lasttopupdate = b.getString(RikslunchenDatasource.LAST_TOPUP_DATE);
-        String latestupdate = b.getString(RikslunchenDatasource.LATEST_UPDATE);
+        String balance = b.getString(Contract.BankStatement.BALANCE);
+        String lasttopupdate = b.getString(Contract.Card.LAST_TOPUP_DATE);
+        String latestupdate = b.getString(Contract.BankStatement.DATE);
         Log.d(TAG,"widget onReceiveResult"+balance+lasttopupdate);
         rv.setTextViewText(R.id.widget_balance,
                 context.getString(R.string.balance) + " " + balance);

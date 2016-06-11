@@ -87,12 +87,12 @@ public class DbSession {
         try {
             card = getCard();
             if (card != null) {
-                card.setData(b.getString(RikslunchenDatasource.CARD_ID),
-                        b.getString(RikslunchenDatasource.LAST_TOPUP_DATE));
+                card.setData(b.getString(Contract.Card.CARD_ID),
+                        b.getString(Contract.Card.LAST_TOPUP_DATE));
                 getCardDao().update(card);
             } else {
-                card = new Card(b.getString(RikslunchenDatasource.CARD_ID),
-                        b.getString(RikslunchenDatasource.LAST_TOPUP_DATE));
+                card = new Card(b.getString(Contract.Card.CARD_ID),
+                        b.getString(Contract.Card.LAST_TOPUP_DATE));
                 getCardDao().create(card);
             }
         } catch (SQLException e) {
@@ -106,12 +106,12 @@ public class DbSession {
         Bundle b = new Bundle();
         BankStatement bankStatement = getLatestBankStatement();
         if (bankStatement != null) {
-            b.putString(RikslunchenDatasource.BALANCE, bankStatement.getBalance().toString());
-            b.putString(RikslunchenDatasource.LATEST_UPDATE, bankStatement.getDate().toString());
+            b.putString(Contract.BankStatement.BALANCE, bankStatement.getBalance().toString());
+            b.putString(Contract.BankStatement.DATE, bankStatement.getDate().toString());
         }
         if (card != null) {
-            b.putString(RikslunchenDatasource.CARD_ID, card.getCardId());
-            b.putString(RikslunchenDatasource.LAST_TOPUP_DATE, card.getLastTopupDate());
+            b.putString(Contract.Card.CARD_ID, card.getCardId());
+            b.putString(Contract.Card.LAST_TOPUP_DATE, card.getLastTopupDate());
         }
 
         return b;
@@ -145,8 +145,8 @@ public class DbSession {
 
     BankStatement createOrUpdateBankStatement(String descr, String balance) {
         Bundle bundle = new Bundle();
-        bundle.putString(RikslunchenDatasource.BALANCE, balance);
-        bundle.putString(RikslunchenDatasource.MESSAGE, descr);
+        bundle.putString(Contract.BankStatement.BALANCE, balance);
+        bundle.putString(Contract.BankStatement.MESSAGE, descr);
         return createOrUpdateBankStatement(bundle);
     }
 
@@ -175,15 +175,15 @@ public class DbSession {
 
     BankStatement createOrUpdateBankStatement(Bundle b) {
         BankStatement bankStatement = getLatestBankStatement();
-        String balanceStr = b.getString(RikslunchenDatasource.BALANCE);
-        String message = b.getString(RikslunchenDatasource.MESSAGE);
+        String balanceStr = b.getString(Contract.BankStatement.BALANCE);
+        String message = b.getString(Contract.BankStatement.MESSAGE);
         if (balanceStr == null) {
             balanceStr = "0";
         }
-        BigDecimal balance = new BigDecimal(balanceStr.replace(',','.'));
-        BigDecimal amount = new BigDecimal("0");
-        boolean createNew = true;
         try {
+            BigDecimal balance = new BigDecimal(balanceStr.replace(",",""));
+            BigDecimal amount = new BigDecimal("0");
+            boolean createNew = true;
             if (bankStatement != null) {
                 if (bankStatement.getBalance().compareTo(balance) == 0) {
                     bankStatement.updateTimestamp();
@@ -206,8 +206,9 @@ public class DbSession {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            Utils.error("createOrUpdateBankStatement",""+e);
+            createLogMessage("createOrUpdateBankStatement:"+e.getMessage());
+        } catch (Exception e) {
+            createLogMessage(e.getMessage());
         }
         return bankStatement;
     }

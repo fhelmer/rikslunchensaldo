@@ -141,9 +141,9 @@ public class SummaryFragment extends ListFragment implements
             mLasttopupField = (TextView) mView.findViewById(R.id.topupdate);
 
             if (b != null) {
-                String balance = b.getString(RikslunchenDatasource.BALANCE);
-                String cardId = b.getString(RikslunchenDatasource.CARD_ID);
-                String lastTopupDate = b.getString(RikslunchenDatasource.LAST_TOPUP_DATE);
+                String balance = b.getString(Contract.BankStatement.BALANCE);
+                String cardId = b.getString(Contract.Card.CARD_ID);
+                String lastTopupDate = b.getString(Contract.Card.LAST_TOPUP_DATE);
                 if (balance != null) {
                     mBalanceField.setText(balance);
                 }
