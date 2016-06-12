@@ -107,9 +107,10 @@ public class MyIntentService extends IntentService {
                 b = session.fetchSummary();
                 break;
             case QUERY_RIKSLUNCHEN_THEN_UPDATE:
-                String result = makePostRequest(session, b.getString(Contract.Card.CARD_ID));
+                String cardId = b.getString(Contract.Card.CARD_ID);
+                String result = makePostRequest(session, cardId);
 
-                Bundle resultBundle = getData(session, result);
+                Bundle resultBundle = getData(session, result, cardId);
 
                 session.createLogMessage("Rikslunchen balance=" +
                         resultBundle.getString(Contract.BankStatement.BALANCE));
@@ -214,10 +215,9 @@ public class MyIntentService extends IntentService {
         return result.toString();
     }
 
-    Bundle getData(DbSession session, String input) {
+    Bundle getData(DbSession session, String input, final String cardId) {
         String balance = "";
         String lasttopupdate = "";
-        String cardId = "";
 
         try {
             DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -226,7 +226,6 @@ public class MyIntentService extends IntentService {
             Document doc = db.parse(is);
            NodeList nodes = doc.getElementsByTagName("span");
             if (nodes.getLength() == 4) {
-                cardId = nodes.item(1).getTextContent();
                 balance = nodes.item(2).getTextContent().toLowerCase();
                 balance = balance.replace(" kr","");
                 lasttopupdate = nodes.item(3).getTextContent();
