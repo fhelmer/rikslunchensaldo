@@ -111,12 +111,18 @@ public class MyIntentService extends IntentService {
                 String result = makePostRequest(session, cardId);
 
                 Bundle resultBundle = getData(session, result, cardId);
+                String error = resultBundle.getString("error").trim();
+                if ("".equals(error)) {
+                    session.createLogMessage("Rikslunchen balance=" +
+                            resultBundle.getString(Contract.BankStatement.BALANCE));
+                    Card card3 = session.createOrUpdateCard(resultBundle);
+                    BankStatement t = session.createOrUpdateBankStatement(resultBundle);
+                    b = session.fetchSummary();
+                } else {
+                    session.createLogMessage("Access or rikslunchen server error: " + error);
+                    b.putString(Contract.BankStatement.BALANCE, error);  // Use amount field as error
+                }
 
-                session.createLogMessage("Rikslunchen balance=" +
-                        resultBundle.getString(Contract.BankStatement.BALANCE));
-                Card card3 = session.createOrUpdateCard(resultBundle);
-                BankStatement t = session.createOrUpdateBankStatement(resultBundle);
-                b = session.fetchSummary();
                 break;
 
             case BANKSTATEMENT_UPDATE:
@@ -188,7 +194,7 @@ public class MyIntentService extends IntentService {
                 }
             }
             else {
-                response="";
+                response="<div><div>Riksbanken server error</div></div>";
 
             }
         } catch (Exception e) {
@@ -218,6 +224,7 @@ public class MyIntentService extends IntentService {
     Bundle getData(DbSession session, String input, final String cardId) {
         String balance = "";
         String lasttopupdate = "";
+        String error = "";
 
         try {
             DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -229,16 +236,21 @@ public class MyIntentService extends IntentService {
                 balance = nodes.item(2).getTextContent().toLowerCase();
                 balance = balance.replace(" kr","");
                 lasttopupdate = nodes.item(3).getTextContent();
+            } else {
+                NodeList errorMessage = doc.getElementsByTagName("div");
+                error = errorMessage.item(1).getTextContent();
             }
 
         } catch (Exception e) {
-            session.createLogMessage(e.getMessage());
+            error = e.getMessage();
+            session.createLogMessage(error);
         }
 
         Bundle b = new Bundle();
         b.putString(Contract.BankStatement.BALANCE, balance);
         b.putString(Contract.Card.LAST_TOPUP_DATE, lasttopupdate);
         b.putString(Contract.Card.CARD_ID, cardId);
+        b.putString("error", error);
         return b;
     }
 
