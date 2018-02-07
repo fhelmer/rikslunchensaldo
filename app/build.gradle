@@ -2,14 +2,13 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 21
-    buildToolsVersion "20.0.0"
 
     defaultConfig {
         applicationId "se.helmer.rikslunchensaldo"
         minSdkVersion 15
         targetSdkVersion 21
-        versionCode 18
-        versionName "1.17"
+        versionCode 19
+        versionName "1.18"
     }
     buildTypes {
         release {
@@ -25,4 +24,5 @@ dependencies {
     compile 'com.j256.ormlite:ormlite-core:4.48'
     compile 'com.j256.ormlite:ormlite-android:4.48'
     compile 'com.tojc.ormlite.android:ormlite-content-provider-library:1.0.4'
+    testCompile 'junit:junit:4.12'
 }

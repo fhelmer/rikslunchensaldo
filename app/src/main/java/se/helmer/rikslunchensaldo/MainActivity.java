@@ -194,7 +194,7 @@ public class MainActivity extends FragmentActivity
                     noCardAlert.show();
                 } else {
                     showMessage("Querying ...");
-                    Utils.queryRikslunchen(getApplicationContext(), card.getCardId());
+                    Utils.queryRikslunchen(this, card.getCardId());
                 }
                 session.close();
                 return true;

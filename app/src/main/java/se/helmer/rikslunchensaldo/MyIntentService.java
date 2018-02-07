@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.xml.parsers.DocumentBuilder;
@@ -80,7 +81,7 @@ public class MyIntentService extends IntentService {
         Bundle b = intent.getBundleExtra(PAYLOAD);
         final ResultReceiver receiver = intent.getParcelableExtra(RECEIVER);
         Context context = getApplicationContext();
-        DbSession session = new DbSession(context);
+        final DbSession session = new DbSession(context);
 
         switch (msgCommand) {
             case CHECK_DATABASE:
@@ -107,22 +108,14 @@ public class MyIntentService extends IntentService {
                 b = session.fetchSummary();
                 break;
             case QUERY_RIKSLUNCHEN_THEN_UPDATE:
-                String cardId = b.getString(Contract.Card.CARD_ID);
-                String result = makePostRequest(session, cardId);
-
-                Bundle resultBundle = getData(session, result, cardId);
-                String error = resultBundle.getString("error").trim();
-                if ("".equals(error)) {
-                    session.createLogMessage("Rikslunchen balance=" +
-                            resultBundle.getString(Contract.BankStatement.BALANCE));
-                    Card card3 = session.createOrUpdateCard(resultBundle);
-                    BankStatement t = session.createOrUpdateBankStatement(resultBundle);
-                    b = session.fetchSummary();
-                } else {
-                    session.createLogMessage("Access or rikslunchen server error: " + error);
-                    b.putString(Contract.BankStatement.BALANCE, error);  // Use amount field as error
-                }
-
+                final String cardId = b.getString(Contract.Card.CARD_ID);
+                final String message = b.getString(Contract.BankStatement.MESSAGE);
+                session.createLogMessage("Rikslunchen balance=" +
+                        b.getString(Contract.BankStatement.BALANCE));
+                Card card3 = session.createOrUpdateCard(b);
+                BankStatement t = session.createOrUpdateBankStatement(b);
+                b = session.fetchSummary();
+                b.putString(Contract.BankStatement.MESSAGE, message);
                 break;
 
             case BANKSTATEMENT_UPDATE:
@@ -160,98 +153,6 @@ public class MyIntentService extends IntentService {
         }
 
 
-    }
-
-    private String makePostRequest(DbSession session, final String card_id) {
-        String response = "";
-        try {
-            URL url = new URL("https://www.rikslunchen.se/card/balance");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(15000);
-            conn.setConnectTimeout(15000);
-            conn.setRequestMethod("POST");
-            conn.setDoInput(true);
-            conn.setDoOutput(true);
-
-            HashMap<String, String> postDataParams = new HashMap<>();
-            postDataParams.put("card_id", card_id);
-
-            OutputStream os = conn.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(
-                    new OutputStreamWriter(os, "UTF-8"));
-            writer.write(getPostDataString(postDataParams));
-
-            writer.flush();
-            writer.close();
-            os.close();
-            int responseCode=conn.getResponseCode();
-
-            if (responseCode == HttpsURLConnection.HTTP_OK) {
-                String line;
-                BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                while ((line=br.readLine()) != null) {
-                    response+=line;
-                }
-            }
-            else {
-                response="<div><div>Riksbanken server error</div></div>";
-
-            }
-        } catch (Exception e) {
-            session.createLogMessage(e.getMessage());
-        }
-
-        return response;
-    }
-
-    private String getPostDataString(HashMap<String, String> params) throws UnsupportedEncodingException{
-        StringBuilder result = new StringBuilder();
-        boolean first = true;
-        for(Map.Entry<String, String> entry : params.entrySet()){
-            if (first)
-                first = false;
-            else
-                result.append("&");
-
-            result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
-            result.append("=");
-            result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
-        }
-
-        return result.toString();
-    }
-
-    Bundle getData(DbSession session, String input, final String cardId) {
-        String balance = "";
-        String lasttopupdate = "";
-        String error = "";
-
-        try {
-            DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            InputSource is = new InputSource();
-            is.setCharacterStream(new StringReader("<root>"+input+"</root>"));
-            Document doc = db.parse(is);
-           NodeList nodes = doc.getElementsByTagName("span");
-            if (nodes.getLength() == 4) {
-                balance = nodes.item(2).getTextContent().toLowerCase();
-                balance = balance.replace(" kr","");
-                lasttopupdate = nodes.item(3).getTextContent();
-            } else {
-                NodeList errorMessage = doc.getElementsByTagName("div");
-                error = errorMessage.item(1).getTextContent();
-            }
-
-        } catch (Exception e) {
-            error = e.getMessage();
-            session.createLogMessage(error);
-        }
-
-        Bundle b = new Bundle();
-        b.putString(Contract.BankStatement.BALANCE, balance);
-        b.putString(Contract.Card.LAST_TOPUP_DATE, lasttopupdate);
-        b.putString(Contract.Card.CARD_ID, cardId);
-        b.putString("error", error);
-        return b;
     }
 
     @Override

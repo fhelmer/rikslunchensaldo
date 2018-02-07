@@ -144,11 +144,17 @@ public class SummaryFragment extends ListFragment implements
                 String balance = b.getString(Contract.BankStatement.BALANCE);
                 String cardId = b.getString(Contract.Card.CARD_ID);
                 String lastTopupDate = b.getString(Contract.Card.LAST_TOPUP_DATE);
+                String message = b.getString(Contract.BankStatement.MESSAGE);
                 if (balance != null) {
                     mBalanceField.setText(balance);
                 }
                 if (cardId != null) {
-                    mCardIdField.setText(cardId);
+                    if (message != null) {
+                        mCardIdField.setText(cardId + " " + message);
+                    } else {
+                        mCardIdField.setText(cardId);
+                    }
+
                 }
                 if (lastTopupDate != null) {
                     mLasttopupField.setText(lastTopupDate);

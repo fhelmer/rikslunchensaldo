@@ -14,6 +14,7 @@ import com.j256.ormlite.table.TableUtils;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.List;
 
 import se.helmer.rikslunchensaldo.model.BankStatement;
@@ -181,7 +182,7 @@ public class DbSession {
             balanceStr = "0";
         }
         try {
-            BigDecimal balance = new BigDecimal(balanceStr.replace(",",""));
+            BigDecimal balance = new BigDecimal(balanceStr.replace(',','.'));
             BigDecimal amount = new BigDecimal("0");
             boolean createNew = true;
             if (bankStatement != null) {
