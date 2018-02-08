@@ -7,8 +7,8 @@ android {
         applicationId "se.helmer.rikslunchensaldo"
         minSdkVersion 15
         targetSdkVersion 21
-        versionCode 19
-        versionName "1.18"
+        versionCode 21
+        versionName "1.21"
     }
     buildTypes {
         release {
