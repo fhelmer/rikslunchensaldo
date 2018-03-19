@@ -1,8 +1,10 @@
 package se.helmer.rikslunchensaldo;
 
 import android.content.Context;
+import android.net.http.SslError;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -36,11 +38,23 @@ public class RikslunchenDatasource {
         webView.addJavascriptInterface(new MyAccessor(c), "accessor");
         webView.setWebChromeClient(new WebChromeClient());
         webView.setWebViewClient(new WebViewClient() {
+
+            @Override
+            public void onReceivedSslError(WebView view, SslErrorHandler handler,
+                                           SslError error) {
+                if (error.getPrimaryError() == SslError.SSL_UNTRUSTED) {
+                    handler.proceed();
+                } else {
+                    handler.cancel();
+                }
+            }
+
+
             @Override
             public void onPageFinished(WebView view, String url) {
             	Log.d(TAG,"onPageFinished:"+url+card_id);
 
-                webView.loadUrl("javascript:" +
+                view.loadUrl("javascript:" +
                         "var public_key = document.getElementById('public_key').value;"+
                         "accessor.test(public_key);" +
                         "cardUtil.getCardData('"+card_id+"',public_key, "
@@ -51,7 +65,7 @@ public class RikslunchenDatasource {
             }
         });
 
-        webView.loadUrl("http://www.rikslunchen.se/riks-cp/check_balance.html");
+        webView.loadUrl("https://www.rikslunchen.se/riks-cp/check_balance.html");
     }
 
     public class MyAccessor {
