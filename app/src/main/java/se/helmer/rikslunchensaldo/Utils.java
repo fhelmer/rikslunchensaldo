@@ -1,13 +1,6 @@
 package se.helmer.rikslunchensaldo;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
-
 import android.app.Activity;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -23,6 +16,12 @@ import android.os.ResultReceiver;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.RemoteViews;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import se.helmer.rikslunchensaldo.model.Card;
 import se.helmer.rikslunchensaldo.model.Contract;
@@ -42,31 +41,16 @@ public class Utils {
         return dateFormat.format(date);
     }
 
-    public static void queryRikslunchen(final Context context, String cardId) {
-        final Bundle b = new Bundle();
+
+    public static void queryRikslunchen(Context context, String cardId) {
+        Bundle b = new Bundle();
         b.putString(Contract.Card.CARD_ID, cardId);
 
-        RikslunchenDatasource.CallBack callback = new RikslunchenDatasource.CallBack() {
-            @Override
-            public void setData(boolean valid, String message, String balance, String lasttopupdate) {
-                b.putString(Contract.Card.LAST_TOPUP_DATE, lasttopupdate);
-                if (valid) {
-                    b.putString(Contract.BankStatement.BALANCE, balance); // Use amount field as message
-                } else {
-                    b.putString(Contract.BankStatement.MESSAGE, message); // Use amount field as message
-                }
-
-                final Intent intent = new Intent(context, MyIntentService.class);
-                intent.putExtra(MyIntentService.COMMAND, MyIntentService.QUERY_RIKSLUNCHEN_THEN_UPDATE);
-                intent.putExtra(MyIntentService.RECEIVER, MainActivity.getReceiver());
-                intent.putExtra(MyIntentService.PAYLOAD, b);
-                ComponentName cm = context.startService(intent);
-            }
-        };
-
-        RikslunchenDatasource rd = new RikslunchenDatasource(callback);
-        rd.query(context, cardId);
-
+        final Intent intent = new Intent(context, MyIntentService.class);
+        intent.putExtra(MyIntentService.COMMAND, MyIntentService.QUERY_RIKSLUNCHEN_THEN_UPDATE);
+        intent.putExtra(MyIntentService.RECEIVER, MainActivity.getReceiver());
+        intent.putExtra(MyIntentService.PAYLOAD, b);
+        ComponentName cm = context.startService(intent);
     }
 
     public static Date LocalToGmt(Date localDate) {

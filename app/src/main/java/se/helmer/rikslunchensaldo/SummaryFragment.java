@@ -3,7 +3,6 @@ package se.helmer.rikslunchensaldo;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
 import android.content.Loader;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.ResultReceiver;

@@ -13,7 +13,7 @@
     <string name="edit">Edit</string>
     <string name="balance">Balance: </string>
     <string name="found_on_card">(This 8 digit number is usually found in the lower left corner the card)</string>
-    <string name="lasttopupdate">Last top up date: </string>
+    <string name="lasttopupdate">Last update: </string>
     <string name="latestupdate">Updated: </string>
     <string name="widget_header">Lunchsaldo</string>
     <string name="largewidgetlabel">Lunchsaldo - Large</string>

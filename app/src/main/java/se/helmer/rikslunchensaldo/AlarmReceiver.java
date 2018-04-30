@@ -3,10 +3,6 @@ package se.helmer.rikslunchensaldo;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Handler;
-import android.os.ResultReceiver;
-import android.preference.PreferenceManager;
 
 import se.helmer.rikslunchensaldo.model.Card;
 

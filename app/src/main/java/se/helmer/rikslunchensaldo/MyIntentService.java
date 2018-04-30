@@ -5,46 +5,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
-import android.util.Log;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.DataOutputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.nio.charset.MalformedInputException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 
 import javax.net.ssl.HttpsURLConnection;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import se.helmer.rikslunchensaldo.model.BankStatement;
 import se.helmer.rikslunchensaldo.model.Card;
@@ -107,15 +81,30 @@ public class MyIntentService extends IntentService {
                 Card card2 = session.createOrUpdateCard(b);
                 b = session.fetchSummary();
                 break;
+
             case QUERY_RIKSLUNCHEN_THEN_UPDATE:
                 final String cardId = b.getString(Contract.Card.CARD_ID);
-                final String message = b.getString(Contract.BankStatement.MESSAGE);
-                session.createLogMessage("Rikslunchen balance=" +
-                        b.getString(Contract.BankStatement.BALANCE));
-                Card card3 = session.createOrUpdateCard(b);
-                BankStatement t = session.createOrUpdateBankStatement(b);
-                b = session.fetchSummary();
-                b.putString(Contract.BankStatement.MESSAGE, message);
+                String result = makePostRequest(session, cardId);
+                try {
+                    JSONObject balanceJson = new JSONObject(result);
+                    b.putString(Contract.BankStatement.BALANCE, balanceJson.getString(Contract.BankStatement.BALANCE));
+                } catch (JSONException jse) {
+                    session.createLogMessage("Query error parsing response: " + jse);
+                }
+                b.putString(Contract.Card.LAST_TOPUP_DATE, Utils.getCurrentLocalTimeString());
+
+                if (!result.isEmpty()) {
+                    final String message = b.getString(Contract.BankStatement.MESSAGE);
+                    session.createLogMessage("Rikslunchen balance=" +
+                            b.getString(Contract.BankStatement.BALANCE));
+                    Card card3 = session.createOrUpdateCard(b);
+                    BankStatement t = session.createOrUpdateBankStatement(b);
+                    b = session.fetchSummary();
+                    b.putString(Contract.BankStatement.MESSAGE, message);
+                } else {
+                    b.putString(Contract.BankStatement.BALANCE, "Lunch server error");
+                    session.createLogMessage("Query error ");
+                }
                 break;
 
             case BANKSTATEMENT_UPDATE:
@@ -154,6 +143,72 @@ public class MyIntentService extends IntentService {
 
 
     }
+
+    // curl -k -d '{"cardid":"35760768"}' -H "Content-Type: application/json" -X POST https://www.rikslunchen.se:9443/isr/services/mobile/quickbalance
+
+    private String makePostRequest(DbSession session, final String card_id) {
+        String response = "";
+        try {
+            TrustManager[] trustAllCerts = new TrustManager[]{
+                    new X509TrustManager() {
+                        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                            return null;
+                        }
+                        public void checkClientTrusted(
+                                java.security.cert.X509Certificate[] certs, String authType) {
+                        }
+                        public void checkServerTrusted(
+                                java.security.cert.X509Certificate[] certs, String authType) {
+                        }
+                    }
+            };
+
+            try {
+                SSLContext sc = SSLContext.getInstance("SSL");
+                sc.init(null, trustAllCerts, new java.security.SecureRandom());
+                HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+            } catch (Exception e) {
+            }
+
+
+            URL url = new URL("https://www.rikslunchen.se:9443/isr/services/mobile/quickbalance");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(15000);
+            conn.setConnectTimeout(15000);
+            conn.setRequestMethod("POST");
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+            conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
+            conn.setRequestProperty("Accept","application/json");
+
+            JSONObject jsonParam = new JSONObject();
+            jsonParam.put("cardid", card_id);
+
+            DataOutputStream os = new DataOutputStream(conn.getOutputStream());
+            os.writeBytes(jsonParam.toString());
+
+            os.flush();
+            os.close();
+            int responseCode=conn.getResponseCode();
+
+            if (responseCode == HttpsURLConnection.HTTP_OK) {
+                String line;
+                BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                while ((line=br.readLine()) != null) {
+                    response+=line;
+                }
+            }
+            else {
+                response="";
+
+            }
+        } catch (Exception e) {
+            session.createLogMessage(e.getMessage());
+        }
+
+        return response;
+    }
+
 
     @Override
     public void onDestroy() {

@@ -14,7 +14,6 @@ import com.j256.ormlite.table.TableUtils;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.text.DecimalFormat;
 import java.util.List;
 
 import se.helmer.rikslunchensaldo.model.BankStatement;
