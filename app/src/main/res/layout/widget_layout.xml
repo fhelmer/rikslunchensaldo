@@ -6,11 +6,11 @@
     android:layout_margin="4dip"
     android:orientation="vertical"
     android:resizeMode="horizontal"
-    android:background="@drawable/myshape">
+    android:background="@color/common_signin_btn_light_text_default">
 
     <TextView
         android:id="@+id/txt"
-        style="@android:style/TextAppearance.Small"
+        style="@android:style/TextAppearance.DeviceDefault.Widget.TextView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
@@ -21,7 +21,7 @@
 
     <TextView
         android:id="@+id/widget_card_id"
-        style="@android:style/TextAppearance.Small"
+        style="@android:style/TextAppearance.DeviceDefault.Widget.TextView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
@@ -31,7 +31,7 @@
     
     <TextView
         android:id="@+id/widget_balance"
-        style="@android:style/TextAppearance.Small"
+        style="@android:style/TextAppearance.DeviceDefault.Widget.TextView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
@@ -40,8 +40,7 @@
     </TextView>
     
        <TextView
-        android:id="@+id/widget_lasttopupdate"
-        style="@android:style/TextAppearance.Small"
+        android:id="@+id/widget_lasttopupdate" style="@android:style/TextAppearance.DeviceDefault.Widget.TextView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
@@ -50,8 +49,7 @@
     </TextView>
 
     <TextView
-        android:id="@+id/widget_latestupdate"
-        style="@android:style/TextAppearance.Small"
+        android:id="@+id/widget_latestupdate" style="@android:style/TextAppearance.DeviceDefault.Widget.TextView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"

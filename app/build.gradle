@@ -6,9 +6,9 @@ android {
     defaultConfig {
         applicationId "se.helmer.rikslunchensaldo"
         minSdkVersion 15
-        targetSdkVersion 21
-        versionCode 23
-        versionName "1.23"
+        targetSdkVersion 26
+        versionCode 25
+        versionName "1.25"
     }
     buildTypes {
         release {
@@ -18,11 +18,11 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:support-v13:21.0.2'
-    compile 'com.google.android.gms:play-services:4.2.42'
-    compile 'com.j256.ormlite:ormlite-core:4.48'
-    compile 'com.j256.ormlite:ormlite-android:4.48'
-    compile 'com.tojc.ormlite.android:ormlite-content-provider-library:1.0.4'
-    testCompile 'junit:junit:4.12'
+    api fileTree(dir: 'libs', include: ['*.jar'])
+    api 'com.android.support:support-v13:21.0.2'
+    api 'com.google.android.gms:play-services:4.2.42'
+    api 'com.j256.ormlite:ormlite-core:4.48'
+    api 'com.j256.ormlite:ormlite-android:4.48'
+    api 'com.tojc.ormlite.android:ormlite-content-provider-library:1.0.4'
+    testImplementation 'junit:junit:4.12'
 }
