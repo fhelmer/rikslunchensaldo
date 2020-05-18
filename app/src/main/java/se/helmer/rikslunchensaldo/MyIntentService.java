@@ -12,11 +12,12 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URL;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
@@ -144,7 +145,15 @@ public class MyIntentService extends IntentService {
 
     }
 
-    // curl -k -d '{"cardid":"35760768"}' -H "Content-Type: application/json" -X POST https://www.rikslunchen.se:9443/isr/services/mobile/quickbalance
+    // always verify the host - dont check for certificate
+    final static HostnameVerifier DO_NOT_VERIFY = new HostnameVerifier() {
+        public boolean verify(String hostname, SSLSession session) {
+            return true;
+        }
+    };
+
+
+    // curl -k -d '{"cardid":"35760768"}' -H "Content-Type: application/json" -X POST https://cardholder.lunchkultur.se:9443/isr/services/mobile/quickbalance
 
     private String makePostRequest(DbSession session, final String card_id) {
         String response = "";
@@ -160,19 +169,21 @@ public class MyIntentService extends IntentService {
                         public void checkServerTrusted(
                                 java.security.cert.X509Certificate[] certs, String authType) {
                         }
+
                     }
             };
 
             try {
-                SSLContext sc = SSLContext.getInstance("SSL");
+                SSLContext sc = SSLContext.getInstance("TLS");
                 sc.init(null, trustAllCerts, new java.security.SecureRandom());
                 HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
             } catch (Exception e) {
             }
 
 
-            URL url = new URL("https://www.rikslunchen.se:9443/isr/services/mobile/quickbalance");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            URL url = new URL("https://cardholder.lunchkultur.se:9443/isr/services/mobile/quickbalance");
+            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+            conn.setHostnameVerifier(DO_NOT_VERIFY);
             conn.setReadTimeout(15000);
             conn.setConnectTimeout(15000);
             conn.setRequestMethod("POST");

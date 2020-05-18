@@ -6,9 +6,9 @@ android {
     defaultConfig {
         applicationId "se.helmer.rikslunchensaldo"
         minSdkVersion 15
-        targetSdkVersion 26
-        versionCode 25
-        versionName "1.25"
+        targetSdkVersion 28
+        versionCode 26
+        versionName "1.26"
     }
     buildTypes {
         release {
