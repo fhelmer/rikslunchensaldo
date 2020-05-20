@@ -50,7 +50,7 @@ public class Utils {
         intent.putExtra(MyIntentService.COMMAND, MyIntentService.QUERY_RIKSLUNCHEN_THEN_UPDATE);
         intent.putExtra(MyIntentService.RECEIVER, MainActivity.getReceiver());
         intent.putExtra(MyIntentService.PAYLOAD, b);
-        ComponentName cm = context.startService(intent);
+        MyIntentService.enqueueWork(context, intent);
     }
 
     public static Date LocalToGmt(Date localDate) {
@@ -237,7 +237,7 @@ public class Utils {
         intent.putExtra(MyIntentService.COMMAND, MyIntentService.LOG_MESSAGE_SAVE);
         intent.putExtra(MyIntentService.RECEIVER, MainActivity.getReceiver());
         intent.putExtra(MyIntentService.PAYLOAD, b);
-        ComponentName cm = context.startService(intent);
+        MyIntentService.enqueueWork(context, intent);
 
     }
 

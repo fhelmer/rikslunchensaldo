@@ -62,7 +62,7 @@ LoaderManager.LoaderCallbacks<Cursor> {
                                     final Intent intent = new Intent(context, MyIntentService.class);
                                     intent.putExtra("command",
                                             MyIntentService.LOG_MESSAGE_DELETE_ALL);
-                                    ComponentName cm = context.startService(intent);
+                                    MyIntentService.enqueueWork(context, intent);
 
                                     break;
 

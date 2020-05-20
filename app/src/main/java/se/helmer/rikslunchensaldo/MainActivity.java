@@ -167,7 +167,7 @@ public class MainActivity extends FragmentActivity
                         intent.putExtra(MyIntentService.COMMAND, MyIntentService.CARD_UPDATE);
                         intent.putExtra(MyIntentService.RECEIVER, MainActivity.getReceiver());
                         intent.putExtra(MyIntentService.PAYLOAD, b);
-                        ComponentName cm = startService(intent);
+                        MyIntentService.enqueueWork(getApplicationContext(), intent);
 
                         showMessage("Querying ...");
                         Utils.queryRikslunchen(getApplicationContext(), value); // 32271843
@@ -242,7 +242,7 @@ public class MainActivity extends FragmentActivity
                 final Intent intent = new Intent(this, MyIntentService.class);
                 intent.putExtra(MyIntentService.COMMAND, MyIntentService.CHECK_DATABASE);
                 intent.putExtra(MyIntentService.RECEIVER, MainActivity.getReceiver());
-                ComponentName cm = startService(intent);
+                MyIntentService.enqueueWork(this, intent);
                 Utils.debug(TAG, "onTabSelected");
                 break;
             default:
@@ -277,7 +277,7 @@ public class MainActivity extends FragmentActivity
         final Intent intent = new Intent(this, MyIntentService.class);
         intent.putExtra(MyIntentService.COMMAND, MyIntentService.CHECK_DATABASE);
         intent.putExtra(MyIntentService.RECEIVER, MainActivity.getReceiver());
-        ComponentName cm = startService(intent);
+        MyIntentService.enqueueWork(this, intent);
         Utils.debug(TAG, "onResume");
     }
 

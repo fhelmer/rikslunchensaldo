@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
+import android.support.v4.app.JobIntentService;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,7 +26,7 @@ import se.helmer.rikslunchensaldo.model.BankStatement;
 import se.helmer.rikslunchensaldo.model.Card;
 import se.helmer.rikslunchensaldo.model.Contract;
 
-public class MyIntentService extends IntentService {
+public class MyIntentService extends JobIntentService {
 
     private final static String TAG = "MyIntentService";
 
@@ -43,14 +44,15 @@ public class MyIntentService extends IntentService {
 
     public static final int RETURN_DATA = 100;
 
-    public MyIntentService() {
-        super("MyIntentService");
+    public static final int JOB_ID = 1;
+
+    public static void enqueueWork(Context context, Intent work) {
+        enqueueWork(context, MyIntentService.class, JOB_ID, work);
     }
 
-
     @Override
-    protected void onHandleIntent(Intent intent) {
-        Utils.log(TAG, "onHandleIntent in");
+    protected void onHandleWork(Intent intent) {
+        Utils.log(TAG, "onHandleWork in");
 
         int msgCommand = intent.getIntExtra(COMMAND, 0);
         Bundle b = intent.getBundleExtra(PAYLOAD);

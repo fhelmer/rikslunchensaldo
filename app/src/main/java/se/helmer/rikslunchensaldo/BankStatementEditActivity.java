@@ -47,7 +47,7 @@ public class BankStatementEditActivity extends Activity {
                         final Intent intent = new Intent(BankStatementEditActivity.this, MyIntentService.class);
                         intent.putExtra(MyIntentService.COMMAND, MyIntentService.BANKSTATEMENT_DELETE);
                         intent.putExtra(MyIntentService.PAYLOAD, mBundle);
-                        ComponentName cm = startService(intent);
+                        MyIntentService.enqueueWork(getApplicationContext(), intent);
                         BankStatementEditActivity.this.finish();
                         break;
 
@@ -80,7 +80,7 @@ public class BankStatementEditActivity extends Activity {
                 final Intent intent = new Intent(BankStatementEditActivity.this, MyIntentService.class);
                 intent.putExtra("command", MyIntentService.BANKSTATEMENT_UPDATE);
                 intent.putExtra(MyIntentService.PAYLOAD, mBundle);
-                ComponentName cm = startService(intent);
+                MyIntentService.enqueueWork(getApplicationContext(), intent);
 
                 BankStatementEditActivity.this.finish();
             }

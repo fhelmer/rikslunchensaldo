@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 21
+    compileSdkVersion 28
 
     defaultConfig {
         applicationId "se.helmer.rikslunchensaldo"
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 26
-        versionName "1.26"
+        versionCode 27
+        versionName "1.27"
     }
     buildTypes {
         release {
@@ -19,7 +19,7 @@ android {
 
 dependencies {
     api fileTree(dir: 'libs', include: ['*.jar'])
-    api 'com.android.support:support-v13:21.0.2'
+    api 'com.android.support:support-v13:28.0.0'
     api 'com.google.android.gms:play-services:4.2.42'
     api 'com.j256.ormlite:ormlite-core:4.48'
     api 'com.j256.ormlite:ormlite-android:4.48'
